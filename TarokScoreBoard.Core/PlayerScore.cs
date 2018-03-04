@@ -2,6 +2,11 @@
 {
   public class PlayerScore
   {
+    public PlayerScore(int score = 0)
+    {
+      _score = score;
+    }
+
     private int _score;
 
     public int Score { get => _score;}
@@ -28,7 +33,7 @@
     public int ChangeScore(int change)
     {
       // TODO log change 
-      _score = +change;
+      _score += change;
       return Score;
     }
   }

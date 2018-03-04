@@ -9,6 +9,7 @@
     SoloDve = 50,
     SoloEna = 60,
     Berac = 70,
+    Klop = 70, // hmm, not ideal
     SoloBrez = 80,
     OdprtiBerac = 90
   }

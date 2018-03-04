@@ -24,7 +24,7 @@ namespace TarokScoreBoard.Core
 
     public Contra ContraFactor { get; set; } = Contra.None;
 
-    public Player MonodFang { get; set; }
+    public Player MondFangPlayer { get; set; }
     
     // TODO MondFang
 
