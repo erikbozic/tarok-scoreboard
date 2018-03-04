@@ -1,0 +1,57 @@
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
+using TarokScoreBoard.Infrastructure.Services;
+
+namespace TarokScoreBoard.Api
+{
+  public class Startup
+  {
+    public Startup(IConfiguration configuration)
+    {
+      Configuration = configuration;
+    }
+
+    public IConfiguration Configuration { get; }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+      // my dependencies
+      services.AddScoped<GameService>();
+      services.AddSingleton(Configuration);
+
+      services.AddSwaggerGen(c =>
+      {
+        c.SwaggerDoc("v1", new Info { Title = "Tarok Scoreboard", Version = "v1"});
+        
+      });
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+      if (env.IsDevelopment())
+      {
+        app.UseDeveloperExceptionPage();
+      }
+
+      //app.UseHttpsRedirection(); // lives behind a proxy which terinates https, so no need to use it on kestrel
+      app.UseMvc();
+      app.UseSwagger(c =>
+      {
+        c.RouteTemplate = "api-docs/{documentName}/scoreboard.json";
+      });
+
+      app.UseSwaggerUI(c =>
+      {
+        c.SwaggerEndpoint("/api-docs/v1/scoreboard.json", "Tarok Scoreboard API");
+      });
+    }
+  }
+}
