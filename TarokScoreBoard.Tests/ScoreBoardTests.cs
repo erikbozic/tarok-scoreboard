@@ -145,7 +145,7 @@ namespace TarokScoreBoard.Tests
       round.Modifiers.Add(new Modifier
         (
          ModifierType.PagatUltimo,
-         Team.NonPlaying, // Is this correct? 
+         Team.NonPlaying,
          Announced.Announced,
          Contra.Re
         ));
@@ -163,7 +163,39 @@ namespace TarokScoreBoard.Tests
       Assert.True(scoreBoard.Scores[jan].Score == -150 );
       Assert.True(scoreBoard.Scores[luka].Score == -150);
     }
+
+    [Fact(DisplayName = "Jan igra ena, rufa Lukata, zmagata 20 razlike, zgubita napovedanega pagant ultimo, ki je re-kontriran, vsi imajo radelc")]
+    public void Test6()
+    {
+      var game = new GameInitializer(fourPlayers);
+
+      var scoreBoard = game.StartGame();
+
+      scoreBoard.Reset();
+      scoreBoard.AddRadelc();
+      var round = new TarokRound();
+
+      round.Modifiers.Add(new Modifier
+        (
+         ModifierType.PagatUltimo,
+         Team.NonPlaying, 
+         Announced.Announced,
+         Contra.Re
+        ));
+
+      round.LeadPlayer = jan;
+      round.SupportingPLayer = luka;
+
+      round.Game = Game.Ena;
+      round.Won = true;
+
+      round.ScoreDifference = 20;
+
+      scoreBoard.ApplyTarokRound(round);
+
+      Assert.True(scoreBoard.Scores[jan].Score == -300);
+      Assert.True(scoreBoard.Scores[luka].Score == -300);
+      Assert.True(scoreBoard.Scores[jan].RadelcCount - scoreBoard.Scores[jan].UsedRadelcCount == 0);
+    }
   }
-
-
 }

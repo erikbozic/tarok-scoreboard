@@ -23,6 +23,8 @@ namespace TarokScoreBoard.Core
     public List<Modifier> Modifiers { get; set; }
 
     public Contra ContraFactor { get; set; } = Contra.None;
+
+    public Player MonodFang { get; set; }
     
     // TODO MondFang
 
@@ -30,9 +32,7 @@ namespace TarokScoreBoard.Core
     {
       var wonModifier = Won ? 1 : -1;
 
-      var result = wonModifier * (int)(ScoreDifference + Game);
-
-      result = result * (int)ContraFactor;
+      var result = wonModifier * (int)(ScoreDifference + Game) * (int)ContraFactor;        
 
       foreach (var mod in Modifiers)
       {

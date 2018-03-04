@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace TarokScoreBoard.Core
 {
@@ -34,19 +33,29 @@ namespace TarokScoreBoard.Core
 
     public void ApplyTarokRound(TarokRound round)
     {
-      var roundScore = round.GetScore();
-      if (Scores[round.LeadPlayer].HasRadelc())
-      { 
-        roundScore *= 2;
-        if (round.Won)
-          Scores[round.LeadPlayer].RemoveRadelc();
-      }
+      var hasRadelc = Scores[round.LeadPlayer].HasRadelc();
+      var roundScore = round.GetScore() * (hasRadelc ? 2 : 1);
+
+      if (hasRadelc && round.Won)
+        Scores[round.LeadPlayer].RemoveRadelc();
+     
 
       Scores[round.LeadPlayer].ChangeScore(roundScore);
       if(round.SupportingPLayer != null)
         Scores[round.SupportingPLayer].ChangeScore(roundScore);
 
-      // TODO Add additional player based modifigers // mond fang, pagat fang
+      if((int)round.Game >= 70)
+      {
+        foreach (var score in Scores)
+        {
+          score.Value.AddRadelc();
+        }
+      }
+
+      if (round.MonodFang != null)
+        Scores[round.MonodFang].ChangeScore(-25);
+      // TODO pagat ultimo fang, če je nenapovedan, je to osebno. mislim, da ne?
     }
+
   }
 }
