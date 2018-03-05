@@ -1,4 +1,6 @@
-﻿namespace TarokScoreBoard.Core
+﻿using TarokScoreBoard.Core.Entities;
+
+namespace TarokScoreBoard.Core
 {
   public class PlayerScore
   {
@@ -36,5 +38,17 @@
       _score += change;
       return Score;
     }
+
+    public static PlayerScore FromRoundResult(RoundResult result)
+    {
+      var score = new PlayerScore(result.PlayerScore)
+      {
+         RadelcCount = result.PlayerRadelcCount,
+         UsedRadelcCount = result.PlayerRadecUsed
+      };
+
+      return score;
+    }
+
   }
 }

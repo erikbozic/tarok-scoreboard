@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using TarokScoreBoard.Core.Entities;
 
 namespace TarokScoreBoard.Core
 {
@@ -6,10 +8,10 @@ namespace TarokScoreBoard.Core
   {
     public KlopRound() : base()
     {
-      KlopScores = new Dictionary<Player, PlayerScore>();
+      KlopScores = new Dictionary<Guid, PlayerScore>();
     }
 
-    public Dictionary<Player, PlayerScore> KlopScores { get; set; }
+    public Dictionary<Guid, PlayerScore> KlopScores { get; set; }
     
   }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Infrastructure.Services;
 using TarokScoreBoard.Shared.DTO;
 
@@ -13,12 +13,10 @@ namespace TarokScoreBoard.Api.Controllers
   public class GameController : ControllerBase
   {
     private readonly GameService gameService;
-    private readonly IConfiguration config;
 
-    public GameController(GameService gameService, IConfiguration config)
+    public GameController(GameService gameService)
     {
       this.gameService = gameService;
-      this.config = config;
     }
     
     [HttpGet]
@@ -29,9 +27,9 @@ namespace TarokScoreBoard.Api.Controllers
     }
     
     [HttpGet("{guid}")]
-    public ActionResult<Game> Get(Guid guid)
+    public async Task<ActionResult<Game>> Get(Guid guid)
     {
-      var game = gameService.GetByGuid(guid);
+      var game = await gameService.GetByGuidAsync(guid);
 
       if (game == null)
         return NotFound();
@@ -40,10 +38,10 @@ namespace TarokScoreBoard.Api.Controllers
     }
     
     [HttpPost]
-    public ActionResult<Game> AddGame(CreateGameRequest game)
+    public async Task<ActionResult<Game>> AddGame(CreateGameRequest gameRequest)
     {
-      var newGame = gameService.StartGame(game);
-      return Ok(newGame);
+      var game = await gameService.StartGameAsync(gameRequest);
+      return Ok(game);
     }
   }
 }

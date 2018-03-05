@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using Swashbuckle.AspNetCore.Swagger;
+using TarokScoreBoard.Core.Entities;
+using TarokScoreBoard.Infrastructure.Repositories;
 using TarokScoreBoard.Infrastructure.Services;
 
 namespace TarokScoreBoard.Api
@@ -23,7 +26,14 @@ namespace TarokScoreBoard.Api
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
       // my dependencies
+      services.AddScoped<GameRepository>();
+      services.AddScoped<GamePlayerRepository>();
+      services.AddScoped<RoundRepository>();
+      services.AddScoped<RoundResultRepository>();
       services.AddScoped<GameService>();
+      services.AddScoped<ScoreBoardService>();
+      services.AddScoped((a) =>  new NpgsqlConnection(Configuration.GetConnectionString("tarok")));
+
       services.AddSingleton(Configuration);
 
       services.AddSwaggerGen(c =>
@@ -52,6 +62,8 @@ namespace TarokScoreBoard.Api
       {
         c.SwaggerEndpoint("/api-docs/v1/scoreboard.json", "Tarok Scoreboard API");
       });
+
+      DapperMapping.ConfigureColumnMapping();
     }
   }
 }

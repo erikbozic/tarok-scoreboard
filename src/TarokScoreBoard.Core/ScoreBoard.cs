@@ -1,16 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using TarokScoreBoard.Core.Entities;
 
 namespace TarokScoreBoard.Core
 {
   public class ScoreBoard
   {
-    private Player[] players;
+    private IEnumerable<Guid> players;
 
-    public IDictionary<Player, PlayerScore>  Scores { get; set; }
+    public IDictionary<Guid, PlayerScore>  Scores { get; set; }
 
-    public ScoreBoard(Player[] players)
+    public ScoreBoard(IEnumerable<Guid> players)
     {
       this.players = players;      
+    }
+
+    private ScoreBoard()
+    {
+
     }
 
     public void AddRadelc()
@@ -23,7 +30,7 @@ namespace TarokScoreBoard.Core
 
     public void Reset()
     {
-      Scores = new Dictionary<Player, PlayerScore>();
+      Scores = new Dictionary<Guid, PlayerScore>();
 
       foreach (var player in players)
       {
@@ -33,8 +40,6 @@ namespace TarokScoreBoard.Core
 
     public void ApplyTarokRound(TarokRound round)
     {
-
-
       if (round is KlopRound klop)
       {
         foreach (var klopScore in klop.KlopScores)
@@ -63,10 +68,22 @@ namespace TarokScoreBoard.Core
         }
       }
 
-      if (round.MondFangPlayer != null)
+      if (round.MondFangPlayer != Guid.Empty)
         Scores[round.MondFangPlayer].ChangeScore(-25);
       // TODO pagat ultimo fang, če je nenapovedan, je to osebno. mislim, da ne?
     }
 
+    public static ScoreBoard FromRound(IEnumerable<RoundResult> roundResults)
+    {
+      var sb =  new ScoreBoard();
+
+      foreach (var result in roundResults)
+      {
+        sb.Scores.Add(result.PlayerId, PlayerScore.FromRoundResult(result));
+      }
+      
+      return sb;
+
+    }
   }
 }

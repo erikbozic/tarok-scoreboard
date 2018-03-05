@@ -1,46 +1,59 @@
-﻿using Dapper;
-using Microsoft.Extensions.Configuration;
-using Npgsql;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TarokScoreBoard.Core.Entities;
+using TarokScoreBoard.Infrastructure.Repositories;
 using TarokScoreBoard.Shared.DTO;
 
 namespace TarokScoreBoard.Infrastructure.Services
 {
   public class GameService
   {
-    private readonly IConfiguration config;
-    private readonly NpgsqlConnection conn;
+    private readonly GameRepository gameRepository;
+    private readonly GamePlayerRepository playerRepository;
 
-    public GameService(IConfiguration config)
+    public GameService(GameRepository gameRepository, GamePlayerRepository playerRepository)
     {
-      this.config = config;
-      this.conn = new NpgsqlConnection(config.GetConnectionString("tarok"));
+      this.gameRepository = gameRepository;
+      this.playerRepository = playerRepository;
     }
 
-    public Game StartGame(CreateGameRequest game)
-    {
-      // TODO save game
-      return new Game()
+    public async Task<Game> StartGameAsync(CreateGameRequest gameRequest)
+    {      
+      var game = new Game()
       {
-        Date = DateTime.Now,
-        Name = game.Name,
-        Guid = Guid.NewGuid(),
-        Players = game.Players
+        Name = gameRequest.Name,
+        GameId = Guid.NewGuid(),
+        Date = DateTime.Now
       };
+
+      game = await gameRepository.AddAsync(game);
+      game.Players = new List<GamePlayer>();
+
+      foreach (var player in gameRequest.Players.Select(p => new GamePlayer(p.Name) { GameId = game.GameId, PlayerId = Guid.NewGuid() }))
+      {
+        var dbPlayer =  await playerRepository.AddAsync(player);
+        game.Players.Add(dbPlayer);
+      }
+
+      return game;
     }
 
-    public async Task<List<Game>> GetAllAsync()
+    public async Task<IEnumerable<Game>> GetAllAsync()
     {
-      var result = await conn.QueryAsync<Game>(@"SELECT id ""Guid"", game_name ""Name"" FROM game");
-      return result.ToList();
+      var result = await gameRepository.GetAllAsync();
+      return result;
     }
 
-    public Game GetByGuid(Guid guid)
+    public async Task<Game> GetByGuidAsync(Guid guid)
     {
-      return new Game();
+      var game = await gameRepository.GetAsync(guid);
+      var id = game.GameId;
+      var gamePlayers = await playerRepository.GetAllAsync(c => c.Where(p => p.GameId == id));
+      game.Players = gamePlayers.ToList();
+
+      return game;
     }
   }
 }

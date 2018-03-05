@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using TarokScoreBoard.Shared.DTO;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using TarokScoreBoard.Core;
+using TarokScoreBoard.Core.Entities;
+using TarokScoreBoard.Infrastructure.Services;
 
 namespace TarokScoreBoard.Api.Controllers
 {
@@ -8,22 +12,25 @@ namespace TarokScoreBoard.Api.Controllers
   [ApiController]
   public class ScoreBoardController : ControllerBase
   {
-    public ScoreBoardController()
-    {
+    private readonly ScoreBoardService scoreboardService;
 
+    public ScoreBoardController(ScoreBoardService scoreboardService)
+    {
+      this.scoreboardService = scoreboardService;
     }
 
-    [HttpGet("{guid}")]
-    public ActionResult Get(Guid guid)
+    [HttpGet("{gameId}")]
+    public async Task<ActionResult<IEnumerable<Round>>> Get(Guid gameId)
     {
-      return Ok();
+      var rounds = await scoreboardService.GetGameRounds(gameId);
+      return Ok(rounds);
     }
 
     [HttpPost]
-    public ActionResult PostRound(Round round)
+    public async Task<ActionResult<IDictionary<Guid, PlayerScore>>> PostRound(Round round)
     {
-      return Ok();
+      var score = await scoreboardService.AddRound(round);
+      return Created("",score); // TODO
     }
-
   }
 }

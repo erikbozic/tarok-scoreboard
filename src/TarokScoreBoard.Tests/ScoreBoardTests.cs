@@ -1,25 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using TarokScoreBoard.Core;
+using TarokScoreBoard.Core.Entities;
 using Xunit;
 
 namespace TarokScoreBoard.Tests
 {
   public class ScoreBoardTests
   {
-    private Player[] fourPlayers;
-    private Player erik;
-    private Player jan;
-    private Player nejc;
-    private Player luka;
+    private IEnumerable<GamePlayer> fourPlayers;
+    private GamePlayer erik;
+    private GamePlayer jan;
+    private GamePlayer nejc;
+    private GamePlayer luka;
 
     public ScoreBoardTests()
     {
-      erik = new Player("Erik");
-      jan = new Player("Jan");
-      nejc = new Player("Nejc");
-      luka = new Player("Luka");
+      erik = new GamePlayer("Erik");
+      jan = new GamePlayer("Jan");
+      nejc = new GamePlayer("Nejc");
+      luka = new GamePlayer("Luka");
 
-      fourPlayers = new Player[] { erik, jan, luka, nejc };
+      fourPlayers = new List<GamePlayer> { erik, jan, luka, nejc };
     }
 
     [Fact(DisplayName = "Jan igra ena, rufa Erika, zmaga 15, trula")]
@@ -42,7 +44,7 @@ namespace TarokScoreBoard.Tests
         Announced.Announced
       ));
 
-      round.Game = Game.Ena;
+      round.Game = Core.Game.Ena;
       round.Won = true;
 
       round.ScoreDifference = 15;
@@ -66,7 +68,7 @@ namespace TarokScoreBoard.Tests
 
       round.LeadPlayer = jan;
 
-      round.Game = Game.Ena;
+      round.Game = Core.Game.Ena;
       round.Won = true;
 
       round.ScoreDifference = 5;
@@ -89,7 +91,7 @@ namespace TarokScoreBoard.Tests
 
       round.LeadPlayer = jan;
 
-      round.Game = Game.Ena;
+      round.Game = Core.Game.Ena;
       round.Won = false;
 
       round.ScoreDifference = 0;
@@ -120,7 +122,7 @@ namespace TarokScoreBoard.Tests
       round.LeadPlayer = jan;
       round.SupportingPLayer = luka;
 
-      round.Game = Game.Ena;
+      round.Game = Core.Game.Ena;
       round.Won = false;
 
       round.ScoreDifference = 0;
@@ -153,7 +155,7 @@ namespace TarokScoreBoard.Tests
       round.LeadPlayer = jan;
       round.SupportingPLayer = luka;
 
-      round.Game = Game.Ena;
+      round.Game = Core.Game.Ena;
       round.Won = true;
 
       round.ScoreDifference = 20;
@@ -186,7 +188,7 @@ namespace TarokScoreBoard.Tests
       round.LeadPlayer = jan;
       round.SupportingPLayer = luka;
 
-      round.Game = Game.Ena;
+      round.Game = Core.Game.Ena;
       round.Won = true;
 
       round.ScoreDifference = 20;
@@ -209,7 +211,7 @@ namespace TarokScoreBoard.Tests
 
       var round = new TarokRound();
 
-      round.Game = Game.Berac;
+      round.Game = Core.Game.Berac;
       round.LeadPlayer = jan;
       round.Won = true;
 
@@ -232,7 +234,7 @@ namespace TarokScoreBoard.Tests
       scoreBoard.AddRadelc();
       var round = new TarokRound();
       
-      round.Game = Game.Berac;
+      round.Game = Core.Game.Berac;
       round.LeadPlayer = jan;
       round.Won = true;
 
@@ -255,7 +257,7 @@ namespace TarokScoreBoard.Tests
       scoreBoard.AddRadelc();
       var round = new TarokRound();
 
-      round.Game = Game.OdprtiBerac;
+      round.Game = Core.Game.OdprtiBerac;
       round.LeadPlayer = jan;
       round.Won = true;
       round.ContraFactor = Contra.Contra;
@@ -279,7 +281,7 @@ namespace TarokScoreBoard.Tests
 
       var round = new TarokRound();
 
-      round.Game = Game.Berac;
+      round.Game = Core.Game.Berac;
       round.LeadPlayer = jan;
       round.Won = false;
 
@@ -301,7 +303,7 @@ namespace TarokScoreBoard.Tests
       scoreBoard.Reset();
 
       var round = new KlopRound();
-      round.Game = Game.Klop;
+      round.Game = Core.Game.Klop;
       round.Won = false;
 
       round.KlopScores.Add(erik, new PlayerScore(-10));
@@ -333,7 +335,7 @@ namespace TarokScoreBoard.Tests
 
       var round = new TarokRound();
 
-      round.Game = Game.Ena;
+      round.Game = Core.Game.Ena;
       round.LeadPlayer = jan;
       round.SupportingPLayer = luka;
       round.Won = true;
