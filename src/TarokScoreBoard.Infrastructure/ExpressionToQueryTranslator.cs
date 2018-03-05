@@ -22,16 +22,6 @@ namespace TarokScoreBoard.Infrastructure
 
     public (string predicate, string orderby, IDictionary<int, object> @params) Translate(Expression expression)
     {
-
-      Func<string,string, int> Count;
-      Count = (t,a) => t.Length;
-
-
-      Count.Invoke("test","sad");
-
-
-
-
       this.sb = new StringBuilder();
       this.Visit(expression);
       this.whereClause = this.sb.ToString();
@@ -71,15 +61,6 @@ namespace TarokScoreBoard.Infrastructure
           Expression nextExpression = m.Arguments[0];
           return this.Visit(nextExpression);
         }
-      }
-      else if (m.Method.Name == "Contains")
-      {
-        Console.WriteLine("contains");
-        var r = ParseContainsExpression(m);
-        
-        // just need to write member.name in m
-
-        return Visit(m.Arguments[0]);
       }
 
       throw new NotSupportedException(string.Format("The method '{0}' is not supported", m.Method.Name));
@@ -199,10 +180,6 @@ namespace TarokScoreBoard.Infrastructure
         queryParameters[paramCount] = value;
         return m;
       }
-      if(m.Expression != null && m.Expression.NodeType == ExpressionType.MemberAccess)
-      {
-        return Visit(m.Expression);
-      }
 
       throw new NotSupportedException(string.Format("The member '{0}' is not supported", m.Member.Name));
     }
@@ -238,7 +215,6 @@ namespace TarokScoreBoard.Infrastructure
 
         return true;
       }
-
       return false;
     }
   }

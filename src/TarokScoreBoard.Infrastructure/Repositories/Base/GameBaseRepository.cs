@@ -14,11 +14,11 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 				game_id, 
 				name";
 
-    protected override string baseSelect { get; set; }
+    protected override string BaseSelect { get; set; }
 
     public GameBaseRepository(NpgsqlConnection conn) : base(conn)
     {    
-      baseSelect = $@"
+      BaseSelect = $@"
         SELECT
           {selectFields}
         FROM game";
@@ -28,7 +28,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
     public Game Get(Guid gameid)
     {
       return conn.QueryFirst<Game>($@"
-      {baseSelect}
+      {BaseSelect}
       WHERE game_id = :gameid",
       new { gameid });
     }
@@ -36,7 +36,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
     public async Task<Game> GetAsync(Guid gameid)
     {
       return await conn.QueryFirstAsync<Game>($@"
-      {baseSelect}
+      {BaseSelect}
       WHERE game_id = :gameid",
       new { gameid });
     }

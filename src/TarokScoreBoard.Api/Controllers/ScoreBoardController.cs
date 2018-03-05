@@ -29,7 +29,7 @@ namespace TarokScoreBoard.Api.Controllers
 
     [HttpPost]
     [TransactionFilter]
-    public async Task<ActionResult<Round>> PostRound(CreateRoundRequest createRoundRequest)
+    public async Task<ActionResult<Round>> PostRound(CreateRoundDTO createRoundRequest)
     {
       var score = await scoreboardService.AddRound(createRoundRequest);
       return Ok(score);

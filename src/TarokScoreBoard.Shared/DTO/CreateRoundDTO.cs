@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TarokScoreBoard.Shared.DTO
 {
-  public class CreateRoundRequest
+  public class CreateRoundDTO
   {
     public bool IsKlop { get; set; }
 

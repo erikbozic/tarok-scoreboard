@@ -1,4 +1,4 @@
-﻿namespace TarokScoreBoard.Core
+﻿namespace TarokScoreBoard.Shared.Enums
 {
   public enum Contra
   {

@@ -10,7 +10,7 @@ namespace TarokScoreBoard.Infrastructure
 {
   public abstract class BaseRepository<T>
   {
-    protected abstract string baseSelect { get; set; }
+    protected abstract string BaseSelect { get; set; }
 
     protected readonly NpgsqlConnection conn;
 
@@ -39,7 +39,7 @@ namespace TarokScoreBoard.Infrastructure
         paging = $" LIMIT {limit} OFFSET {offset}";
 
       return conn.Query<T>($@"
-      {baseSelect}
+      {BaseSelect}
       {whereClause}
       {orderbyClause}
       {paging}
@@ -68,7 +68,7 @@ namespace TarokScoreBoard.Infrastructure
         paging = $" LIMIT {limit} OFFSET {offset}";
 
       return await conn.QueryAsync<T>($@"
-      {baseSelect}
+      {BaseSelect}
       {whereClause}
       {orderbyClause}
       {paging}
@@ -83,7 +83,7 @@ namespace TarokScoreBoard.Infrastructure
         paging = $" LIMIT {limit} OFFSET {offset}";
 
       return conn.Query<T>($@"
-      {baseSelect} 
+      {BaseSelect} 
       {paging}
       ", buffered: buffered);
     }
@@ -95,7 +95,7 @@ namespace TarokScoreBoard.Infrastructure
         paging = $" LIMIT {limit} OFFSET {offset}";
 
       return await conn.QueryAsync<T>($@"
-      {baseSelect}
+      {BaseSelect}
       {paging}
       ");
     }

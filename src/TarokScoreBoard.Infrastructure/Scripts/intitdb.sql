@@ -32,3 +32,13 @@ create table round_result(
   player_radelc_count int not null,
   player_radec_used int not null
 );
+
+create type modifier as enum ('kralji', 'trula', 'kralj_ultimo', 'pagat_ultimo', 'barvni_valat');
+
+create table round_modifiers(
+  round_id uuid not null,
+  team int not null default 1,
+  announced int not null default  1,
+  contra int not null default 1,
+  modifier_type modifier
+);

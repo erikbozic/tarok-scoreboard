@@ -1,6 +1,6 @@
-﻿namespace TarokScoreBoard.Core
+﻿namespace TarokScoreBoard.Shared.Enums
 {
-  public enum Game
+  public enum GameType
   {
     Tri = 10,
     Dve = 20,

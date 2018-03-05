@@ -22,11 +22,11 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 				supporting_player_id, 
 				won";
 
-    protected override string baseSelect { get; set; }
+    protected override string BaseSelect { get; set; }
 
     public RoundBaseRepository(NpgsqlConnection conn) : base(conn)
     {    
-      baseSelect = $@"
+      BaseSelect = $@"
         SELECT
           {selectFields}
         FROM round";
@@ -36,7 +36,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
     public Round Get(Guid roundid)
     {
       return conn.QueryFirst<Round>($@"
-      {baseSelect}
+      {BaseSelect}
       WHERE round_id = :roundid",
       new { roundid });
     }
@@ -44,7 +44,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
     public async Task<Round> GetAsync(Guid roundid)
     {
       return await conn.QueryFirstAsync<Round>($@"
-      {baseSelect}
+      {BaseSelect}
       WHERE round_id = :roundid",
       new { roundid });
     }

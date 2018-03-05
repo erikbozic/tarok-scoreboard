@@ -13,11 +13,11 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 				name, 
 				player_id";
 
-    protected override string baseSelect { get; set; }
+    protected override string BaseSelect { get; set; }
 
     public GamePlayerBaseRepository(NpgsqlConnection conn) : base(conn)
     {    
-      baseSelect = $@"
+      BaseSelect = $@"
         SELECT
           {selectFields}
         FROM game_player";

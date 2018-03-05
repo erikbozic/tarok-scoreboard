@@ -30,6 +30,7 @@ namespace TarokScoreBoard.Api
       services.AddScoped<GamePlayerRepository>();
       services.AddScoped<RoundRepository>();
       services.AddScoped<RoundResultRepository>();
+      services.AddScoped<RoundModifierRepository>();
       services.AddScoped<GameService>();
       services.AddScoped<ScoreBoardService>();
       services.AddScoped((ser) =>  new NpgsqlConnection(ser.GetService<IConfiguration>().GetConnectionString("tarok")));

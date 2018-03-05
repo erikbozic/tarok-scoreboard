@@ -1,4 +1,6 @@
-﻿namespace TarokScoreBoard.Core
+﻿using TarokScoreBoard.Shared.Enums;
+
+namespace TarokScoreBoard.Core
 {
   public class Modifier
   {

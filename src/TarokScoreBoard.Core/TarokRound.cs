@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TarokScoreBoard.Core.Entities;
+using TarokScoreBoard.Shared;
+using TarokScoreBoard.Shared.Enums;
 
 namespace TarokScoreBoard.Core
 {
@@ -17,7 +20,7 @@ namespace TarokScoreBoard.Core
 
     public bool Won { get; set; }
 
-    public Game Game { get; set; }
+    public GameType Game { get; set; }
 
     public int ScoreDifference { get; set; }
 
@@ -31,7 +34,7 @@ namespace TarokScoreBoard.Core
     {
       var wonModifier = Won ? 1 : -1;
 
-      if (Game == Game.Berac || Game == Game.OdprtiBerac)
+      if (Game == GameType.Berac || Game == GameType.OdprtiBerac)
         ScoreDifference = 0;
 
       var result = wonModifier * (int)(ScoreDifference + Game) * (int)ContraFactor;
@@ -46,7 +49,21 @@ namespace TarokScoreBoard.Core
 
     public static TarokRound FromRound(Round round)
     {
-      var tarokRound = new TarokRound()
+      if (round.IsKlop)
+      {
+        return new KlopRound
+        {
+          Won = round.Won,
+          ScoreDifference = round.Difference,
+          ContraFactor = (Contra)round.ContraFactor,
+          LeadPlayer = round.LeadPlayerId,
+          SupportingPLayer = round.SupportingPlayerId,
+          MondFangPlayer = round.MondFangPlayerId,
+          Game = (GameType)round.GameType
+        };
+      }
+
+      return new TarokRound()
       {
         Won = round.Won,
         ScoreDifference = round.Difference,
@@ -54,10 +71,34 @@ namespace TarokScoreBoard.Core
         LeadPlayer = round.LeadPlayerId,
         SupportingPLayer = round.SupportingPlayerId,
         MondFangPlayer = round.MondFangPlayerId,
-        Game = (Game)round.GameType,        
-      };
+        Game = (GameType)round.GameType,
+        Modifiers = round.Modifiers.Select(m =>
+        {
+          ModifierType modType;
 
-      return tarokRound;
+          switch (m.ModifierType)
+          {
+            case ModifierTypeDbEnum.TRULA:
+              modType = ModifierType.Trula;
+              break;
+            case ModifierTypeDbEnum.KRALJI:
+              modType = ModifierType.Kralji;
+              break;
+            case ModifierTypeDbEnum.KRALJ_ULTIMO:
+              modType = ModifierType.KraljUltimo;
+              break;
+            case ModifierTypeDbEnum.PAGAT_ULTIMO:
+              modType = ModifierType.PagatUltimo;
+              break;
+            case ModifierTypeDbEnum.BARVNI_VALATR:
+              modType = ModifierType.BarvniValat;
+              break;
+            default:
+              throw new Exception($"Can't. Ni '{m.ModifierType}'.");
+          }
+          return new Modifier(modType, (Team)m.Team, (Announced)m.Announced, (Contra)m.Contra);
+        }).ToList()
+      };
     }
   }
 }
