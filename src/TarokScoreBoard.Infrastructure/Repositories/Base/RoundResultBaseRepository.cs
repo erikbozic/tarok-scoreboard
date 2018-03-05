@@ -2,7 +2,6 @@
 using Npgsql;
 using Dapper;
 using System.Threading.Tasks;
-using System;
 using TarokScoreBoard.Core.Entities;
 
 namespace TarokScoreBoard.Infrastructure.Repositories
@@ -12,8 +11,8 @@ namespace TarokScoreBoard.Infrastructure.Repositories
     protected string selectFields = @"
         game_id, 
 				player_id, 
-				player_radec_used, 
 				player_radelc_count, 
+				player_radelc_used, 
 				player_score, 
 				round_id";
 
@@ -35,12 +34,12 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       (
         game_id, 
 				player_id, 
-				player_radec_used, 
 				player_radelc_count, 
+				player_radelc_used, 
 				player_score, 
 				round_id
       )
-      VALUES (:GameId, :PlayerId, :PlayerRadecUsed, :PlayerRadelcCount, :PlayerScore, :RoundId)
+      VALUES (:GameId, :PlayerId, :PlayerRadelcCount, :PlayerRadelcUsed, :PlayerScore, :RoundId)
       RETURNING
         {selectFields}
       ",
@@ -54,12 +53,12 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       (
         game_id, 
 				player_id, 
-				player_radec_used, 
 				player_radelc_count, 
+				player_radelc_used, 
 				player_score, 
 				round_id
       )
-      VALUES (:GameId, :PlayerId, :PlayerRadecUsed, :PlayerRadelcCount, :PlayerScore, :RoundId)
+      VALUES (:GameId, :PlayerId, :PlayerRadelcCount, :PlayerRadelcUsed, :PlayerScore, :RoundId)
       RETURNING
         {selectFields}
       ",

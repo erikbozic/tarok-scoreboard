@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using TarokScoreBoard.Core.Entities;
 
 namespace TarokScoreBoard.Core
-  {
+{
   public class GameInitializer
   {
     private readonly IEnumerable<Guid> players;
@@ -19,10 +17,13 @@ namespace TarokScoreBoard.Core
 
     }
 
-    public ScoreBoard StartGame()
+    public ScoreBoard StartGame(Guid gameId)
     {
-      var scoreBoard = new ScoreBoard(players);
-      scoreBoard.Reset();
+      var scoreBoard = new ScoreBoard(players)
+      {
+        GameId = gameId
+      };
+      scoreBoard.ResetScores();
       return scoreBoard;
     }
 

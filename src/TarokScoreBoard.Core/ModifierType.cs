@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TarokScoreBoard.Core
+﻿namespace TarokScoreBoard.Core
 {
   public enum ModifierType
   {

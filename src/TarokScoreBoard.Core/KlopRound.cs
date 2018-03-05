@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using TarokScoreBoard.Core.Entities;
 
 namespace TarokScoreBoard.Core
 {

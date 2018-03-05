@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Npgsql;
+﻿using Npgsql;
 
 namespace TarokScoreBoard.Infrastructure.Repositories
 {

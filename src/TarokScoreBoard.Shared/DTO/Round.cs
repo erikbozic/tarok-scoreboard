@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace TarokScoreBoard.Shared.DTO
+﻿namespace TarokScoreBoard.Shared.DTO
 {
   //public class Round
   //{

@@ -2,9 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TarokScoreBoard.Core;
+using TarokScoreBoard.Api.Filters;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Infrastructure.Services;
+using TarokScoreBoard.Shared.DTO;
 
 namespace TarokScoreBoard.Api.Controllers
 {
@@ -27,10 +28,11 @@ namespace TarokScoreBoard.Api.Controllers
     }
 
     [HttpPost]
-    public async Task<ActionResult<IDictionary<Guid, PlayerScore>>> PostRound(Round round)
+    [TransactionFilter]
+    public async Task<ActionResult<Round>> PostRound(CreateRoundRequest createRoundRequest)
     {
-      var score = await scoreboardService.AddRound(round);
-      return Created("",score); // TODO
+      var score = await scoreboardService.AddRound(createRoundRequest);
+      return Ok(score);
     }
   }
 }

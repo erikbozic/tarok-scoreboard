@@ -6,6 +6,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
   {
     public GameRepository(NpgsqlConnection conn) : base(conn)
     {
+
     }
   }
 }

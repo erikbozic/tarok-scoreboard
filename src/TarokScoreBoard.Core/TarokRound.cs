@@ -6,7 +6,6 @@ namespace TarokScoreBoard.Core
 {
   public class TarokRound
   {
-    // TODO klop
     public TarokRound()
     {
       Modifiers = new List<Modifier>();
@@ -28,11 +27,12 @@ namespace TarokScoreBoard.Core
 
     public Guid MondFangPlayer { get; set; }
 
-    // TODO MondFang
-
     public virtual int GetScore()
     {
       var wonModifier = Won ? 1 : -1;
+
+      if (Game == Game.Berac || Game == Game.OdprtiBerac)
+        ScoreDifference = 0;
 
       var result = wonModifier * (int)(ScoreDifference + Game) * (int)ContraFactor;
 

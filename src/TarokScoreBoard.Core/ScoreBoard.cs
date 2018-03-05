@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TarokScoreBoard.Core.Entities;
 
 namespace TarokScoreBoard.Core
@@ -9,6 +10,8 @@ namespace TarokScoreBoard.Core
     private IEnumerable<Guid> players;
 
     public IDictionary<Guid, PlayerScore>  Scores { get; set; }
+
+    public Guid GameId { get; set; }
 
     public ScoreBoard(IEnumerable<Guid> players)
     {
@@ -28,7 +31,7 @@ namespace TarokScoreBoard.Core
       }
     }
 
-    public void Reset()
+    public void ResetScores()
     {
       Scores = new Dictionary<Guid, PlayerScore>();
 
@@ -56,7 +59,7 @@ namespace TarokScoreBoard.Core
           Scores[round.LeadPlayer].RemoveRadelc();
 
         Scores[round.LeadPlayer].ChangeScore(roundScore);
-        if (round.SupportingPLayer != null)
+        if (round.SupportingPLayer != Guid.Empty)
           Scores[round.SupportingPLayer].ChangeScore(roundScore);
       }
 
@@ -75,15 +78,17 @@ namespace TarokScoreBoard.Core
 
     public static ScoreBoard FromRound(IEnumerable<RoundResult> roundResults)
     {
-      var sb =  new ScoreBoard();
-
+      var sb = new ScoreBoard
+      {
+        GameId = roundResults.First().GameId,
+        Scores = new Dictionary<Guid, PlayerScore>()
+      };
       foreach (var result in roundResults)
       {
         sb.Scores.Add(result.PlayerId, PlayerScore.FromRoundResult(result));
       }
       
       return sb;
-
     }
   }
 }

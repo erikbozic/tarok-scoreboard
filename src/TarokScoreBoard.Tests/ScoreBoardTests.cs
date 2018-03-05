@@ -8,7 +8,7 @@ namespace TarokScoreBoard.Tests
 {
   public class ScoreBoardTests
   {
-    private IEnumerable<GamePlayer> fourPlayers;
+    private IDictionary<Guid, GamePlayer> fourPlayers;
     private GamePlayer erik;
     private GamePlayer jan;
     private GamePlayer nejc;
@@ -16,57 +16,63 @@ namespace TarokScoreBoard.Tests
 
     public ScoreBoardTests()
     {
-      erik = new GamePlayer("Erik");
-      jan = new GamePlayer("Jan");
-      nejc = new GamePlayer("Nejc");
-      luka = new GamePlayer("Luka");
+      erik = new GamePlayer("Erik") { PlayerId = Guid.NewGuid() };
+      jan = new GamePlayer("Jan") { PlayerId = Guid.NewGuid() };
+      nejc = new GamePlayer("Nejc") { PlayerId = Guid.NewGuid() };
+      luka = new GamePlayer("Luka") { PlayerId = Guid.NewGuid() };
 
-      fourPlayers = new List<GamePlayer> { erik, jan, luka, nejc };
+      fourPlayers = new Dictionary<Guid, GamePlayer>()
+      {
+        {erik.PlayerId, erik },
+        {jan.PlayerId, jan },
+        {luka.PlayerId,  luka },
+        {nejc.PlayerId, nejc }
+      };
     }
 
     [Fact(DisplayName = "Jan igra ena, rufa Erika, zmaga 15, trula")]
     public void Test1()
-    {
-      var game = new GameInitializer(fourPlayers);
+      {
+        var game = new GameInitializer(fourPlayers.Keys);
+        var gameId = Guid.NewGuid();
+        var scoreBoard = game.StartGame(gameId);
 
-      var scoreBoard = game.StartGame();
+        scoreBoard.ResetScores();
 
-      scoreBoard.Reset();
-      
-      var round = new TarokRound();
+        var round = new TarokRound();
 
-      round.LeadPlayer = jan;
-      round.SupportingPLayer = erik;
+        round.LeadPlayer = jan.PlayerId;
+        round.SupportingPLayer = erik.PlayerId;
 
-      round.Modifiers.Add(new Modifier(
-        ModifierType.Trula,
-        Team.Playing,
-        Announced.Announced
-      ));
+        round.Modifiers.Add(new Modifier(
+          ModifierType.Trula,
+          Team.Playing,
+          Announced.Announced
+        ));
 
-      round.Game = Core.Game.Ena;
-      round.Won = true;
+        round.Game = Core.Game.Ena;
+        round.Won = true;
 
-      round.ScoreDifference = 15;
-      
-      scoreBoard.ApplyTarokRound(round);
+        round.ScoreDifference = 15;
 
-      Assert.True(scoreBoard.Scores[jan].Score == 65);
-      Assert.True(scoreBoard.Scores[erik].Score == 65);
-    }
+        scoreBoard.ApplyTarokRound(round);
+
+        Assert.True(scoreBoard.Scores[jan.PlayerId].Score == 65);
+        Assert.True(scoreBoard.Scores[erik.PlayerId].Score == 65);
+      }
 
     [Fact(DisplayName = "Jan igra ena, rufa sebe, zmaga 5")]
     public void Test2()
     {
-      var game = new GameInitializer(fourPlayers);
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
 
-      var scoreBoard = game.StartGame();
-
-      scoreBoard.Reset();
+      scoreBoard.ResetScores();
 
       var round = new TarokRound();
 
-      round.LeadPlayer = jan;
+      round.LeadPlayer = jan.PlayerId;
 
       round.Game = Core.Game.Ena;
       round.Won = true;
@@ -75,21 +81,21 @@ namespace TarokScoreBoard.Tests
 
       scoreBoard.ApplyTarokRound(round);
 
-      Assert.True(scoreBoard.Scores[jan].Score == 35);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == 35);
     }
 
     [Fact(DisplayName = "Jan igra ena, rufa sebe, zgubi brez razlike")]
     public void Test3()
     {
-      var game = new GameInitializer(fourPlayers);
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
 
-      var scoreBoard = game.StartGame();
-
-      scoreBoard.Reset();
+      scoreBoard.ResetScores();
 
       var round = new TarokRound();
 
-      round.LeadPlayer = jan;
+      round.LeadPlayer = jan.PlayerId;
 
       round.Game = Core.Game.Ena;
       round.Won = false;
@@ -98,17 +104,17 @@ namespace TarokScoreBoard.Tests
 
       scoreBoard.ApplyTarokRound(round);
 
-      Assert.True(scoreBoard.Scores[jan].Score == -30);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == -30);
     }
 
     [Fact(DisplayName = "Jan igra ena, rufa Lukata, zgubita brez razlike, naredita napovedan pagant ultimo")]
     public void Test4()
     {
-      var game = new GameInitializer(fourPlayers);
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
 
-      var scoreBoard = game.StartGame();
-
-      scoreBoard.Reset();
+      scoreBoard.ResetScores();
 
       var round = new TarokRound();
 
@@ -119,8 +125,8 @@ namespace TarokScoreBoard.Tests
          Announced.Announced
         ));
 
-      round.LeadPlayer = jan;
-      round.SupportingPLayer = luka;
+      round.LeadPlayer = jan.PlayerId;
+      round.SupportingPLayer = luka.PlayerId;
 
       round.Game = Core.Game.Ena;
       round.Won = false;
@@ -129,18 +135,18 @@ namespace TarokScoreBoard.Tests
 
       scoreBoard.ApplyTarokRound(round);
 
-      Assert.True(scoreBoard.Scores[jan].Score == 20);
-      Assert.True(scoreBoard.Scores[luka].Score == 20);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == 20);
+      Assert.True(scoreBoard.Scores[luka.PlayerId].Score == 20);
     }
 
     [Fact(DisplayName = "Jan igra ena, rufa Lukata, zmagata 20 razlike, zgubita napovedanega pagant ultimo, ki je re-kontriran")]
     public void Test5()
     {
-      var game = new GameInitializer(fourPlayers);
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
 
-      var scoreBoard = game.StartGame();
-
-      scoreBoard.Reset();
+      scoreBoard.ResetScores();
 
       var round = new TarokRound();
 
@@ -152,8 +158,8 @@ namespace TarokScoreBoard.Tests
          Contra.Re
         ));
 
-      round.LeadPlayer = jan;
-      round.SupportingPLayer = luka;
+      round.LeadPlayer = jan.PlayerId;
+      round.SupportingPLayer = luka.PlayerId;
 
       round.Game = Core.Game.Ena;
       round.Won = true;
@@ -162,31 +168,31 @@ namespace TarokScoreBoard.Tests
 
       scoreBoard.ApplyTarokRound(round);
 
-      Assert.True(scoreBoard.Scores[jan].Score == -150 );
-      Assert.True(scoreBoard.Scores[luka].Score == -150);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == -150);
+      Assert.True(scoreBoard.Scores[luka.PlayerId].Score == -150);
     }
 
     [Fact(DisplayName = "Jan igra ena, rufa Lukata, zmagata 20 razlike, zgubita napovedanega pagant ultimo, ki je re-kontriran, vsi imajo radelc")]
     public void Test6()
     {
-      var game = new GameInitializer(fourPlayers);
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
 
-      var scoreBoard = game.StartGame();
-
-      scoreBoard.Reset();
+      scoreBoard.ResetScores();
       scoreBoard.AddRadelc();
       var round = new TarokRound();
 
       round.Modifiers.Add(new Modifier
         (
          ModifierType.PagatUltimo,
-         Team.NonPlaying, 
+         Team.NonPlaying,
          Announced.Announced,
          Contra.Re
         ));
 
-      round.LeadPlayer = jan;
-      round.SupportingPLayer = luka;
+      round.LeadPlayer = jan.PlayerId;
+      round.SupportingPLayer = luka.PlayerId;
 
       round.Game = Core.Game.Ena;
       round.Won = true;
@@ -195,70 +201,70 @@ namespace TarokScoreBoard.Tests
 
       scoreBoard.ApplyTarokRound(round);
 
-      Assert.True(scoreBoard.Scores[jan].Score == -300);
-      Assert.True(scoreBoard.Scores[luka].Score == -300);
-      Assert.True(scoreBoard.Scores[jan].RadelcCount - scoreBoard.Scores[jan].UsedRadelcCount == 0);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == -300);
+      Assert.True(scoreBoard.Scores[luka.PlayerId].Score == -300);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].RadelcCount - scoreBoard.Scores[jan.PlayerId].UsedRadelcCount == 0);
     }
 
     [Fact(DisplayName = "Jan zmaga berača")]
     public void Test7()
     {
-      var game = new GameInitializer(fourPlayers);
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
 
-      var scoreBoard = game.StartGame();
-
-      scoreBoard.Reset();
+      scoreBoard.ResetScores();
 
       var round = new TarokRound();
 
       round.Game = Core.Game.Berac;
-      round.LeadPlayer = jan;
+      round.LeadPlayer = jan.PlayerId;
       round.Won = true;
 
       round.ScoreDifference = 0;
 
       scoreBoard.ApplyTarokRound(round);
 
-      Assert.True(scoreBoard.Scores[jan].Score == 70);
-      Assert.True(scoreBoard.Scores[jan].RadelcCount - scoreBoard.Scores[jan].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == 70);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].RadelcCount - scoreBoard.Scores[jan.PlayerId].UsedRadelcCount == 1);
     }
 
     [Fact(DisplayName = "Jan zmaga berača, z radelcem")]
     public void Test8()
     {
-      var game = new GameInitializer(fourPlayers);
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
 
-      var scoreBoard = game.StartGame();
-
-      scoreBoard.Reset();
+      scoreBoard.ResetScores();
       scoreBoard.AddRadelc();
       var round = new TarokRound();
-      
+
       round.Game = Core.Game.Berac;
-      round.LeadPlayer = jan;
+      round.LeadPlayer = jan.PlayerId;
       round.Won = true;
 
       round.ScoreDifference = 0;
 
       scoreBoard.ApplyTarokRound(round);
 
-      Assert.True(scoreBoard.Scores[jan].Score == 140);
-      Assert.True(scoreBoard.Scores[jan].RadelcCount - scoreBoard.Scores[jan].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == 140);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].RadelcCount - scoreBoard.Scores[jan.PlayerId].UsedRadelcCount == 1);
     }
 
     [Fact(DisplayName = "Jan zamaga odprtega berača, z radelcem in kontro")]
     public void Test9()
     {
-      var game = new GameInitializer(fourPlayers);
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
 
-      var scoreBoard = game.StartGame();
-
-      scoreBoard.Reset();
+      scoreBoard.ResetScores();
       scoreBoard.AddRadelc();
       var round = new TarokRound();
 
       round.Game = Core.Game.OdprtiBerac;
-      round.LeadPlayer = jan;
+      round.LeadPlayer = jan.PlayerId;
       round.Won = true;
       round.ContraFactor = Contra.Contra;
 
@@ -266,88 +272,88 @@ namespace TarokScoreBoard.Tests
 
       scoreBoard.ApplyTarokRound(round);
 
-      Assert.True(scoreBoard.Scores[jan].Score == 360);
-      Assert.True(scoreBoard.Scores[jan].RadelcCount - scoreBoard.Scores[jan].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == 360);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].RadelcCount - scoreBoard.Scores[jan.PlayerId].UsedRadelcCount == 1);
     }
 
     [Fact(DisplayName = "Jan izgubi berača")]
     public void Test10()
     {
-      var game = new GameInitializer(fourPlayers);
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
 
-      var scoreBoard = game.StartGame();
-
-      scoreBoard.Reset();
+      scoreBoard.ResetScores();
 
       var round = new TarokRound();
 
       round.Game = Core.Game.Berac;
-      round.LeadPlayer = jan;
+      round.LeadPlayer = jan.PlayerId;
       round.Won = false;
 
       round.ScoreDifference = 0;
 
       scoreBoard.ApplyTarokRound(round);
 
-      Assert.True(scoreBoard.Scores[jan].Score == -70);
-      Assert.True(scoreBoard.Scores[jan].RadelcCount - scoreBoard.Scores[jan].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == -70);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].RadelcCount - scoreBoard.Scores[jan.PlayerId].UsedRadelcCount == 1);
     }
 
     [Fact(DisplayName = "Klop, Erik 10, Jan 5, Luka 25, Nejc, 30")]
     public void Test11()
     {
-      var game = new GameInitializer(fourPlayers);
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
 
-      var scoreBoard = game.StartGame();
-
-      scoreBoard.Reset();
+      scoreBoard.ResetScores();
 
       var round = new KlopRound();
       round.Game = Core.Game.Klop;
       round.Won = false;
 
-      round.KlopScores.Add(erik, new PlayerScore(-10));
-      round.KlopScores.Add(jan, new PlayerScore(-5));
-      round.KlopScores.Add(luka, new PlayerScore(-25));
-      round.KlopScores.Add(nejc, new PlayerScore(-30));
+      round.KlopScores.Add(erik.PlayerId, new PlayerScore(-10));
+      round.KlopScores.Add(jan.PlayerId, new PlayerScore(-5));
+      round.KlopScores.Add(luka.PlayerId, new PlayerScore(-25));
+      round.KlopScores.Add(nejc.PlayerId, new PlayerScore(-30));
 
       scoreBoard.ApplyTarokRound(round);
 
-      Assert.True(scoreBoard.Scores[jan].Score == -5);
-      Assert.True(scoreBoard.Scores[erik].Score == -10);
-      Assert.True(scoreBoard.Scores[nejc].Score == -30);
-      Assert.True(scoreBoard.Scores[luka].Score == -25);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == -5);
+      Assert.True(scoreBoard.Scores[erik.PlayerId].Score == -10);
+      Assert.True(scoreBoard.Scores[nejc.PlayerId].Score == -30);
+      Assert.True(scoreBoard.Scores[luka.PlayerId].Score == -25);
 
-      Assert.True(scoreBoard.Scores[jan].RadelcCount -  scoreBoard.Scores[jan].UsedRadelcCount == 1);
-      Assert.True(scoreBoard.Scores[erik].RadelcCount - scoreBoard.Scores[erik].UsedRadelcCount == 1);
-      Assert.True(scoreBoard.Scores[nejc].RadelcCount - scoreBoard.Scores[nejc].UsedRadelcCount == 1);
-      Assert.True(scoreBoard.Scores[luka].RadelcCount - scoreBoard.Scores[luka].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].RadelcCount - scoreBoard.Scores[jan.PlayerId].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[erik.PlayerId].RadelcCount - scoreBoard.Scores[erik.PlayerId].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[nejc.PlayerId].RadelcCount - scoreBoard.Scores[nejc.PlayerId].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[luka.PlayerId].RadelcCount - scoreBoard.Scores[luka.PlayerId].UsedRadelcCount == 1);
     }
 
     [Fact(DisplayName = "Igra Jan v ena, porufa lukata, zamgata 10 razlike,  Luka zgubi monda")]
     public void Test12()
     {
-      var game = new GameInitializer(fourPlayers);
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
 
-      var scoreBoard = game.StartGame();
-
-      scoreBoard.Reset();
+      scoreBoard.ResetScores();
 
       var round = new TarokRound();
 
       round.Game = Core.Game.Ena;
-      round.LeadPlayer = jan;
-      round.SupportingPLayer = luka;
+      round.LeadPlayer = jan.PlayerId;
+      round.SupportingPLayer = luka.PlayerId;
       round.Won = true;
 
       round.ScoreDifference = 10;
 
-      round.MondFangPlayer = luka;
+      round.MondFangPlayer = luka.PlayerId;
 
       scoreBoard.ApplyTarokRound(round);
 
-      Assert.True(scoreBoard.Scores[jan].Score == 40);
-      Assert.True(scoreBoard.Scores[luka].Score == 15);
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == 40);
+      Assert.True(scoreBoard.Scores[luka.PlayerId].Score == 15);
     }
   }
 }

@@ -44,7 +44,7 @@ namespace TarokScoreBoard.Core
       var score = new PlayerScore(result.PlayerScore)
       {
          RadelcCount = result.PlayerRadelcCount,
-         UsedRadelcCount = result.PlayerRadecUsed
+         UsedRadelcCount = result.PlayerRadelcUsed
       };
 
       return score;
