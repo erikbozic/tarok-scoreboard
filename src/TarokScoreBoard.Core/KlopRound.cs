@@ -10,7 +10,6 @@ namespace TarokScoreBoard.Core
       KlopScores = new Dictionary<Guid, PlayerScore>();
     }
 
-    public Dictionary<Guid, PlayerScore> KlopScores { get; set; }
-    
+    public Dictionary<Guid, PlayerScore> KlopScores { get; set; }    
   }
 }

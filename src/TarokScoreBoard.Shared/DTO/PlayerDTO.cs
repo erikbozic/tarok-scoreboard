@@ -1,6 +1,6 @@
 ﻿namespace TarokScoreBoard.Shared.DTO
 {
-  public class Player
+  public class PlayerDTO
   {
     public string Name { get; set; }
   }

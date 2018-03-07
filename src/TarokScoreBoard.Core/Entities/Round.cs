@@ -6,8 +6,9 @@ namespace TarokScoreBoard.Core.Entities
 {
   public partial class Round
   {
-    public List<RoundResult> RoundResults { get; set; }
-    public List<RoundModifier> Modifiers { get; set; }
+    public List<RoundResult> RoundResults { get; set; } = new List<RoundResult>();
+
+    public List<RoundModifier> Modifiers { get; set; } = new List<RoundModifier>();
 
     public static Round FromCreateRoundRequest(CreateRoundDTO round)
     {
@@ -23,7 +24,9 @@ namespace TarokScoreBoard.Core.Entities
         MondFangPlayerId = round.MondFangPlayerId,
         Won = round.Won,
         Modifiers = round.Modifiers?.Select(m => 
-          new RoundModifier(m.ModifierType, m.Team, m.Announced, m.ContraFactor)).ToList()
+          new RoundModifier(m.ModifierType, m.Team, m.Announced, m.ContraFactor)).ToList(),
+        RoundResults = round.KlopResults.Select(r =>
+          new RoundResult() {  GameId = round.GameId, PlayerId = r.PlayerId, PlayerScore = r.Score }).ToList()
       };
     }
   }

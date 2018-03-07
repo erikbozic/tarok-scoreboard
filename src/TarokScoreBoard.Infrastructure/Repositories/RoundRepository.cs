@@ -19,27 +19,36 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       var sql = @"
       SELECT
         r.*,
-        '0' ""round_result_id"",
-        rr.*
+        '0' ""rr_id"",
+        rr.*,
+        '0' ""rm_id"",
+        rm.*
       FROM round r
         LEFT JOIN round_result rr ON rr.round_id = r.round_id
+        LEFT JOIN round_modifier rm ON rm.round_id = r.round_id
       WHERE rr.game_id = :gameId
       ORDER BY r.round_number ASC
       ";
 
       var lookup = new Dictionary<Guid, Round>();
-      await this.conn.QueryAsync<Round, RoundResult, Round>(
+      await this.conn.QueryAsync<Round, RoundResult, RoundModifier, Round>(
         sql, 
-        (r,rr) => {
+        (r,rr, rm) => {
           if (!lookup.TryGetValue(r.RoundId, out Round round))
-          {
-            lookup.Add(r.RoundId, round = r);
-          }
-          if (round.RoundResults == null)
-            round.RoundResults = new List<RoundResult>();
+            lookup.Add(r.RoundId, round = r);          
+
           round.RoundResults.Add(rr);
+
+          var modlookup = new Dictionary<string, RoundModifier>();
+
+          if (!String.IsNullOrEmpty(rm.ModifierType) && !modlookup.TryGetValue(rm.ModifierType, out var mod))
+          {
+            modlookup.Add(rm.ModifierType, mod = rm);
+            round.Modifiers.Add(mod);
+          }
+
           return round;
-        }, new { gameId }, splitOn: "round_result_id");
+        }, new { gameId }, splitOn: "rr_id,rm_id");
 
       return lookup.Values;
     }

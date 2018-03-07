@@ -19,7 +19,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       this.playerRepository = playerRepository;
     }
 
-    public async Task<Game> StartGameAsync(CreateGameRequest gameRequest)
+    public async Task<Game> StartGameAsync(CreateGameDTO gameRequest)
     {      
       var game = new Game()
       {

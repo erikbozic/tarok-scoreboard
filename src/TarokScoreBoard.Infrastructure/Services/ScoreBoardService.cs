@@ -52,9 +52,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       await roundRepository.AddAsync(round);
       // TODO move to repo, bulk insert
       foreach (var mod in round.Modifiers)
-      {
         await modifierRepository.AddAsync(mod);
-      }      
 
       var game = await gameRepository.GetAsync(gameId);
       var players = (await playerRepository.GetAllAsync(c => c.Where(p => p.GameId == gameId))).ToDictionary(item => item.PlayerId, item => item);
@@ -108,17 +106,6 @@ namespace TarokScoreBoard.Infrastructure.Services
            PlayerRadelcUsed = score.Value.UsedRadelcCount
         });
       }
-    }
-
-    public async Task<object> GetGameScoreboard(Guid gameId)
-    {
-      var rounds = await roundRepository.GetAllAsync(c => c.Where(r => r.GameId == gameId));
-      
-      var result = rounds.Select(r => new
-      {
-        
-      });
-      return result;
     }
   }
 }

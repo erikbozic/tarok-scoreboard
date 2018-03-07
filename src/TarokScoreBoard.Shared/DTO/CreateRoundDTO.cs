@@ -19,10 +19,12 @@ namespace TarokScoreBoard.Shared.DTO
 
     public int ScoreDifference { get; set; }
 
-    public List<Modifier> Modifiers { get; set; }
+    public List<ModifierDTO> Modifiers { get; set; } = new List<ModifierDTO>();
 
     public int ContraFactor { get; set; } = 1;
 
     public Guid MondFangPlayerId { get; set; }
+
+    public List<KlopResultDTO> KlopResults { get; set; } = new List<KlopResultDTO>();
   }
 }

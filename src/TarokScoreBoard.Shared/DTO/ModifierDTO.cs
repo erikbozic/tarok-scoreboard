@@ -2,7 +2,7 @@
 
 namespace TarokScoreBoard.Shared.DTO
 {
-  public class Modifier
+  public class ModifierDTO
   {
     public string ModifierType { get; set; }
 

@@ -40,9 +40,7 @@ namespace TarokScoreBoard.Core
       var result = wonModifier * (int)(ScoreDifference + Game) * (int)ContraFactor;
 
       foreach (var mod in Modifiers)
-      {
-        result += (int)mod.Team * (int)mod.Announced * (int)mod.ModifierType * (int)mod.ContraFactor;
-      }
+        result += (int)mod.Team * (int)mod.Announced * (int)mod.ModifierType * (int)mod.ContraFactor;      
 
       return result;
     }
@@ -55,11 +53,9 @@ namespace TarokScoreBoard.Core
         {
           Won = round.Won,
           ScoreDifference = round.Difference,
-          ContraFactor = (Contra)round.ContraFactor,
-          LeadPlayer = round.LeadPlayerId,
-          SupportingPLayer = round.SupportingPlayerId,
-          MondFangPlayer = round.MondFangPlayerId,
-          Game = (GameType)round.GameType
+          Game = (GameType)round.GameType,
+          KlopScores = round.RoundResults.ToDictionary(r => r.PlayerId,
+            p => new PlayerScore(- p.PlayerScore))            
         };
       }
 
@@ -90,7 +86,7 @@ namespace TarokScoreBoard.Core
             case ModifierTypeDbEnum.PAGAT_ULTIMO:
               modType = ModifierType.PagatUltimo;
               break;
-            case ModifierTypeDbEnum.BARVNI_VALATR:
+            case ModifierTypeDbEnum.BARVNI_VALAT:
               modType = ModifierType.BarvniValat;
               break;
             default:

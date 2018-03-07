@@ -11,7 +11,7 @@ namespace TarokScoreBoard.Api.Controllers
 {
   [Route("api/[controller]")]
   [ApiController]
-  public class ScoreBoardController : ControllerBase
+  public class ScoreBoardController : BaseController
   {
     private readonly ScoreBoardService scoreboardService;
 
@@ -21,7 +21,7 @@ namespace TarokScoreBoard.Api.Controllers
     }
 
     [HttpGet("{gameId}")]
-    public async Task<ActionResult<IEnumerable<Round>>> Get(Guid gameId)
+    public async Task<ActionResult<ResponseDTO<IEnumerable<Round>>>> Get(Guid gameId)
     {
       var rounds = await scoreboardService.GetGameRounds(gameId);
       return Ok(rounds);
@@ -29,7 +29,7 @@ namespace TarokScoreBoard.Api.Controllers
 
     [HttpPost]
     [TransactionFilter]
-    public async Task<ActionResult<Round>> PostRound(CreateRoundDTO createRoundRequest)
+    public async Task<ActionResult<ResponseDTO<Round>>> PostRound(CreateRoundDTO createRoundRequest)
     {
       var score = await scoreboardService.AddRound(createRoundRequest);
       return Ok(score);

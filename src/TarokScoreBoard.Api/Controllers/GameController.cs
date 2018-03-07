@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using TarokScoreBoard.Api.Filters;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Infrastructure.Services;
 using TarokScoreBoard.Shared.DTO;
@@ -10,7 +11,7 @@ namespace TarokScoreBoard.Api.Controllers
 {
   [Route("api/[controller]")]
   [ApiController]
-  public class GameController : ControllerBase
+  public class GameController : BaseController
   {
     private readonly GameService gameService;
 
@@ -18,18 +19,18 @@ namespace TarokScoreBoard.Api.Controllers
     {
       this.gameService = gameService;
     }
-    
+
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Game>>> Get()
+    public async Task<ActionResult<ResponseDTO<IEnumerable<Game>>>> Get()
     {
-      var games = await  gameService.GetAllAsync();
+      var games = await gameService.GetAllAsync();
       return Ok(games);
     }
     
-    [HttpGet("{guid}")]
-    public async Task<ActionResult<Game>> Get(Guid guid)
+    [HttpGet("{gameId}")]
+    public async Task<ActionResult<ResponseDTO<Game>>> Get(Guid gameId)
     {
-      var game = await gameService.GetByGuidAsync(guid);
+      var game = await gameService.GetByGuidAsync(gameId);
 
       if (game == null)
         return NotFound();
@@ -38,7 +39,8 @@ namespace TarokScoreBoard.Api.Controllers
     }
     
     [HttpPost]
-    public async Task<ActionResult<Game>> AddGame(CreateGameRequest gameRequest)
+    [TransactionFilter]
+    public async Task<ActionResult<ResponseDTO<Game>>> AddGame(CreateGameDTO gameRequest)
     {
       var game = await gameService.StartGameAsync(gameRequest);
       return Ok(game);

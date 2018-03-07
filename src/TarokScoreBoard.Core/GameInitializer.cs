@@ -26,6 +26,5 @@ namespace TarokScoreBoard.Core
       scoreBoard.ResetScores();
       return scoreBoard;
     }
-
   }
 }
