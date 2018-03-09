@@ -72,7 +72,7 @@ namespace TarokScoreBoard.Core
       }
 
       if (round.MondFangPlayer != Guid.Empty)
-        Scores[round.MondFangPlayer].ChangeScore(-25);
+        Scores[round.MondFangPlayer].ChangeScore(-20);
       // TODO pagat ultimo fang, če je nenapovedan, je to osebno. mislim, da ne?
     }
 
