@@ -24,6 +24,7 @@ namespace TarokScoreBoard.Api
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+      services.AddCors();
 
       // my dependencies
       services.AddScoped<GameRepository>();
@@ -52,7 +53,11 @@ namespace TarokScoreBoard.Api
         app.UseDeveloperExceptionPage();
       }
 
-      //app.UseHttpsRedirection(); // lives behind a proxy which terinates https, so no need to use it on kestrel
+      app.UseCors(a =>
+      a.WithOrigins("https://tarocco.erikbozic.com", "http://localhost:3002")
+      .AllowAnyHeader()
+      .AllowAnyMethod());
+
       app.UseMvc();
       app.UseSwagger(c =>
       {

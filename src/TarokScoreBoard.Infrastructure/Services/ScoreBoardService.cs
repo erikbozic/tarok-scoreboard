@@ -45,8 +45,6 @@ namespace TarokScoreBoard.Infrastructure.Services
       var gameRounds = await roundRepository.GetAllAsync(c => c.Where(r => r.GameId == gameId).OrderBy(r => r.RoundNumber));
 
       var lastRound = gameRounds.LastOrDefault();
-
-      round.RoundId = Guid.NewGuid(); 
       round.RoundNumber = (lastRound?.RoundNumber ?? 0) + 1;
 
       await roundRepository.AddAsync(round);
@@ -74,20 +72,23 @@ namespace TarokScoreBoard.Infrastructure.Services
       var tarokRound = TarokRound.FromRound(round);
 
       scoreBoard.ApplyTarokRound(tarokRound);
-      await this.AddRoundResults(scoreBoard, round.RoundId);
 
       round.RoundResults = new List<RoundResult>();
-      round.RoundResults.AddRange(scoreBoard.Scores.Select(s =>
+      round.RoundResults.AddRange(scoreBoard.Scores.OrderBy(s => s.Key).Select(s =>
       {
         return new RoundResult()
         {
           GameId = gameId,
+          RoundId = round.RoundId,
           PlayerId = s.Key,
           PlayerScore = s.Value.Score,
           PlayerRadelcCount = s.Value.RadelcCount,
           PlayerRadelcUsed = s.Value.UsedRadelcCount
         };
       }));
+
+      foreach (var roundResult in round.RoundResults)
+        await roundResultRepository.AddAsync(roundResult);
 
       return round;
     }

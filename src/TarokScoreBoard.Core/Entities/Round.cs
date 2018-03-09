@@ -13,8 +13,8 @@ namespace TarokScoreBoard.Core.Entities
 
     public static Round FromCreateRoundRequest(CreateRoundDTO round)
     {
-
       var roundId = Guid.NewGuid();
+
       return new Round
       {
         RoundId = roundId,
@@ -30,7 +30,7 @@ namespace TarokScoreBoard.Core.Entities
         Modifiers = round.Modifiers?.Select(m => 
           new RoundModifier(m.ModifierType, m.Team, roundId, m.Announced, m.ContraFactor)).ToList(),
         RoundResults = round.KlopResults.Select(r =>
-          new RoundResult() {  GameId = round.GameId, PlayerId = r.PlayerId, PlayerScore = r.Score }).ToList()
+          new RoundResult() {  GameId = round.GameId, PlayerId = r.PlayerId, PlayerScore = r.Score, RoundId = roundId }).ToList()
       };
     }
   }

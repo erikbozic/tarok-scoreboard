@@ -9,9 +9,9 @@ namespace TarokScoreBoard.Shared.DTO
 
     public Guid GameId { get; set; }
 
-    public Guid LeadPlayerId { get; set; }
+    public Guid? LeadPlayerId { get; set; }
 
-    public Guid SupportingPlayerId { get; set; }
+    public Guid? SupportingPlayerId { get; set; }
 
     public bool Won { get; set; }
 
@@ -23,7 +23,7 @@ namespace TarokScoreBoard.Shared.DTO
 
     public int ContraFactor { get; set; } = 1;
 
-    public Guid MondFangPlayerId { get; set; }
+    public Guid? MondFangPlayerId { get; set; }
 
     public List<KlopResultDTO> KlopResults { get; set; } = new List<KlopResultDTO>();
   }

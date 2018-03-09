@@ -41,26 +41,56 @@ namespace TarokScoreBoard.Core
       }
     }
 
+    private void ChangeScore(Guid playerId, int baseScore) => Scores[playerId].ChangeScore(baseScore * (Scores[playerId].HasRadelc() ? 2 : 1));
+
     public void ApplyTarokRound(TarokRound round)
     {
       if (round is KlopRound klop)
-      {
-        foreach (var klopScore in klop.KlopScores)
+      { 
+        round.Game = Shared.Enums.GameType.Klop;
+
+        var fullPlayer = klop.KlopScores.FirstOrDefault(s => s.Value.Score < -35);
+        var emptyPlayers = klop.KlopScores.Where(s => s.Value.Score == 0);
+
+        if (emptyPlayers.Any() && fullPlayer.Value != null)
         {
-          Scores[klopScore.Key].ChangeScore(klopScore.Value.Score * (klopScore.Value.HasRadelc() ? 2: 1));
-        }       
+          ChangeScore(fullPlayer.Key, -35);
+          ChangeScore(emptyPlayers.First().Key, 35);
+
+          if (Scores[emptyPlayers.First().Key].HasRadelc())
+            Scores[emptyPlayers.First().Key].RemoveRadelc();
+        }
+        else if (!emptyPlayers.Any() && fullPlayer.Value != null)
+          ChangeScore(fullPlayer.Key, -70);
+        else if (emptyPlayers.Any() && fullPlayer.Value == null)
+        {
+          foreach (var emptyPlayer in emptyPlayers)
+          {
+            ChangeScore(emptyPlayer.Key, (70/emptyPlayers.Count()));
+
+            if (Scores[emptyPlayer.Key].HasRadelc())
+              Scores[emptyPlayer.Key].RemoveRadelc();
+          }
+        }
+        else
+        {
+          foreach (var klopScore in klop.KlopScores)
+          {
+            Scores[klopScore.Key].ChangeScore(klopScore.Value.Score * (Scores[klopScore.Key].HasRadelc() ? 2 : 1));
+          }
+        }    
       }
       else
       {
-        var hasRadelc = Scores[round.LeadPlayer].HasRadelc();
+        var hasRadelc = Scores[round.LeadPlayer.Value].HasRadelc();
         var roundScore = round.GetScore() * (hasRadelc ? 2 : 1);
 
         if (hasRadelc && round.Won)
-          Scores[round.LeadPlayer].RemoveRadelc();
+          Scores[round.LeadPlayer.Value].RemoveRadelc();
 
-        Scores[round.LeadPlayer].ChangeScore(roundScore);
-        if (round.SupportingPLayer != Guid.Empty)
-          Scores[round.SupportingPLayer].ChangeScore(roundScore);
+        Scores[round.LeadPlayer.Value].ChangeScore(roundScore);
+        if (round.SupportingPLayer != null)
+          Scores[round.SupportingPLayer.Value].ChangeScore(roundScore);
       }
 
       if((int)round.Game >= 70)
@@ -71,8 +101,8 @@ namespace TarokScoreBoard.Core
         }
       }
 
-      if (round.MondFangPlayer != Guid.Empty)
-        Scores[round.MondFangPlayer].ChangeScore(-20);
+      if (round.MondFangPlayer != null)
+        Scores[round.MondFangPlayer.Value].ChangeScore(-20);
       // TODO pagat ultimo fang, če je nenapovedan, je to osebno. mislim, da ne?
     }
 

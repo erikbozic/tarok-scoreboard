@@ -24,10 +24,10 @@ namespace TarokScoreBoard.Core.Entities
     public bool IsKlop { get; set; }
 
     [Column("lead_player_id")]
-    public Guid LeadPlayerId { get; set; }
+    public Guid? LeadPlayerId { get; set; }
 
     [Column("mond_fang_player_id")]
-    public Guid MondFangPlayerId { get; set; }
+    public Guid? MondFangPlayerId { get; set; }
 
     [Key]
     [Column("round_id")]
@@ -37,7 +37,7 @@ namespace TarokScoreBoard.Core.Entities
     public int RoundNumber { get; set; }
 
     [Column("supporting_player_id")]
-    public Guid SupportingPlayerId { get; set; }
+    public Guid? SupportingPlayerId { get; set; }
 
     [Column("won")]
     public bool Won { get; set; }

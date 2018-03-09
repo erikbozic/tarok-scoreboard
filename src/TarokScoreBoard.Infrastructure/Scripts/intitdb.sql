@@ -14,7 +14,7 @@ create table round(
   supporting_player_id uuid,
   is_klop boolean not null,
   contra_factor int not null,
-  mond_fang_player_id uuid not null,
+  mond_fang_player_id uuid,
   round_number int not null
 );
 
@@ -33,12 +33,11 @@ create table round_result(
   player_radec_used int not null
 );
 
-create type modifier as enum ('kralji', 'trula', 'kralj_ultimo', 'pagat_ultimo', 'barvni_valat');
 
 create table round_modifiers(
   round_id uuid not null,
   team int not null default 1,
   announced int not null default  1,
   contra int not null default 1,
-  modifier_type modifier
+  modifier_type varchar(64)
 );

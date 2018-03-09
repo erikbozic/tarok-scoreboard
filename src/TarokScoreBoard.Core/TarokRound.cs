@@ -14,9 +14,9 @@ namespace TarokScoreBoard.Core
       Modifiers = new List<Modifier>();
     }
 
-    public Guid LeadPlayer { get; set; }
+    public Guid? LeadPlayer { get; set; }
 
-    public Guid SupportingPLayer { get; set; }
+    public Guid? SupportingPLayer { get; set; }
 
     public bool Won { get; set; }
 
@@ -28,7 +28,7 @@ namespace TarokScoreBoard.Core
 
     public Contra ContraFactor { get; set; } = Contra.None;
 
-    public Guid MondFangPlayer { get; set; }
+    public Guid? MondFangPlayer { get; set; }
 
     public virtual int GetScore()
     {
@@ -55,7 +55,7 @@ namespace TarokScoreBoard.Core
           ScoreDifference = round.Difference,
           Game = (GameType)round.GameType,
           KlopScores = round.RoundResults.ToDictionary(r => r.PlayerId,
-            p => new PlayerScore(- p.PlayerScore))            
+            p => new PlayerScore(-p.PlayerScore))            
         };
       }
 

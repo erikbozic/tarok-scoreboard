@@ -27,7 +27,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
         LEFT JOIN round_result rr ON rr.round_id = r.round_id
         LEFT JOIN round_modifier rm ON rm.round_id = r.round_id
       WHERE rr.game_id = :gameId
-      ORDER BY r.round_number ASC
+      ORDER BY r.round_number ASC, rr.player_id ASC
       ";
 
       var lookup = new Dictionary<Guid, Round>();
