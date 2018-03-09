@@ -34,13 +34,13 @@ namespace TarokScoreBoard.Core
     {
       var wonModifier = Won ? 1 : -1;
 
-      if (Game == GameType.Berac || Game == GameType.OdprtiBerac)
+      if (Game == GameType.Berac || Game == GameType.OdprtiBerac || Modifiers.Any(m=> m.ModifierType == ModifierType.Valat))
         ScoreDifference = 0;
 
       var result = wonModifier * (int)(ScoreDifference + Game) * (int)ContraFactor;
 
       foreach (var mod in Modifiers)
-        result += (int)mod.Team * (int)mod.Announced * (int)mod.ModifierType * (int)mod.ContraFactor;      
+        result += (int)mod.Team * (int)mod.Announced * (int)mod.ModifierType * (int)mod.ContraFactor;   
 
       return result;
     }
@@ -88,6 +88,9 @@ namespace TarokScoreBoard.Core
               break;
             case ModifierTypeDbEnum.BARVNI_VALAT:
               modType = ModifierType.BarvniValat;
+              break;
+            case ModifierTypeDbEnum.VALAT:
+              modType = ModifierType.Valat;
               break;
             default:
               throw new Exception($"Can't. Ni '{m.ModifierType}'.");
