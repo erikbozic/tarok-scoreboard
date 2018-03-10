@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Swashbuckle.AspNetCore.Swagger;
+using TarokScoreBoard.Api.Middleware;
+using TarokScoreBoard.Api.Swagger;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Infrastructure.Repositories;
 using TarokScoreBoard.Infrastructure.Services;
@@ -41,7 +43,7 @@ namespace TarokScoreBoard.Api
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new Info { Title = "Tarok Scoreboard", Version = "v1"});
-        
+        c.SchemaFilter<SwaggerExampleFilter>();        
       });
     }
 
@@ -57,6 +59,8 @@ namespace TarokScoreBoard.Api
       a.WithOrigins("https://tarocco.erikbozic.com", "http://localhost:3002")
       .AllowAnyHeader()
       .AllowAnyMethod());
+
+      app.UseErrorHandling();
 
       app.UseMvc();
       app.UseSwagger(c =>

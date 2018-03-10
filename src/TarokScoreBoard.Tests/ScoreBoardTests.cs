@@ -327,7 +327,7 @@ namespace TarokScoreBoard.Tests
       Assert.True(scoreBoard.Scores[luka.PlayerId].RadelcCount - scoreBoard.Scores[luka.PlayerId].UsedRadelcCount == 1);
     }
 
-    [Fact(DisplayName = "Igra Jan v ena, porufa Lukata, zamgata 10 razlike,  Luka zgubi monda")]
+    [Fact(DisplayName = "Igra Jan v ena, porufa Lukata, zmagata 10 razlike,  Luka zgubi monda")]
     public void Test12()
     {
       var game = new GameInitializer(fourPlayers.Keys);

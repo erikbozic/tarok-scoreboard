@@ -37,7 +37,7 @@ create table round_result(
 create table round_modifiers(
   round_id uuid not null,
   team int not null default 1,
-  announced int not null default  1,
+  announced boolean not null default  false,
   contra int not null default 1,
   modifier_type varchar(64)
 );

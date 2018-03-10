@@ -39,6 +39,7 @@ namespace TarokScoreBoard.Api.Controllers
     [TransactionFilter]
     public async Task<IActionResult> Delete(Guid gameId)
     {
+      throw new Exception("aaa");
       var result = await scoreboardService.DeleteLastRound(gameId);
       return NoContent();
     }

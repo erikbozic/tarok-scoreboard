@@ -10,7 +10,6 @@ using TarokScoreBoard.Shared.DTO;
 namespace TarokScoreBoard.Api.Controllers
 {
   [Route("api/[controller]")]
-  [ApiController]
   public class GameController : BaseController
   {
     private readonly GameService gameService;
@@ -28,6 +27,7 @@ namespace TarokScoreBoard.Api.Controllers
     }
     
     [HttpGet("{gameId}")]
+    [ResponseCache(Duration = 72000, Location = ResponseCacheLocation.Any)]
     public async Task<ActionResult<ResponseDTO<Game>>> Get(Guid gameId)
     {
       var game = await gameService.GetByGuidAsync(gameId);
