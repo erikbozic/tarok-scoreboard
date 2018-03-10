@@ -4,7 +4,7 @@ namespace TarokScoreBoard.Core
 {
   public class Modifier
   {
-    public Modifier(ModifierType modifierType, Team team, Announced announced = Announced.NotAnnounced, Contra contra = Contra.None)
+    public Modifier(ModifierType modifierType, Team team, bool announced, Contra contra = Contra.None)
     {
       ModifierType = modifierType;
       Team = team;
@@ -15,7 +15,7 @@ namespace TarokScoreBoard.Core
 
     public Team Team { get; }
 
-    public Announced Announced { get; }
+    public bool Announced { get; }
 
     public Contra ContraFactor { get; }
   }

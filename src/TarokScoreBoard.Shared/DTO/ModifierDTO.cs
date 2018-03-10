@@ -8,7 +8,7 @@ namespace TarokScoreBoard.Shared.DTO
 
     public Team Team { get; set; }
 
-    public Announced Announced { get; set; }
+    public bool Announced { get; set; }
 
     public Contra ContraFactor { get; set; }
   }

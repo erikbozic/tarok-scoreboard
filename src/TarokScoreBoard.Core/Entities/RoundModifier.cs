@@ -10,11 +10,11 @@ namespace TarokScoreBoard.Core.Entities
 
     }
 
-    public RoundModifier(string modifierType, Team team, Guid roundId, Announced announced = Shared.Enums.Announced.NotAnnounced, Contra contra = Shared.Enums.Contra.None)
+    public RoundModifier(string modifierType, Team team, Guid roundId, bool announced = false, Contra contra = Shared.Enums.Contra.None)
     {
       this.ModifierType = modifierType;
       this.Team = (int)team;
-      this.Announced = (int)announced;
+      this.Announced = announced;
       this.Contra = (int)contra;
       this.RoundId = roundId;
     }

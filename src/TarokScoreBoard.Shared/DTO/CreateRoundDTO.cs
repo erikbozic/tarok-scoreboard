@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using TarokScoreBoard.Shared.Enums;
 
 namespace TarokScoreBoard.Shared.DTO
 {
-  public class CreateRoundDTO
+  public class CreateRoundDTO : IValidatableObject
   {
     public bool IsKlop { get; set; }
 
@@ -26,5 +29,26 @@ namespace TarokScoreBoard.Shared.DTO
     public Guid? MondFangPlayerId { get; set; }
 
     public List<KlopResultDTO> KlopResults { get; set; } = new List<KlopResultDTO>();
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+      var contraFactorsAllowed = new[] { 1, 2, 4, 8, 16 };
+
+      if (ScoreDifference % 5 != 0)
+        yield return new ValidationResult("Score must be divisable by 5.");
+
+      if (!contraFactorsAllowed.Contains(ContraFactor))
+        yield return new ValidationResult("ContraFactor must be one of 1, 2, 4, 8, or 16.");
+
+      if (KlopResults != null && KlopResults.Any(r => r.Score % 5 != 0))
+        yield return new ValidationResult("Klop results must be divisable by 5.");
+
+      if (Modifiers.All(m => contraFactorsAllowed.Contains((int)m.ContraFactor)))
+        yield return new ValidationResult("Modifier contraFactors must be one of 1, 2, 4, 8 or 16.");
+      
+      if (!IsKlop && !Enum.IsDefined(typeof(GameType), GameType))
+        yield return new ValidationResult($"Dont suppor't game type: {GameType.ToString()}");
+
+    }
   }
 }

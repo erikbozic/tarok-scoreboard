@@ -28,7 +28,12 @@ namespace TarokScoreBoard.Core.Entities
         MondFangPlayerId = round.MondFangPlayerId,
         Won = round.Won,
         Modifiers = round.Modifiers?.Select(m => 
-          new RoundModifier(m.ModifierType, m.Team, roundId, m.Announced, m.ContraFactor)).ToList(),
+          new RoundModifier(
+            m.ModifierType,
+            m.Team,
+            roundId, 
+            m.Announced,
+            m.ContraFactor)).ToList(),
         RoundResults = round.KlopResults.Select(r =>
           new RoundResult() {  GameId = round.GameId, PlayerId = r.PlayerId, PlayerScore = r.Score, RoundId = roundId }).ToList()
       };

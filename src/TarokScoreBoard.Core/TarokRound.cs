@@ -40,7 +40,7 @@ namespace TarokScoreBoard.Core
       var result = wonModifier * (int)(ScoreDifference + Game) * (int)ContraFactor;
 
       foreach (var mod in Modifiers)
-        result += (int)mod.Team * (int)mod.Announced * (int)mod.ModifierType * (int)mod.ContraFactor;   
+        result += (int)mod.Team * (mod.Announced ? 2 : 1) * (int)mod.ModifierType * (int)mod.ContraFactor;   
 
       return result;
     }
@@ -95,7 +95,7 @@ namespace TarokScoreBoard.Core
             default:
               throw new Exception($"Can't. Ni '{m.ModifierType}'.");
           }
-          return new Modifier(modType, (Team)m.Team, (Announced)m.Announced, (Contra)m.Contra);
+          return new Modifier(modType, (Team)m.Team, m.Announced, (Contra)m.Contra);
         }).ToList()
       };
     }
