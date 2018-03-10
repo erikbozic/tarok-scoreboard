@@ -19,9 +19,9 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       var sql = @"
       SELECT
         r.*,
-        '0' ""rr_id"",
+        0 ""rr_id"",
         rr.*,
-        '0' ""rm_id"",
+        0 ""rm_id"",
         rm.*
       FROM round r
         LEFT JOIN round_result rr ON rr.round_id = r.round_id
@@ -30,21 +30,30 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       ORDER BY r.round_number ASC, rr.player_id ASC
       ";
 
+      // TODO should just add an id column on both results and modifiers, would make this easier...
       var lookup = new Dictionary<Guid, Round>();
+      var resultLookup = new Dictionary<GuidGuidComposite, bool>();
+      var modlookup = new Dictionary<GuidStringComposite, bool>();
       await this.conn.QueryAsync<Round, RoundResult, RoundModifier, Round>(
         sql, 
         (r,rr, rm) => {
           if (!lookup.TryGetValue(r.RoundId, out Round round))
-            lookup.Add(r.RoundId, round = r);          
+            lookup.Add(r.RoundId, round = r);
 
-          round.RoundResults.Add(rr);
-
-          var modlookup = new Dictionary<string, RoundModifier>();
-
-          if (!String.IsNullOrEmpty(rm.ModifierType) && !modlookup.TryGetValue(rm.ModifierType, out var mod))
+          // if a round already has this player's result, dont add...
+          var ggc = new GuidGuidComposite(r.RoundId, rr.PlayerId);
+          if (!resultLookup.TryGetValue(ggc, out bool value))
           {
-            modlookup.Add(rm.ModifierType, mod = rm);
-            round.Modifiers.Add(mod);
+            resultLookup.Add(ggc, value);
+            round.RoundResults.Add(rr);
+          }
+
+          // if a round already has this modifier, dont add
+          var gsc = new GuidStringComposite(r.RoundId, rm.ModifierType);
+          if (!String.IsNullOrEmpty(rm.ModifierType) && !modlookup.TryGetValue(gsc, out bool modValue))
+          {
+            modlookup.Add(gsc, modValue);
+            round.Modifiers.Add(rm);
           }
 
           return round;
@@ -52,5 +61,31 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 
       return lookup.Values;
     }
+  }
+
+  public struct GuidGuidComposite
+  {
+    public GuidGuidComposite(Guid roundId, Guid playerId)
+    {
+      this.roundId = roundId;
+      this.playerId = playerId;
+    }
+
+    Guid roundId;
+
+    Guid playerId;
+  }
+
+  public struct GuidStringComposite
+  {
+    public GuidStringComposite(Guid roundId, string modifierType)
+    {
+      this.roundId = roundId;
+      this.modifierType = modifierType;
+    }
+
+    Guid roundId;
+
+    string modifierType;
   }
 }
