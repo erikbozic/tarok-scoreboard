@@ -108,5 +108,16 @@ namespace TarokScoreBoard.Infrastructure.Services
         });
       }
     }
+
+    public async Task<bool> DeleteLastRound(Guid gameId)
+    {
+      var lastRound =(await roundRepository.GetAllAsync(c => c.Where(r => r.GameId == gameId)
+      .OrderByDescending(r => r.RoundNumber)))
+      .FirstOrDefault();
+
+      var result = await roundRepository.DeleteAsync(lastRound.RoundId);
+
+      return result;
+    }
   }
 }

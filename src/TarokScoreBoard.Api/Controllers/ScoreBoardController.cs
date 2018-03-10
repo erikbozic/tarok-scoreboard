@@ -34,5 +34,13 @@ namespace TarokScoreBoard.Api.Controllers
       var score = await scoreboardService.AddRound(createRoundRequest);
       return Ok(score);
     }
+
+    [HttpDelete("{gameId}")]
+    [TransactionFilter]
+    public async Task<IActionResult> Delete(Guid gameId)
+    {
+      var result = await scoreboardService.DeleteLastRound(gameId);
+      return NoContent();
+    }
   }
 }

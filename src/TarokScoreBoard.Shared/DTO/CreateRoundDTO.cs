@@ -43,7 +43,7 @@ namespace TarokScoreBoard.Shared.DTO
       if (KlopResults != null && KlopResults.Any(r => r.Score % 5 != 0))
         yield return new ValidationResult("Klop results must be divisable by 5.");
 
-      if (Modifiers.All(m => contraFactorsAllowed.Contains((int)m.ContraFactor)))
+      if (!Modifiers.All(m => contraFactorsAllowed.Contains((int)m.ContraFactor)))
         yield return new ValidationResult("Modifier contraFactors must be one of 1, 2, 4, 8 or 16.");
       
       if (!IsKlop && !Enum.IsDefined(typeof(GameType), GameType))
