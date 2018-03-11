@@ -10,9 +10,9 @@ namespace TarokScoreBoard.Core.Entities
     public static void ConfigureColumnMapping()
     {
       SqlMapper.SetTypeMap(
-        typeof(RoundModifier),
+        typeof(Game),
         new CustomPropertyTypeMap(
-          typeof(RoundModifier),
+          typeof(Game),
           (type, columnName) =>
             type.GetProperties().FirstOrDefault(prop =>
               prop.GetCustomAttributes(false)
@@ -40,6 +40,16 @@ namespace TarokScoreBoard.Core.Entities
                 .Any(attr => attr.Name == columnName))));
 
       SqlMapper.SetTypeMap(
+        typeof(RoundModifier),
+        new CustomPropertyTypeMap(
+          typeof(RoundModifier),
+          (type, columnName) =>
+            type.GetProperties().FirstOrDefault(prop =>
+              prop.GetCustomAttributes(false)
+                .OfType<ColumnAttribute>()
+                .Any(attr => attr.Name == columnName))));
+
+      SqlMapper.SetTypeMap(
         typeof(GamePlayer),
         new CustomPropertyTypeMap(
           typeof(GamePlayer),
@@ -50,9 +60,19 @@ namespace TarokScoreBoard.Core.Entities
                 .Any(attr => attr.Name == columnName))));
 
       SqlMapper.SetTypeMap(
-        typeof(Game),
+        typeof(TeamPlayer),
         new CustomPropertyTypeMap(
-          typeof(Game),
+          typeof(TeamPlayer),
+          (type, columnName) =>
+            type.GetProperties().FirstOrDefault(prop =>
+              prop.GetCustomAttributes(false)
+                .OfType<ColumnAttribute>()
+                .Any(attr => attr.Name == columnName))));
+
+      SqlMapper.SetTypeMap(
+        typeof(Team),
+        new CustomPropertyTypeMap(
+          typeof(Team),
           (type, columnName) =>
             type.GetProperties().FirstOrDefault(prop =>
               prop.GetCustomAttributes(false)

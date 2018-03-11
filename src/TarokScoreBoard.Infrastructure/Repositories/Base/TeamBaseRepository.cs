@@ -24,6 +24,66 @@ namespace TarokScoreBoard.Infrastructure.Repositories
         FROM team";
     }
 
+            
+    public Team Get(Guid teamid)
+    {
+      return conn.QueryFirst<Team>($@"
+      {BaseSelect}
+      WHERE team_id = :teamid",
+      new { teamid });
+    }
+
+    public async Task<Team> GetAsync(Guid teamid)
+    {
+      return await conn.QueryFirstAsync<Team>($@"
+      {BaseSelect}
+      WHERE team_id = :teamid",
+      new { teamid });
+    }
+
+    public Team Update(Team entity)
+    {
+      return conn.QueryFirst<Team>($@"
+      UPDATE team SET
+        passphrase = :Passphrase, 
+				team_id = :TeamId, 
+				team_name = :TeamName
+      WHERE team_id = :TeamId
+      RETURNING
+        {selectFields}",
+      entity);
+    }
+
+    public async Task<Team> UpdateAsync(Team entity)
+    {
+      return await conn.QueryFirstAsync<Team>($@"
+      UPDATE team SET
+        passphrase = :Passphrase, 
+				team_id = :TeamId, 
+				team_name = :TeamName
+      WHERE team_id = :TeamId
+      RETURNING            
+        {selectFields}",
+      entity);
+    }
+            
+    public bool Delete(Guid teamid)
+    {
+      return conn.Execute(@"
+      DELETE FROM 
+        team
+      WHERE team_id = :teamid",
+      new { teamid }) == 1;
+    }
+
+    public async Task<bool> DeleteAsync(Guid teamid)
+    {
+      return await conn.ExecuteAsync(@"
+      DELETE FROM 
+        team
+      WHERE team_id = :teamid",
+      new { teamid }) == 1;
+    }
     
     public Team Add(Team entity)
     {

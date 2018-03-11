@@ -11,6 +11,7 @@ namespace TarokScoreBoard.Core.Entities
     [Column("passphrase")]
     public string Passphrase { get; set; }
 
+    [Key]
     [Column("team_id")]
     public Guid TeamId { get; set; }
 

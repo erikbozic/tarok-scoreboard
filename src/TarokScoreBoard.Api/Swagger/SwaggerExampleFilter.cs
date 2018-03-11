@@ -13,6 +13,7 @@ namespace TarokScoreBoard.Api.Swagger
   {
     Guid gameId = Guid.Parse("20d0b6c4-91e7-4555-8b7b-06301bd0a43f");
     Guid roundId = Guid.Parse("c1aa894a-030d-42ce-9600-10b61606839e");
+    Guid teamId = Guid.NewGuid();
 
     private IDictionary<Guid, GamePlayer> fourPlayers;
     private GamePlayer erik;
@@ -96,6 +97,7 @@ namespace TarokScoreBoard.Api.Swagger
             Date = new DateTime(2018, 03, 10),
             GameId = gameId,
             Name = "Tarok escapade of 2018.03.10",
+            TeamId = teamId,
             Players = fourPlayers.Select(p => p.Value).ToList()         
           };
         case nameof(Round):
@@ -121,7 +123,8 @@ namespace TarokScoreBoard.Api.Swagger
                 PlayerId = jan.PlayerId,
                 PlayerScore = 210,
                 PlayerRadelcCount = 1,
-                PlayerRadelcUsed = 1                                
+                PlayerRadelcUsed = 1 ,
+                RoundScoreChange = 0
               },
               new RoundResult()
               {
@@ -130,7 +133,8 @@ namespace TarokScoreBoard.Api.Swagger
                 PlayerId = erik.PlayerId,
                 PlayerScore = 210,
                 PlayerRadelcCount = 1,
-                PlayerRadelcUsed = 0
+                PlayerRadelcUsed = 0,
+                RoundScoreChange = 60
               },
               new RoundResult()
               {
@@ -139,7 +143,8 @@ namespace TarokScoreBoard.Api.Swagger
                 PlayerId = luka.PlayerId,
                 PlayerScore = 0,
                 PlayerRadelcCount = 1,
-                PlayerRadelcUsed = 0
+                PlayerRadelcUsed = 0,
+                RoundScoreChange = 60
               },
               new RoundResult()
               {
@@ -148,7 +153,8 @@ namespace TarokScoreBoard.Api.Swagger
                 PlayerId = nejc.PlayerId,
                 PlayerScore = 0,
                 PlayerRadelcCount = 1,
-                PlayerRadelcUsed = 0
+                PlayerRadelcUsed = 0, 
+                RoundScoreChange = 0
               }
             },
             Modifiers = new List<RoundModifier>()
@@ -174,6 +180,50 @@ namespace TarokScoreBoard.Api.Swagger
                  ModifierType = ModifierTypeDbEnum.KRALJI,
                  Team = -1
                },
+            }
+          };
+        case nameof(CreateTeamDTO):
+          return new CreateTeamDTO()
+          {
+            Passphrase = "Neko geslo ki ga poznajo vsi igralci",
+            Name = "Naša tarok skupina",
+            Members = new List<TeamPlayerDTO>()
+            {
+              new TeamPlayerDTO("Luka"),
+              new TeamPlayerDTO("Nejc"),
+              new TeamPlayerDTO("Erik"),
+              new TeamPlayerDTO("Jan")
+            }
+          };
+        case nameof(Team):
+          return new Team()
+          {
+            TeamName = "Naša tarok skupina",
+            Passphrase = "to bom še odstranil v responsu", // TODO
+            TeamId = teamId,
+            Members = new List<TeamPlayer>()
+            {
+              new TeamPlayer()
+              {
+                TeamId = teamId,
+                Name = luka.Name,
+                PlayerId = luka.PlayerId
+              },new TeamPlayer()
+              {
+                TeamId = teamId,
+                Name = nejc.Name,
+                PlayerId = nejc.PlayerId
+              },new TeamPlayer()
+              {
+                TeamId = teamId,
+                Name = erik.Name,
+                PlayerId = erik.PlayerId
+              },new TeamPlayer()
+              {
+                TeamId = teamId,
+                Name = jan.Name,
+                PlayerId = jan.PlayerId
+              },
             }
           };
 
