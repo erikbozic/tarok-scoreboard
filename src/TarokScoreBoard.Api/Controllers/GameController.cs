@@ -27,7 +27,7 @@ namespace TarokScoreBoard.Api.Controllers
     }
     
     [HttpGet("{gameId}")]
-    [ResponseCache(Duration = 72000, Location = ResponseCacheLocation.Any)]
+    [ResponseCache(Duration = 72000, Location = ResponseCacheLocation.Any, VaryByHeader = "Origin")]
     public async Task<ActionResult<ResponseDTO<Game>>> Get(Guid gameId)
     {
       var game = await gameService.GetAsync(gameId);

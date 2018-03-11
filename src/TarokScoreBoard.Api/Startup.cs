@@ -38,6 +38,8 @@ namespace TarokScoreBoard.Api
       services.AddScoped<ScoreBoardService>();
       services.AddScoped((ser) =>  new NpgsqlConnection(ser.GetService<IConfiguration>().GetConnectionString("tarok")));
 
+      services.ConfigureValidationModel();
+
       services.AddSingleton(Configuration);
 
       services.AddSwaggerGen(c =>

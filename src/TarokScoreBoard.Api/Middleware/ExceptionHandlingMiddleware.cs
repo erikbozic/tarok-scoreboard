@@ -49,7 +49,7 @@ namespace TarokScoreBoard.Api.Middleware
       //}
 
 
-
+      // TODO use global serilaization settings
       var result = JsonConvert.SerializeObject(error);
       context.Response.ContentType = "application/json";
       context.Response.StatusCode = (int)code;
