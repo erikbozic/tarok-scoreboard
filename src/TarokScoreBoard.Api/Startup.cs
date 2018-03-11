@@ -58,7 +58,7 @@ namespace TarokScoreBoard.Api
       }
 
       app.UseCors(a =>
-      a.WithOrigins("https://tarocco.erikbozic.com", "http://localhost:3002")
+      a.WithOrigins("https://tarok.erikbozic.com", "http://localhost:3002")
       .AllowAnyHeader()
       .AllowAnyMethod());
 

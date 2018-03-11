@@ -2,12 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <PreserveCompilationContext>false</PreserveCompilationContext>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="appsettings.Development.json" />
+  </ItemGroup>
 
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.4" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.0-preview1-final" />
@@ -21,9 +26,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="appsettings.Development.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TarokScoreBoard.Core\TarokScoreBoard.Core.csproj" />
     <ProjectReference Include="..\TarokScoreBoard.Infrastructure\TarokScoreBoard.Infrastructure.csproj" />
     <ProjectReference Include="..\TarokScoreBoard.Shared\TarokScoreBoard.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="deploy.sh">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
