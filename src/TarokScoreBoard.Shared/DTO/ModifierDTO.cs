@@ -6,7 +6,7 @@ namespace TarokScoreBoard.Shared.DTO
   {
     public string ModifierType { get; set; }
 
-    public Team Team { get; set; }
+    public TeamModifier Team { get; set; }
 
     public bool Announced { get; set; }
 

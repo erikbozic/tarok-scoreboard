@@ -5,16 +5,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TarokScoreBoard.Core.Entities
 {
-  [Table("game_player")]
-  public partial class GamePlayer
+  [Table("team_player")]
+  public partial class TeamPlayer
   { 
-    [Column("game_id")]
-    public Guid GameId { get; set; }
-
     [Column("name")]
     public string Name { get; set; }
 
     [Column("player_id")]
     public Guid PlayerId { get; set; }
+
+    [Column("team_id")]
+    public Guid TeamId { get; set; }
   }
 }

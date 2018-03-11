@@ -17,5 +17,8 @@ namespace TarokScoreBoard.Core.Entities
 
     [Column("name")]
     public string Name { get; set; }
+
+    [Column("team_id")]
+    public Guid? TeamId { get; set; }
   }
 }

@@ -51,7 +51,7 @@ namespace TarokScoreBoard.Tests
 
       round.Modifiers.Add(new Modifier(
           ModifierType.Trula,
-          Team.Playing,
+          TeamModifier.Playing,
           announced: true
         ));
 
@@ -126,7 +126,7 @@ namespace TarokScoreBoard.Tests
       round.Modifiers.Add(new Modifier
        (
         ModifierType.PagatUltimo,
-        Team.Playing,
+        TeamModifier.Playing,
         announced: true
        ));
 
@@ -157,7 +157,7 @@ namespace TarokScoreBoard.Tests
       round.Modifiers.Add(new Modifier
       (
        ModifierType.PagatUltimo,
-       Team.NonPlaying,
+       TeamModifier.NonPlaying,
        announced: true,
        contra: Contra.Re
       ));
@@ -189,7 +189,7 @@ namespace TarokScoreBoard.Tests
       round.Modifiers.Add(new Modifier
         (
          ModifierType.PagatUltimo,
-         Team.NonPlaying,
+         TeamModifier.NonPlaying,
          announced: true,
          contra: Contra.Re
         ));

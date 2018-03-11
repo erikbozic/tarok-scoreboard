@@ -10,7 +10,6 @@ using TarokScoreBoard.Shared.DTO;
 namespace TarokScoreBoard.Api.Controllers
 {
   [Route("api/[controller]")]
-  [ApiController]
   public class ScoreBoardController : BaseController
   {
     private readonly ScoreBoardService scoreboardService;

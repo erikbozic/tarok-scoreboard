@@ -1,6 +1,6 @@
 ﻿namespace TarokScoreBoard.Shared.Enums
 {
-  public enum Team
+  public enum TeamModifier
   {
     Playing = 1,
     NonPlaying = -1

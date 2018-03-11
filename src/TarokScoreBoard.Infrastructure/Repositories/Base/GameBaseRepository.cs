@@ -12,7 +12,8 @@ namespace TarokScoreBoard.Infrastructure.Repositories
     protected string selectFields = @"
         date, 
 				game_id, 
-				name";
+				name, 
+				team_id";
 
     protected override string BaseSelect { get; set; }
 
@@ -47,7 +48,8 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       UPDATE game SET
         date = :Date, 
 				game_id = :GameId, 
-				name = :Name
+				name = :Name, 
+				team_id = :TeamId
       WHERE game_id = :GameId
       RETURNING
         {selectFields}",
@@ -60,7 +62,8 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       UPDATE game SET
         date = :Date, 
 				game_id = :GameId, 
-				name = :Name
+				name = :Name, 
+				team_id = :TeamId
       WHERE game_id = :GameId
       RETURNING            
         {selectFields}",
@@ -92,9 +95,10 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       (
         date, 
 				game_id, 
-				name
+				name, 
+				team_id
       )
-      VALUES (:Date, :GameId, :Name)
+      VALUES (:Date, :GameId, :Name, :TeamId)
       RETURNING
         {selectFields}
       ",
@@ -108,9 +112,10 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       (
         date, 
 				game_id, 
-				name
+				name, 
+				team_id
       )
-      VALUES (:Date, :GameId, :Name)
+      VALUES (:Date, :GameId, :Name, :TeamId)
       RETURNING
         {selectFields}
       ",

@@ -95,7 +95,7 @@ namespace TarokScoreBoard.Core
             default:
               throw new Exception($"Can't. Ni '{m.ModifierType}'.");
           }
-          return new Modifier(modType, (Team)m.Team, m.Announced, (Contra)m.Contra);
+          return new Modifier(modType, (Shared.Enums.TeamModifier)m.Team, m.Announced, (Contra)m.Contra);
         }).ToList()
       };
     }

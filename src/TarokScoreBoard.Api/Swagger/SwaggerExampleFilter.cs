@@ -72,21 +72,21 @@ namespace TarokScoreBoard.Api.Swagger
                  Announced = false,
                  ContraFactor = Shared.Enums.Contra.None,
                  ModifierType = ModifierTypeDbEnum.PAGAT_ULTIMO,
-                 Team = Shared.Enums.Team.Playing
+                 Team = Shared.Enums.TeamModifier.Playing
                },
                new ModifierDTO()
                {
                  Announced = true,
                  ContraFactor = Shared.Enums.Contra.Contra,
                  ModifierType = ModifierTypeDbEnum.TRULA,
-                 Team = Shared.Enums.Team.Playing
+                 Team = Shared.Enums.TeamModifier.Playing
                },
                new ModifierDTO()
                {
                  Announced = false,
                  ContraFactor = Shared.Enums.Contra.None,
                  ModifierType = ModifierTypeDbEnum.KRALJI,
-                 Team = Shared.Enums.Team.NonPlaying
+                 Team = Shared.Enums.TeamModifier.NonPlaying
                },
              }
           };
