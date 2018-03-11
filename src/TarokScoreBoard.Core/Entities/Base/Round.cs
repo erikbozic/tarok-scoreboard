@@ -12,13 +12,13 @@ namespace TarokScoreBoard.Core.Entities
     public int ContraFactor { get; set; }
 
     [Column("difference")]
-    public int Difference { get; set; }
+    public int? Difference { get; set; }
 
     [Column("game_id")]
     public Guid GameId { get; set; }
 
     [Column("game_type")]
-    public int GameType { get; set; }
+    public int? GameType { get; set; }
 
     [Column("is_klop")]
     public bool IsKlop { get; set; }
@@ -28,6 +28,9 @@ namespace TarokScoreBoard.Core.Entities
 
     [Column("mond_fang_player_id")]
     public Guid? MondFangPlayerId { get; set; }
+
+    [Column("pagat_fang_player_id")]
+    public Guid? PagatFangPlayerId { get; set; }
 
     [Key]
     [Column("round_id")]

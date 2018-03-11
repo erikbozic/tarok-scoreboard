@@ -23,7 +23,7 @@ namespace TarokScoreBoard.Api.Swagger
     public SwaggerExampleFilter()
     {
       erik = new GamePlayer("Erik") { PlayerId = Guid.NewGuid() };
-      jan = new GamePlayer("Jan") { PlayerId = Guid.NewGuid() };
+      jan = new GamePlayer("Jan")   { PlayerId = Guid.NewGuid() };
       nejc = new GamePlayer("Nejc") { PlayerId = Guid.NewGuid() };
       luka = new GamePlayer("Luka") { PlayerId = Guid.NewGuid() };
 
@@ -61,7 +61,8 @@ namespace TarokScoreBoard.Api.Swagger
              GameType = 30,
              IsKlop = false,
              LeadPlayerId = jan.PlayerId,
-             SupportingPlayerId = erik.PlayerId,
+             SupportingPlayerId = erik.PlayerId,        
+             PagatFangPlayerId = luka.PlayerId,
              ScoreDifference = 20,
              Won = true,
              Modifiers = new List<ModifierDTO>()
@@ -109,6 +110,7 @@ namespace TarokScoreBoard.Api.Swagger
             RoundId = roundId,
             RoundNumber = 1,
             SupportingPlayerId = erik.PlayerId,
+            PagatFangPlayerId = luka.PlayerId,
             Won = true,
             RoundResults = new List<RoundResult>()
             {

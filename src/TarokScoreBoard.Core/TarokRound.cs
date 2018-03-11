@@ -22,13 +22,15 @@ namespace TarokScoreBoard.Core
 
     public GameType Game { get; set; }
 
-    public int ScoreDifference { get; set; }
+    public int? ScoreDifference { get; set; }
 
     public List<Modifier> Modifiers { get; set; }
 
     public Contra ContraFactor { get; set; } = Contra.None;
 
     public Guid? MondFangPlayer { get; set; }
+
+    public Guid? PagatFangPlayer { get; set; }
 
     public virtual int GetScore()
     {
@@ -51,9 +53,7 @@ namespace TarokScoreBoard.Core
       {
         return new KlopRound
         {
-          Won = round.Won,
-          ScoreDifference = round.Difference,
-          Game = (GameType)round.GameType,
+          Game = GameType.Klop,
           KlopScores = round.RoundResults.ToDictionary(r => r.PlayerId,
             p => new PlayerScore(-p.PlayerScore))            
         };

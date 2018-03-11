@@ -28,6 +28,8 @@ namespace TarokScoreBoard.Shared.DTO
 
     public Guid? MondFangPlayerId { get; set; }
 
+    public Guid? PagatFangPlayerId { get; set; }
+
     public List<KlopResultDTO> KlopResults { get; set; } = new List<KlopResultDTO>();
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

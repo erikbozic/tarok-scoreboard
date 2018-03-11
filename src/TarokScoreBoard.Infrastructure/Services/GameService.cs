@@ -46,7 +46,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       return result;
     }
 
-    public async Task<Game> GetByGuidAsync(Guid guid)
+    public async Task<Game> GetAsync(Guid guid)
     {
       var game = await gameRepository.GetAsync(guid);
       var id = game.GameId;

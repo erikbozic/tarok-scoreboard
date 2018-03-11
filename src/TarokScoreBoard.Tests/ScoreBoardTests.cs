@@ -384,5 +384,33 @@ namespace TarokScoreBoard.Tests
       Assert.True(scoreBoard.Scores[nejc.PlayerId].RadelcCount - scoreBoard.Scores[nejc.PlayerId].UsedRadelcCount == 1);
       Assert.True(scoreBoard.Scores[luka.PlayerId].RadelcCount - scoreBoard.Scores[luka.PlayerId].UsedRadelcCount == 1);
     }
+
+    [Fact(DisplayName = "Jan igra v ena, Luka zgubi monda, Erik zgubi zadnjega pagata nenapovedano")]
+    public void Test14()
+    {
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
+
+      scoreBoard.ResetScores();
+
+      var round = new TarokRound
+      {
+        Game = GameType.Ena,
+        LeadPlayer = jan.PlayerId,
+        SupportingPLayer = luka.PlayerId,
+        Won = true,
+        ScoreDifference = 10,
+        MondFangPlayer = luka.PlayerId,
+        PagatFangPlayer = erik.PlayerId
+      };
+
+      scoreBoard.ApplyTarokRound(round);
+
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == 40);
+      Assert.True(scoreBoard.Scores[luka.PlayerId].Score == 20);
+      Assert.True(scoreBoard.Scores[erik.PlayerId].Score == -25);
+    }
+
   }
 }

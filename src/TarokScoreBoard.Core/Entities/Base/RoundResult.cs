@@ -24,5 +24,8 @@ namespace TarokScoreBoard.Core.Entities
 
     [Column("round_id")]
     public Guid RoundId { get; set; }
+
+    [Column("round_score_change")]
+    public int? RoundScoreChange { get; set; }
   }
 }

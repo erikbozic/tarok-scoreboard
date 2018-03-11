@@ -30,7 +30,7 @@ namespace TarokScoreBoard.Api.Controllers
     [ResponseCache(Duration = 72000, Location = ResponseCacheLocation.Any)]
     public async Task<ActionResult<ResponseDTO<Game>>> Get(Guid gameId)
     {
-      var game = await gameService.GetByGuidAsync(gameId);
+      var game = await gameService.GetAsync(gameId);
 
       if (game == null)
         return NotFound();

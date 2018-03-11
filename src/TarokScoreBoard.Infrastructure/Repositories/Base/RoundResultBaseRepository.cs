@@ -14,7 +14,8 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 				player_radelc_count, 
 				player_radelc_used, 
 				player_score, 
-				round_id";
+				round_id, 
+				round_score_change";
 
     protected override string BaseSelect { get; set; }
 
@@ -37,9 +38,10 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 				player_radelc_count, 
 				player_radelc_used, 
 				player_score, 
-				round_id
+				round_id, 
+				round_score_change
       )
-      VALUES (:GameId, :PlayerId, :PlayerRadelcCount, :PlayerRadelcUsed, :PlayerScore, :RoundId)
+      VALUES (:GameId, :PlayerId, :PlayerRadelcCount, :PlayerRadelcUsed, :PlayerScore, :RoundId, :RoundScoreChange)
       RETURNING
         {selectFields}
       ",
@@ -56,9 +58,10 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 				player_radelc_count, 
 				player_radelc_used, 
 				player_score, 
-				round_id
+				round_id, 
+				round_score_change
       )
-      VALUES (:GameId, :PlayerId, :PlayerRadelcCount, :PlayerRadelcUsed, :PlayerScore, :RoundId)
+      VALUES (:GameId, :PlayerId, :PlayerRadelcCount, :PlayerRadelcUsed, :PlayerScore, :RoundId, :RoundScoreChange)
       RETURNING
         {selectFields}
       ",

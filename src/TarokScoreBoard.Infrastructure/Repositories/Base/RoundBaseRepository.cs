@@ -17,6 +17,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 				is_klop, 
 				lead_player_id, 
 				mond_fang_player_id, 
+				pagat_fang_player_id, 
 				round_id, 
 				round_number, 
 				supporting_player_id, 
@@ -60,6 +61,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 				is_klop = :IsKlop, 
 				lead_player_id = :LeadPlayerId, 
 				mond_fang_player_id = :MondFangPlayerId, 
+				pagat_fang_player_id = :PagatFangPlayerId, 
 				round_id = :RoundId, 
 				round_number = :RoundNumber, 
 				supporting_player_id = :SupportingPlayerId, 
@@ -81,6 +83,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 				is_klop = :IsKlop, 
 				lead_player_id = :LeadPlayerId, 
 				mond_fang_player_id = :MondFangPlayerId, 
+				pagat_fang_player_id = :PagatFangPlayerId, 
 				round_id = :RoundId, 
 				round_number = :RoundNumber, 
 				supporting_player_id = :SupportingPlayerId, 
@@ -121,12 +124,13 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 				is_klop, 
 				lead_player_id, 
 				mond_fang_player_id, 
+				pagat_fang_player_id, 
 				round_id, 
 				round_number, 
 				supporting_player_id, 
 				won
       )
-      VALUES (:ContraFactor, :Difference, :GameId, :GameType, :IsKlop, :LeadPlayerId, :MondFangPlayerId, :RoundId, :RoundNumber, :SupportingPlayerId, :Won)
+      VALUES (:ContraFactor, :Difference, :GameId, :GameType, :IsKlop, :LeadPlayerId, :MondFangPlayerId, :PagatFangPlayerId, :RoundId, :RoundNumber, :SupportingPlayerId, :Won)
       RETURNING
         {selectFields}
       ",
@@ -145,12 +149,13 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 				is_klop, 
 				lead_player_id, 
 				mond_fang_player_id, 
+				pagat_fang_player_id, 
 				round_id, 
 				round_number, 
 				supporting_player_id, 
 				won
       )
-      VALUES (:ContraFactor, :Difference, :GameId, :GameType, :IsKlop, :LeadPlayerId, :MondFangPlayerId, :RoundId, :RoundNumber, :SupportingPlayerId, :Won)
+      VALUES (:ContraFactor, :Difference, :GameId, :GameType, :IsKlop, :LeadPlayerId, :MondFangPlayerId, :PagatFangPlayerId, :RoundId, :RoundNumber, :SupportingPlayerId, :Won)
       RETURNING
         {selectFields}
       ",

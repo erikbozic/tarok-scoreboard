@@ -103,7 +103,9 @@ namespace TarokScoreBoard.Core
 
       if (round.MondFangPlayer != null)
         Scores[round.MondFangPlayer.Value].ChangeScore(-20);
-      // TODO pagat ultimo fang, če je nenapovedan, je to osebno. mislim, da ne?
+
+      if (round.PagatFangPlayer != null)
+        Scores[round.PagatFangPlayer.Value].ChangeScore(-25);
     }
 
     public static ScoreBoard FromRound(IEnumerable<RoundResult> roundResults)
