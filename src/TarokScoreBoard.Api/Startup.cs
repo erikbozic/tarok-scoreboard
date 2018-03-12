@@ -77,6 +77,7 @@ namespace TarokScoreBoard.Api
       app.UseSwaggerUI(c =>
       {
         c.SwaggerEndpoint("/api-docs/v1/scoreboard.json", "Tarok Scoreboard API");
+        c.RoutePrefix = "";
       });
 
       DapperMapping.ConfigureColumnMapping();
