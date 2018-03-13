@@ -23,6 +23,7 @@ namespace TarokScoreBoard.Infrastructure.Services
     {      
       var game = new Game()
       {
+        TeamId = gameRequest.TeamId,
         Name = gameRequest.Name,
         GameId = Guid.NewGuid(),
         Date = DateTime.Now
@@ -30,8 +31,8 @@ namespace TarokScoreBoard.Infrastructure.Services
 
       game = await gameRepository.AddAsync(game);
       game.Players = new List<GamePlayer>();
-
-      foreach (var player in gameRequest.Players.Select(p => new GamePlayer(p.Name) { GameId = game.GameId, PlayerId = Guid.NewGuid() }))
+      // TODO Check the players actually belong the the specified team
+      foreach (var player in gameRequest.Players.Select(p => new GamePlayer(p.Name) { GameId = game.GameId, PlayerId =  p.PlayerId ?? Guid.NewGuid() }))
       {
         var dbPlayer =  await playerRepository.AddAsync(player);
         game.Players.Add(dbPlayer);

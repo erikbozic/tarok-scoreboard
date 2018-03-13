@@ -11,8 +11,10 @@ namespace TarokScoreBoard.Infrastructure.Repositories
   {
     protected string selectFields = @"
         passphrase, 
+				salt, 
 				team_id, 
-				team_name";
+				team_name, 
+				team_user_id";
 
     protected override string BaseSelect { get; set; }
 
@@ -46,8 +48,10 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       return conn.QueryFirst<Team>($@"
       UPDATE team SET
         passphrase = :Passphrase, 
+				salt = :Salt, 
 				team_id = :TeamId, 
-				team_name = :TeamName
+				team_name = :TeamName, 
+				team_user_id = :TeamUserId
       WHERE team_id = :TeamId
       RETURNING
         {selectFields}",
@@ -59,8 +63,10 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       return await conn.QueryFirstAsync<Team>($@"
       UPDATE team SET
         passphrase = :Passphrase, 
+				salt = :Salt, 
 				team_id = :TeamId, 
-				team_name = :TeamName
+				team_name = :TeamName, 
+				team_user_id = :TeamUserId
       WHERE team_id = :TeamId
       RETURNING            
         {selectFields}",
@@ -91,10 +97,12 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       INSERT INTO team
       (
         passphrase, 
+				salt, 
 				team_id, 
-				team_name
+				team_name, 
+				team_user_id
       )
-      VALUES (:Passphrase, :TeamId, :TeamName)
+      VALUES (:Passphrase, :Salt, :TeamId, :TeamName, :TeamUserId)
       RETURNING
         {selectFields}
       ",
@@ -107,10 +115,12 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       INSERT INTO team
       (
         passphrase, 
+				salt, 
 				team_id, 
-				team_name
+				team_name, 
+				team_user_id
       )
-      VALUES (:Passphrase, :TeamId, :TeamName)
+      VALUES (:Passphrase, :Salt, :TeamId, :TeamName, :TeamUserId)
       RETURNING
         {selectFields}
       ",

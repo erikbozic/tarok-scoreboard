@@ -32,7 +32,7 @@ create table round_result(
   player_id uuid not null,
   player_score int not null,
   player_radelc_count int not null,
-  player_radec_used int not null
+  player_radelc_used int not null
 );
 
 
@@ -42,4 +42,23 @@ create table round_modifier(
   announced boolean not null,
   contra int not null default 1,
   modifier_type varchar(64) not null
+);
+
+create table team (
+  team_id uuid primary key not null,
+  team_user_id varchar(255) not null,
+  team_name  varchar(255)     not null,
+  passphrase varchar(255)     not null  
+);
+
+create table team_player (
+  team_id   uuid         not null,
+  player_id uuid         not null,
+  name      varchar(100) not null
+);
+
+create table team_access_token(
+  team_id uuid not null,
+  access_token uuid not null,
+  date_issued date not null default now()
 );

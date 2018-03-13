@@ -3,9 +3,11 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Shared;
 using TarokScoreBoard.Shared.DTO;
+using static System.Buffers.Text.Encodings;
 
 namespace TarokScoreBoard.Api.Swagger
 {
@@ -186,6 +188,7 @@ namespace TarokScoreBoard.Api.Swagger
           return new CreateTeamDTO()
           {
             Passphrase = "Neko geslo ki ga poznajo vsi igralci",
+            TeamId = "Nek unique id, ki si ga je lahko zapomnit",
             Name = "Naša tarok skupina",
             Members = new List<TeamPlayerDTO>()
             {
@@ -199,7 +202,7 @@ namespace TarokScoreBoard.Api.Swagger
           return new Team()
           {
             TeamName = "Naša tarok skupina",
-            Passphrase = "to bom še odstranil v responsu", // TODO
+            Passphrase = Encoding.UTF8.GetBytes("to bom še odstranil v responsu"), // TODO
             TeamId = teamId,
             Members = new List<TeamPlayer>()
             {
@@ -226,6 +229,14 @@ namespace TarokScoreBoard.Api.Swagger
               },
             }
           };
+        case nameof(LoginDTO):
+          return new LoginDTO()
+          {
+            TeamId = "hribovci",
+            Passphrase = "g00"      
+          };
+        case nameof(LoginResponseDTO):
+        return  new LoginResponseDTO(Guid.NewGuid());
 
         default:
           return null;

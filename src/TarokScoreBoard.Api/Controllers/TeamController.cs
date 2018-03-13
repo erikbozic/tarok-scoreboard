@@ -2,8 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TarokScoreBoard.Api.Filters;
+using TarokScoreBoard.Core;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Infrastructure.Services;
+using TarokScoreBoard.Shared;
 using TarokScoreBoard.Shared.DTO;
 
 namespace TarokScoreBoard.Api.Controllers
@@ -12,10 +15,12 @@ namespace TarokScoreBoard.Api.Controllers
   public class TeamController : BaseController
   {
     private readonly TeamService teamService;
+    private readonly RequestContext context;
 
-    public TeamController(TeamService teamService)
+    public TeamController(TeamService teamService, RequestContext context)
     {
       this.teamService = teamService;
+      this.context = context;
     }
     [HttpPost]
     public async Task<ActionResult<Team>> CreateTeam(CreateTeamDTO createTeamDTO)
@@ -25,10 +30,10 @@ namespace TarokScoreBoard.Api.Controllers
     }
 
     [HttpPost("/login")]
-    public IActionResult Login(string passphrase)
+    public async Task<ActionResult<LoginResponseDTO>> Login(LoginDTO loginDto)
     {
-      Response.Cookies.Append("access-token", "some-token-guid", new Microsoft.AspNetCore.Http.CookieOptions() { Expires = DateTimeOffset.MaxValue });
-      return Ok("not supported yet");
+      var accessToken = await teamService.LoginAsync(loginDto);
+      return Ok(new LoginResponseDTO(accessToken));
     }
 
     [HttpGet]
@@ -47,10 +52,22 @@ namespace TarokScoreBoard.Api.Controllers
     }
 
     [HttpPut]
+    [Authorize]
     public IActionResult UpdateTeam(Guid teamId)
     {
       // can only edit own team, probably?
       return Ok("not supported yet");
+    }
+
+    [HttpPost("{teamId}/player")]
+    [Authorize]
+    public async Task<ActionResult> AddPlayerToTeam(Guid teamId, AddPlayerToTeamDTO addPlayerDTO)
+    {
+      if (teamId != context.TeamId)
+        return Forbid();
+
+      var newPlayer = await teamService.AddPlayerToTeamAsync(addPlayerDTO, teamId);
+      return Ok(newPlayer);
     }
 
   }

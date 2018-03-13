@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace TarokScoreBoard.Shared.DTO
@@ -10,5 +11,7 @@ namespace TarokScoreBoard.Shared.DTO
 
     [Required]
     public List<PlayerDTO> Players { get; set; }
+
+    public Guid TeamId { get; set; }
   }
 }

@@ -6,6 +6,8 @@ namespace TarokScoreBoard.Shared.DTO
   {
     public string Name { get; set; }
 
+    public string TeamId { get; set; }
+
     public string Passphrase { get; set; }
 
     public List<TeamPlayerDTO> Members { get; set; }

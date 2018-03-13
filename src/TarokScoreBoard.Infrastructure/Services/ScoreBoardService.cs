@@ -93,6 +93,44 @@ namespace TarokScoreBoard.Infrastructure.Services
       return round;
     }
 
+    public async Task<Round> EndGame(Guid gameId)
+    {
+      var gameRounds = await roundRepository.GetAllAsync(c => c.Where(r => r.GameId == gameId).OrderBy(r => r.RoundNumber));
+
+      var lastRound = gameRounds.LastOrDefault();
+
+      var lastRoundId = lastRound.RoundId;
+      var lastRoundResults = await roundResultRepository.GetAllAsync(c => c.Where(r => r.RoundId == lastRoundId));
+
+      var scoreBoard = ScoreBoard.FromRound(lastRoundResults);
+      scoreBoard.EndGame();
+      var roundId = Guid.NewGuid();
+      var endRound = new Round()
+      {
+        GameId = gameId,
+        RoundId = roundId,
+        GameType = 0,
+        RoundNumber = lastRound.RoundNumber + 1,
+      };
+      endRound.RoundResults.AddRange(scoreBoard.Scores.OrderBy(s => s.Key).Select(s =>
+      {
+        return new RoundResult()
+        {
+          RoundId = roundId,
+          GameId = gameId,
+          PlayerId = s.Key,
+          PlayerScore = s.Value.Score,
+          PlayerRadelcCount = s.Value.RadelcCount,
+          PlayerRadelcUsed = s.Value.RadelcCount // should we leave as is?
+        };
+      }));
+      await roundRepository.AddAsync(endRound);
+      foreach (var roundResult in endRound.RoundResults)
+        await roundResultRepository.AddAsync(roundResult);
+
+      return endRound;
+    }
+
     private async Task AddRoundResults(ScoreBoard scoreBoard, Guid roundId)
     {
       foreach (var score in scoreBoard.Scores)

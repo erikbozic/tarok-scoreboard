@@ -9,7 +9,10 @@ namespace TarokScoreBoard.Core.Entities
   public partial class Team
   { 
     [Column("passphrase")]
-    public string Passphrase { get; set; }
+    public byte[] Passphrase { get; set; }
+
+    [Column("salt")]
+    public byte[] Salt { get; set; }
 
     [Key]
     [Column("team_id")]
@@ -17,5 +20,8 @@ namespace TarokScoreBoard.Core.Entities
 
     [Column("team_name")]
     public string TeamName { get; set; }
+
+    [Column("team_user_id")]
+    public string TeamUserId { get; set; }
   }
 }

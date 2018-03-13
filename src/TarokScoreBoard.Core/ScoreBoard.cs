@@ -108,6 +108,16 @@ namespace TarokScoreBoard.Core
         Scores[round.PagatFangPlayer.Value].ChangeScore(-25);
     }
 
+    public void EndGame()
+    {
+      foreach (var score in Scores)
+      {
+        var leftRadelc = score.Value.RadelcCount - score.Value.UsedRadelcCount;
+        
+        score.Value.ChangeScore(leftRadelc * -100);
+      }
+    }
+
     public static ScoreBoard FromRound(IEnumerable<RoundResult> roundResults)
     {
       var sb = new ScoreBoard

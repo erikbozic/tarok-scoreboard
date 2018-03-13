@@ -20,22 +20,22 @@ namespace TarokScoreBoard.Infrastructure.Repositories
             stat.*
           FROM (
                  SELECT
-                   rr.player_id,
-                   avg(rr.round_score_change)       average_per_round,
-                   avg(lead.round_score_change)     average_per_lead,
-                   avg(prikolca.round_score_change) average_per_prikolica,
-                   avg(playing.round_score_change)  average_per_played,
-                   max(rr.round_score_change)       max_pos_score_change,
-                   min(rr.round_score_change)       max_neg_score_change,
-                   count(lead.player_id)            count_lead,
-                   count(prikolca.player_id)        count_prikolica,
-                   count(playing.player_id)         count_played,
-                   count(lead_lost.player_id)       count_lead_lost,
-                   count(lead_won.player_id)        count_lead_won,
-                   sum(played_lost.round_score_change) sum_score_lost,
-                   sum(played_won.round_score_change) sum_score_won
+                   rr.player_id ""playerId"",
+                   avg(rr.round_score_change)       ""averagePerRound"",
+                   avg(lead.round_score_change)     ""averagePerLead"",
+                   avg(prikolca.round_score_change) ""averagePerPrikolica"",
+                   avg(playing.round_score_change)  ""averagePerPlayed"",
+                   max(rr.round_score_change)       ""maxPosScoreChange"",
+                   min(rr.round_score_change)       ""maxNegScoreChange"",
+                   count(lead.player_id)            ""countLead"",
+                   count(prikolca.player_id)        ""countPrikolica"",
+                   count(playing.player_id)         ""countPlayed"",
+                   count(lead_lost.player_id)       ""countLeadLost"",
+                   count(lead_won.player_id)        ""countLeadWon"",
+                   sum(played_lost.round_score_change) ""sumScoreLost"",
+                   sum(played_won.round_score_change) ""sumScoreWon""
                  FROM round_result rr
-                   INNER JOIN team_player tp ON tp.player_id = rr.player_id --AND team_id = :teamId
+                   INNER JOIN team_player tp ON tp.player_id = rr.player_id AND team_id = :teamId
                    LEFT JOIN round r ON rr.round_id = r.round_id
                    LEFT JOIN round_result lead
                      ON r.round_id = lead.round_id AND lead.player_id = r.lead_player_id AND lead.player_id = rr.player_id
@@ -55,9 +55,38 @@ namespace TarokScoreBoard.Infrastructure.Repositories
                       AND played_lost.round_score_change < 0
                  GROUP BY rr.player_id
                ) stat
-            LEFT JOIN team_player tp ON tp.player_id = stat.player_id;";
+            LEFT JOIN team_player tp ON tp.player_id = stat.""playerId"";";
 
       return await this.conn.QueryAsync(sql, new { teamId });
+    }
+
+    public async Task<Guid> GetAccessToken(Guid teamId)
+    {
+      var accessToken = await this.conn.QueryFirstOrDefaultAsync<Guid>(@"
+        SELECT access_token FROM team_access_token
+        WHERE team_id = :teamId", new { teamId });
+
+      if(accessToken == Guid.Empty)
+      {
+        var token = Guid.NewGuid();
+
+        accessToken = await conn.QueryFirstAsync<Guid>(@"
+          INSERT INTO team_access_token (team_id, access_token) VALUES (:teamId, :token)
+          RETURNiNG access_token", new { teamId, token });
+      }
+
+      return accessToken;
+    }
+
+    public async Task<Guid?> GetTeamId(Guid accessToken)
+    {
+      var teamId = await this.conn.QueryFirstOrDefaultAsync<Guid?>(@"
+        SELECT team_id FROM team_access_token
+        WHERE access_token = :accessToken", new { accessToken });
+      
+      
+
+      return teamId;
     }
   }
 }

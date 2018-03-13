@@ -5,8 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Collections.Generic;
 using TarokScoreBoard.Api.Middleware;
 using TarokScoreBoard.Api.Swagger;
+using TarokScoreBoard.Core;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Infrastructure.Repositories;
 using TarokScoreBoard.Infrastructure.Services;
@@ -40,6 +42,8 @@ namespace TarokScoreBoard.Api
       services.AddScoped<ScoreBoardService>();
       services.AddScoped<TeamService>();
       services.AddScoped<StatisticsService>();
+      services.AddScoped<AuthorizationService>();
+      services.AddScoped<RequestContext>();
       services.AddScoped((ser) =>  new NpgsqlConnection(ser.GetService<IConfiguration>().GetConnectionString("tarok")));
 
       services.ConfigureValidationModel();
@@ -49,7 +53,19 @@ namespace TarokScoreBoard.Api
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new Info { Title = "Tarok Scoreboard", Version = "v1"});
-        c.SchemaFilter<SwaggerExampleFilter>();        
+        c.SchemaFilter<SwaggerExampleFilter>();
+        c.AddSecurityDefinition("access-token", new ApiKeyScheme()
+        {
+          Description = "Access token authentication",
+          Name = "access-token",
+          In = "header",
+          Type = "apiKey"
+        });
+        c.OperationFilter<AuthResponsesOperationFilter>();
+        //c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+        //{
+        //  { "access-token", new string[] { } }
+        //});
       });
     }
 
@@ -62,7 +78,7 @@ namespace TarokScoreBoard.Api
       }
 
       app.UseCors(a =>
-      a.WithOrigins("https://tarok.erikbozic.com", "http://localhost:3002")
+      a.WithOrigins("https://tarok.erikbozic.com", "http://localhost:3002", "http://localhost:4200")
       .AllowAnyHeader()
       .AllowAnyMethod());
 
