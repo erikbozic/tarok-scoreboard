@@ -45,18 +45,18 @@ namespace TarokScoreBoard.Api.Controllers
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Team>>> Get()
+    public async Task<ActionResult<IEnumerable<TeamDTO>>> Get()
     {
       var teams = await teamService.GetTeamsAsync();
-      return Ok(teams);
+      return Ok(teams.Select(t => t.ToDto()));
     }
 
     [HttpGet("{teamId}")]
-    public async Task<ActionResult<Team>> Get(Guid teamId)
+    public async Task<ActionResult<TeamDTO>> Get(Guid teamId)
     {
       var team = await teamService.GetTeamAsync(teamId);
 
-      return Ok(team);
+      return Ok(team.ToDto());
     }
 
     [HttpGet("check-name/{username}")]

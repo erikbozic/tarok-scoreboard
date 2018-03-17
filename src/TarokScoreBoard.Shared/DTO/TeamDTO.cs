@@ -12,5 +12,6 @@ namespace TarokScoreBoard.Shared.DTO
     public string TeamUserId { get; set; }
 
     public List<TeamPlayerDTO> Members { get; set; } = new List<TeamPlayerDTO>();
+
   }
 }
