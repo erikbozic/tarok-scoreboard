@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Collections.Generic;
+using System.Linq;
 using TarokScoreBoard.Api.Middleware;
 using TarokScoreBoard.Api.Swagger;
 using TarokScoreBoard.Core;
@@ -62,10 +63,6 @@ namespace TarokScoreBoard.Api
           Type = "apiKey"
         });
         c.OperationFilter<AuthResponsesOperationFilter>();
-        //c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
-        //{
-        //  { "access-token", new string[] { } }
-        //});
       });
     }
 
@@ -77,8 +74,10 @@ namespace TarokScoreBoard.Api
         app.UseDeveloperExceptionPage();
       }
 
+      var allowedOrigins = Configuration.GetSection("CORS:AllowedOrigins").GetChildren().Select(c => c.Value).ToArray();
+
       app.UseCors(a =>
-      a.WithOrigins("https://tarok.erikbozic.com", "http://localhost:3002", "http://localhost:4200")
+      a.WithOrigins(allowedOrigins)
       .AllowAnyHeader()
       .AllowAnyMethod());
 

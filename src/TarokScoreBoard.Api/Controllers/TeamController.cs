@@ -29,7 +29,7 @@ namespace TarokScoreBoard.Api.Controllers
       return Ok(team);
     }
 
-    [HttpPost("/login")]
+    [HttpPost("login")]
     public async Task<ActionResult<LoginResponseDTO>> Login(LoginDTO loginDto)
     {
       var accessToken = await teamService.LoginAsync(loginDto);
