@@ -412,5 +412,55 @@ namespace TarokScoreBoard.Tests
       Assert.True(scoreBoard.Scores[erik.PlayerId].Score == -25);
     }
 
+    [Fact(DisplayName = "Jan igra v ena, rufa Luka naredita valata")]
+    public void Test15()
+    {
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
+
+      scoreBoard.ResetScores();
+
+      var round = new TarokRound
+      {
+        Game = GameType.Ena,
+        LeadPlayer = jan.PlayerId,
+        SupportingPLayer = luka.PlayerId,
+        Won = true,
+        ScoreDifference = 30,
+      };
+
+      round.Modifiers.Add(new Modifier(ModifierType.Valat, TeamModifier.Playing, false));
+
+      scoreBoard.ApplyTarokRound(round);
+
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == 250);
+      Assert.True(scoreBoard.Scores[luka.PlayerId].Score == 250);
+    }
+
+    [Fact(DisplayName = "Erik gre barvnega valata in zmaga")]
+    public void Test16()
+    {
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
+
+      scoreBoard.ResetScores();
+
+      var round = new TarokRound
+      {
+        Game = GameType.SoloTri,
+        LeadPlayer = erik.PlayerId,
+        Won = true,
+        ScoreDifference = 30,
+      };
+
+      round.Modifiers.Add(new Modifier(ModifierType.BarvniValat, TeamModifier.Playing, true));
+
+      scoreBoard.ApplyTarokRound(round);
+
+      Assert.True(scoreBoard.Scores[erik.PlayerId].Score == 125);
+    }
+
   }
 }

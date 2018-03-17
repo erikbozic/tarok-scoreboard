@@ -22,8 +22,8 @@ namespace TarokScoreBoard.Api.Controllers
       return Ok(stat);
     }
 
-    [HttpGet()]
-    public async Task<IActionResult> GetTeamStatistcs(Guid? teamId, Guid? gameId, Guid? playerId)
+    [HttpGet]
+    public async Task<IActionResult> GetStatistcs(Guid? teamId, Guid? gameId, Guid? playerId)
     {
       var stat = await statisticsService.GetTeamPlayersStatistics(teamId, gameId, playerId);
       return Ok(stat);

@@ -36,13 +36,21 @@ namespace TarokScoreBoard.Core
     {
       var wonModifier = Won ? 1 : -1;
 
-      if (Game == GameType.Berac || Game == GameType.OdprtiBerac || Modifiers.Any(m=> m.ModifierType == ModifierType.Valat))
+      var modifierIsGame = Modifiers.Any(m => m.ModifierType == ModifierType.Valat || m.ModifierType == ModifierType.BarvniValat);
+
+      if (Game == GameType.Berac || Game == GameType.OdprtiBerac || modifierIsGame)
         ScoreDifference = 0;
+
+      if (modifierIsGame)      
+        Game = 0;
 
       var result = wonModifier * (int)(ScoreDifference + Game) * (int)ContraFactor;
 
       foreach (var mod in Modifiers)
-        result += (int)mod.Team * (mod.Announced ? 2 : 1) * (int)mod.ModifierType * (int)mod.ContraFactor;   
+        result += (int)mod.Team *
+          (mod.Announced && mod.ModifierType != ModifierType.BarvniValat? 2 : 1) *
+          (int)mod.ModifierType *
+          (int)mod.ContraFactor;   
 
       return result;
     }

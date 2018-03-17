@@ -26,7 +26,6 @@ namespace TarokScoreBoard.Api.Swagger
           }
         };
       }
-
     }
   }
 }
