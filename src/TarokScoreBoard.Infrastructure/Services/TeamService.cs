@@ -35,7 +35,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       return team;
     }
 
-    public async Task<Guid> LoginAsync(LoginDTO loginDto)
+    public async Task<(Guid, Team)> LoginAsync(LoginDTO loginDto)
     {
       var teamId = loginDto.TeamId;
       var passphrase = loginDto.Passphrase;
@@ -53,8 +53,16 @@ namespace TarokScoreBoard.Infrastructure.Services
       }
 
       var token = await this.teamRepository.GetAccessToken(team.TeamId);
+      team = await this.GetTeamAsync(team.TeamId);
              
-      return token;
+      return (token,team);
+    }
+
+    public async Task<bool> CheckNameAsync(string username)
+    {
+      var team = await teamRepository.GetAllAsync(c => c.Where(t => t.TeamUserId == username));
+
+      return team.FirstOrDefault() != null;
     }
 
     public async Task<Team> CreateTeamAsync(CreateTeamDTO createTeamDTO)

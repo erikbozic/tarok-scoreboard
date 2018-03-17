@@ -62,3 +62,19 @@ create table team_access_token(
   access_token uuid not null,
   date_issued date not null default now()
 );
+
+alter table game add constraint game_game_id_pk primary key (game_id);
+alter table round add constraint round_round_id_pk primary key (round_id);
+
+alter table round
+add constraint game_round_fk
+foreign key (game_id) references game (game_id) on delete cascade;
+
+alter table round_result
+add constraint game_round_result_fk
+foreign key (round_id) references round (round_id) on delete cascade;
+
+alter table round_modifier
+add constraint game_round_modifier_fk
+foreign key (round_id) references round (round_id) on delete cascade;
+

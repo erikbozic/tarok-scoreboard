@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TarokScoreBoard.Api.Filters;
 using TarokScoreBoard.Core;
@@ -32,8 +34,15 @@ namespace TarokScoreBoard.Api.Controllers
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponseDTO>> Login(LoginDTO loginDto)
     {
-      var accessToken = await teamService.LoginAsync(loginDto);
-      return Ok(new LoginResponseDTO(accessToken));
+      var (accessToken, team) = await teamService.LoginAsync(loginDto);
+
+      return Ok(new LoginResponseDTO(accessToken, new TeamDTO()
+      {
+        TeamId = team.TeamId,
+        TeamName = team.TeamName,
+        TeamUserId = team.TeamUserId,
+        Members = team.Members.Select(p => new TeamPlayerDTO(p.Name) { PlayerId = p.PlayerId }).ToList()
+      }));
     }
 
     [HttpGet]
@@ -49,6 +58,18 @@ namespace TarokScoreBoard.Api.Controllers
       var team = await teamService.GetTeamAsync(teamId);
 
       return Ok(team);
+    }
+
+    [HttpGet("check-name/{username}")]
+    [SwaggerResponse(422, Description = "If team with same username already exists, otherwise 200 OK")]
+    public async Task<IActionResult> CheckTeamUsernameExists(string username)
+    {
+      var exists = await this.teamService.CheckNameAsync(username);
+
+      if (exists)
+        return UnprocessableEntity(username);
+
+      return Ok(username);
     }
 
     [HttpPut]

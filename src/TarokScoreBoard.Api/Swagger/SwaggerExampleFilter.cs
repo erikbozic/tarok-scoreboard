@@ -236,7 +236,13 @@ namespace TarokScoreBoard.Api.Swagger
             Passphrase = "g00"      
           };
         case nameof(LoginResponseDTO):
-        return  new LoginResponseDTO(Guid.NewGuid());
+          return new LoginResponseDTO(Guid.NewGuid(), new TeamDTO()
+          {
+            TeamId = teamId,
+            TeamName = "Hribi team",
+            TeamUserId = "hribovci",
+            Members = fourPlayers.Select(p => new TeamPlayerDTO(p.Value.Name) { PlayerId = p.Value.PlayerId }).ToList()
+        });
 
         default:
           return null;

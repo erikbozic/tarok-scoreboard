@@ -1,4 +1,6 @@
-﻿namespace TarokScoreBoard.Shared.DTO
+﻿using System;
+
+namespace TarokScoreBoard.Shared.DTO
 {
   public class TeamPlayerDTO
   {
@@ -8,5 +10,8 @@
     }
 
     public string Name { get; set; }
+
+    public Guid PlayerId { get; set; }
+
   }
 }
