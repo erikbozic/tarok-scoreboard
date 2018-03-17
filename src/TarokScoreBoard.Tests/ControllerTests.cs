@@ -1,60 +1,43 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
-using TarokScoreBoard.Api;
-using System.IO;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using TarokScoreBoard.Shared.DTO;
 using TarokScoreBoard.Core.Entities;
-using Xunit.Abstractions;
 using TarokScoreBoard.Tests.IntegrationSetup;
+using System.Text;
 
 namespace TarokScoreBoard.Tests
 {
-  public class ControllerTests
+  [TestCaseOrderer("TarokScoreBoard.Tests.PriorityOrderer", "TarokScoreBoard.Tests")]
+  public class ControllerTests : IClassFixture<BackendTestFixture>
   {
-    private readonly TestServer _server;
-    private readonly HttpClient _client;
-    private readonly ITestOutputHelper output;
+    private readonly BackendTestFixture fixture;
+    private Guid accessToken;
+    private TeamDTO team;
 
-    public ControllerTests(ITestOutputHelper output)
+    public ControllerTests(BackendTestFixture fixture)
     {
-      // Arrange
-      this.output = output;
-
-      const string testingconfigFile = @"appsettings.Testing.json";
-      string currentPath = Directory.GetCurrentDirectory();
-
-      var testingConfig = new ConfigurationBuilder()
-           .SetBasePath(currentPath)
-           .AddJsonFile(testingconfigFile, optional: true)
-           .Build();
-
-      _server = new TestServer(new WebHostBuilder()
-          .UseEnvironment("Testing")
-          .UseConfiguration(testingConfig)
-          .UseStartup<Startup>());
-      _client = _server.CreateClient();
-
-      // Create a database in known state
-      // Use modifed startup so it can execute setup logic (database connection, seed ...)
-
-      var testDbAdapter = new TestDatabaseAdapter(testingConfig.GetConnectionString("tarok"), output);
-      testDbAdapter.RecreateDatabase();
-      testDbAdapter.SeedData();
-      testDbAdapter.Dispose();
+      this.fixture = fixture;
     }
 
+    [Fact, TestPriority(-10)]
+    public async Task DeleteUnauthorized()
+    {
+      var response = await fixture.Client.DeleteAsync("/api/scoreboard/4ac472ed-5e78-4573-b24e-6506198f1f13");
 
-    [Fact]
+      var unauthorized = response.StatusCode == System.Net.HttpStatusCode.Unauthorized;
+
+      // Assert
+      Assert.True(unauthorized);
+    }
+
+    [Fact, TestPriority(0)]
     public async Task GetGamesTest()
     {
       // Act
-      var response = await _client.GetAsync("/api/Game");
+      var response = await fixture.Client.GetAsync("/api/game");
       response.EnsureSuccessStatusCode();
 
       var responseString = await response.Content.ReadAsStringAsync();
@@ -63,6 +46,40 @@ namespace TarokScoreBoard.Tests
       // Assert
       Assert.True(result.Data.Length == 1);
       Assert.True(!String.IsNullOrEmpty(responseString));
+    }
+
+    [Fact, TestPriority(10)]
+    public async Task Login()
+    {
+      var loginDto = new LoginDTO()
+      {
+        TeamId = "hribovci",
+        Passphrase = "g00"
+      };
+
+      var content = new StringContent(JsonConvert.SerializeObject(loginDto), Encoding.UTF8, "application/json");
+
+      var response = await fixture.Client.PostAsync("/api/team/login", content);
+      response.EnsureSuccessStatusCode();
+
+      var responseString = await response.Content.ReadAsStringAsync();
+      var result = JsonConvert.DeserializeObject<ResponseDTO<LoginResponseDTO>>(responseString);
+      this.accessToken = result.Data.AccessToken;
+      this.team = result.Data.Team;
+      fixture.Client.DefaultRequestHeaders.Add("access-token", accessToken.ToString());
+      // Assert
+      Assert.True(!String.IsNullOrEmpty(responseString));
+    }
+
+    [Fact, TestPriority(20)]
+    public async Task DeleteAuthorized()
+    {
+      var response = await fixture.Client.DeleteAsync("/api/scoreboard/4ac472ed-5e78-4573-b24e-6506198f1f13");
+
+      var deleted = response.StatusCode == System.Net.HttpStatusCode.NoContent;
+
+      // Assert
+      Assert.True(deleted);
     }
   }
 }
