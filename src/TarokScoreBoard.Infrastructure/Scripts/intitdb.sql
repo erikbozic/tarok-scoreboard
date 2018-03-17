@@ -1,7 +1,8 @@
 ﻿create table game(
   game_id uuid primary key not null,
   name varchar(100) not null,
-  date timestamp not null
+  date timestamp not null,
+  team_id uuid
 );
 
 create table round(
@@ -48,7 +49,8 @@ create table team (
   team_id uuid primary key not null,
   team_user_id varchar(255) not null,
   team_name  varchar(255)     not null,
-  passphrase varchar(255)     not null  
+  passphrase bytea     not null,
+  salt bytea not null
 );
 
 create table team_player (
@@ -63,8 +65,7 @@ create table team_access_token(
   date_issued date not null default now()
 );
 
-alter table game add constraint game_game_id_pk primary key (game_id);
-alter table round add constraint round_round_id_pk primary key (round_id);
+
 
 alter table round
 add constraint game_round_fk
@@ -77,4 +78,3 @@ foreign key (round_id) references round (round_id) on delete cascade;
 alter table round_modifier
 add constraint game_round_modifier_fk
 foreign key (round_id) references round (round_id) on delete cascade;
-

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
 using System.Linq;
 using TarokScoreBoard.Api.Middleware;
 using TarokScoreBoard.Api.Swagger;
@@ -77,6 +78,7 @@ namespace TarokScoreBoard.Api
 
       app.UseCors(a =>
       a.WithOrigins(allowedOrigins)
+      .SetPreflightMaxAge(TimeSpan.FromSeconds(3600))
       .AllowAnyHeader()
       .AllowAnyMethod());
 
