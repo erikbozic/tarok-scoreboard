@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using System;
 using System.Threading.Tasks;
@@ -7,15 +8,26 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 {
   public class TeamRepository : TeamBaseRepository
   {
-    public TeamRepository(NpgsqlConnection conn) : base(conn)
+    private readonly ILogger<TeamRepository> logger;
+
+    public TeamRepository(NpgsqlConnection conn, ILogger<TeamRepository> logger) : base(conn)
     {
+      this.logger = logger;
     }
 
-    public async Task<object> GetTeamPlayersStatisticsAsync(Guid teamId)
+    public async Task<object> GetTeamPlayersStatisticsAsync(Guid? teamId = null, Guid? gameId = null, Guid? playerId = null)
     {
-      var sql = @"
+      var innerJoin = gameId == null ? "INNER JOIN team_player tp ON tp.player_id = rr.player_id AND team_id = :teamId" :
+                                       "INNER JOIN game_player gp ON gp.player_id = rr.player_id AND gp.game_id = :gameId";
+      var leftJoin = gameId == null ? @"LEFT JOIN team_player x ON x.player_id = stat.""playerId"";" :
+                                      @"LEFT JOIN game_player x ON x.player_id = stat.""playerId"";";
+
+      if (playerId != null)
+        innerJoin += " AND rr.player_id = :playerId";
+
+      var sql = $@"
           SELECT
-            tp.name,
+            x.name,
             stat.*
           FROM (
                  SELECT
@@ -34,7 +46,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
                    sum(played_lost.round_score_change) ""sumScoreLost"",
                    sum(played_won.round_score_change) ""sumScoreWon""
                  FROM round_result rr
-                   INNER JOIN team_player tp ON tp.player_id = rr.player_id AND team_id = :teamId
+                   {innerJoin}
                    LEFT JOIN round r ON rr.round_id = r.round_id
                    LEFT JOIN round_result lead
                      ON r.round_id = lead.round_id AND lead.player_id = r.lead_player_id AND lead.player_id = rr.player_id
@@ -54,9 +66,9 @@ namespace TarokScoreBoard.Infrastructure.Repositories
                       AND played_lost.round_score_change < 0
                  GROUP BY rr.player_id
                ) stat
-            LEFT JOIN team_player tp ON tp.player_id = stat.""playerId"";";
-
-      return await this.conn.QueryAsync(sql, new { teamId });
+              {leftJoin}";
+      logger.LogDebug(sql);
+      return await this.conn.QueryAsync(sql, new { teamId, gameId, playerId });
     }
 
     public async Task<Guid> GetAccessToken(Guid teamId)
