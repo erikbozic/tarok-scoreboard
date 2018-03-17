@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using Npgsql;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace TarokScoreBoard.Infrastructure.Repositories

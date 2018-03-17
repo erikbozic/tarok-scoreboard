@@ -1,5 +1,4 @@
-﻿using Npgsql;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using TarokScoreBoard.Core;
 using TarokScoreBoard.Infrastructure.Repositories;
@@ -8,7 +7,6 @@ namespace TarokScoreBoard.Infrastructure.Services
 {
   public class AuthorizationService
   {
-    private readonly NpgsqlConnection connection;
     private readonly TeamRepository teamRepository;
     private readonly RequestContext context;
 

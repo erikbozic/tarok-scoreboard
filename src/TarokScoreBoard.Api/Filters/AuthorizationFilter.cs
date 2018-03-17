@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Npgsql;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TarokScoreBoard.Infrastructure.Services;
 
@@ -32,17 +29,17 @@ namespace TarokScoreBoard.Api.Filters
         
         if (!context.HttpContext.Request.Headers.TryGetValue("access-token", out var token))
         {
-          context.Result = new UnauthorizedResult();
+          context.Result = new StatusCodeResult(401);
           return;
         }
         if(!Guid.TryParse(token, out var accessToken))
         {
-          context.Result = new UnauthorizedResult();
+          context.Result = new StatusCodeResult(401);
           return;
         }
         if(!await this.authorizationService.CheckAuthenticated(accessToken))
         {
-          context.Result = new ForbidResult();
+          context.Result = new StatusCodeResult(403);
         }
       }
     }

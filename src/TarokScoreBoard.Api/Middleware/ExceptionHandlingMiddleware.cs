@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using TarokScoreBoard.Core.Exceptions;
 using TarokScoreBoard.Shared.DTO;
 
 namespace TarokScoreBoard.Api.Middleware
@@ -11,10 +14,15 @@ namespace TarokScoreBoard.Api.Middleware
   public class ErrorHandlingMiddleware
   {
     private readonly RequestDelegate _next;
+    private readonly JsonSerializer _serializer;
 
     public ErrorHandlingMiddleware(RequestDelegate next)
     {
       _next = next;
+      _serializer = new JsonSerializer
+      {
+        ContractResolver = new CamelCasePropertyNamesContractResolver()
+      };
     }
 
     public async Task Invoke(HttpContext context, ILogger<ErrorHandlingMiddleware> logger)
@@ -29,30 +37,33 @@ namespace TarokScoreBoard.Api.Middleware
       }
     }
 
-    private static Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger<ErrorHandlingMiddleware> logger)
+    private async Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger<ErrorHandlingMiddleware> logger)
     {
       logger.LogError(exception.HResult, exception, "Error returned to the client.");
       var code = HttpStatusCode.InternalServerError; // 500 if unexpected
+      ResponseDTO<object> error;
 
+      if (exception is TarokBaseException tbe)
+      {
+        error = ResponseDTO.Create<object>(null, tbe.UserFriendyMessage, tbe);
+        code = tbe.StatusCode;
+      }
+      else
+      {
+        error = ResponseDTO.Create<object>(null, exception.Message, exception);
+      }
       // TODO In production, backend shouldn't return an error message with  internal implementation details.
-      var error = ResponseDTO.Create<object>(null, exception.Message);
-
-      // TODO if an expected exception type, then ne more detailed.
-      //if (exception is TarokBaseException tbe)
-      //{
-      //  code = tbe.StatusCode;
-      //  error.Message = tbe.Message;
-      //  error.UserFriendlyMessage = tbe.UserFriendyMessage;
-      //  error.AdditionalData = tbe.AdditionalData;
-      //  error.ErrorCode = tbe.ErrorCode;
-      //}
 
 
-      // TODO use global serilaization settings
-      var result = JsonConvert.SerializeObject(error);
+      logger.LogError(exception, exception.Message, code);
       context.Response.ContentType = "application/json";
       context.Response.StatusCode = (int)code;
-      return context.Response.WriteAsync(result);
+
+      using (var writer = new StreamWriter(context.Response.Body))
+      {
+        _serializer.Serialize(writer, error);
+        await writer.FlushAsync();
+      }
     }
   }
 }

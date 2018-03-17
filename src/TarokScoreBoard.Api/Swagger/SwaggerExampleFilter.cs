@@ -7,7 +7,6 @@ using System.Text;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Shared;
 using TarokScoreBoard.Shared.DTO;
-using static System.Buffers.Text.Encodings;
 
 namespace TarokScoreBoard.Api.Swagger
 {

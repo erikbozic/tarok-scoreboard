@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using TarokScoreBoard.Core.Entities;
+using TarokScoreBoard.Core.Exceptions;
 using TarokScoreBoard.Infrastructure.Repositories;
 using TarokScoreBoard.Shared.DTO;
 
@@ -42,14 +42,14 @@ namespace TarokScoreBoard.Infrastructure.Services
 
       var team = (await teamRepository.GetAllAsync(c => c.Where(t => t.TeamUserId == teamId))).FirstOrDefault();
       if (team == null)
-        throw new InvalidOperationException("Credentials invalid!");
+        throw new LoginFailedException("Credentials invalid!");
 
       using (var deriveBytes = new Rfc2898DeriveBytes(passphrase, team.Salt))
       {
         byte[] newKey = deriveBytes.GetBytes(32);
 
         if (!newKey.SequenceEqual(team.Passphrase))
-          throw new InvalidOperationException("Credentials invalid!");
+          throw new LoginFailedException("Credentials invalid!");
       }
 
       var token = await this.teamRepository.GetAccessToken(team.TeamId);

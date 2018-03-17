@@ -37,7 +37,7 @@ namespace TarokScoreBoard.Api.Controllers
     public async Task<ActionResult<ResponseDTO<Round>>> PostRound(CreateRoundDTO createRoundRequest)
     {
       if (!await CheckTeamId(createRoundRequest.GameId))
-        return Forbid();
+        return StatusCode(403);
 
       var score = await scoreboardService.AddRound(createRoundRequest);
       return Ok(score);
@@ -51,7 +51,7 @@ namespace TarokScoreBoard.Api.Controllers
     public async Task<IActionResult> Delete(Guid gameId)
     {
       if (!await CheckTeamId(gameId))
-        return Forbid();
+        return StatusCode(403);
 
       var result = await scoreboardService.DeleteLastRound(gameId);
       return NoContent();

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Swashbuckle.AspNetCore.Swagger;
-using System.Collections.Generic;
 using System.Linq;
 using TarokScoreBoard.Api.Middleware;
 using TarokScoreBoard.Api.Swagger;
@@ -49,9 +48,9 @@ namespace TarokScoreBoard.Api
 
       services.ConfigureValidationModel();
 
-      services.AddSingleton(Configuration);
+      services.AddSingleton(Configuration);      
 
-      services.AddSwaggerGen(c =>
+       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new Info { Title = "Tarok Scoreboard", Version = "v1"});
         c.SchemaFilter<SwaggerExampleFilter>();

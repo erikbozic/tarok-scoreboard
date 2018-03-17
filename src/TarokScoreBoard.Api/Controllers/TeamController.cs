@@ -8,7 +8,6 @@ using TarokScoreBoard.Api.Filters;
 using TarokScoreBoard.Core;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Infrastructure.Services;
-using TarokScoreBoard.Shared;
 using TarokScoreBoard.Shared.DTO;
 
 namespace TarokScoreBoard.Api.Controllers
@@ -85,11 +84,10 @@ namespace TarokScoreBoard.Api.Controllers
     public async Task<ActionResult> AddPlayerToTeam(Guid teamId, AddPlayerToTeamDTO addPlayerDTO)
     {
       if (teamId != context.TeamId)
-        return Forbid();
+        return StatusCode(403);
 
       var newPlayer = await teamService.AddPlayerToTeamAsync(addPlayerDTO, teamId);
       return Ok(newPlayer);
     }
-
   }
 }
