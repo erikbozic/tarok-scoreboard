@@ -20,7 +20,9 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       var innerJoin = gameId == null ? "INNER JOIN team_player tp ON tp.player_id = rr.player_id AND team_id = :teamId" :
                                        "INNER JOIN game_player gp ON gp.player_id = rr.player_id AND gp.game_id = :gameId";
       var leftJoin = gameId == null ? @"LEFT JOIN team_player x ON x.player_id = stat.""playerId"";" :
-                                      @"LEFT JOIN game_player x ON x.player_id = stat.""playerId"";";
+                                      @"LEFT JOIN game_player x ON x.player_id = stat.""playerId"" and x.game_id = :gameId;";
+
+      var baseCondition = gameId == null ? "" : "WHERE r.game_id = :gameId";
 
       if (playerId != null)
         innerJoin += " AND rr.player_id = :playerId";
@@ -64,6 +66,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
                       AND played_won.round_score_change > 0
                    LEFT JOIN round_result played_lost   ON r.round_id = played_lost.round_id AND played_lost.player_id = rr.player_id
                       AND played_lost.round_score_change < 0
+                {baseCondition}
                  GROUP BY rr.player_id
                ) stat
               {leftJoin}";
