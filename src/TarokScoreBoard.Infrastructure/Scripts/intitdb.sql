@@ -65,7 +65,9 @@ create table team_access_token(
   date_issued date not null default now()
 );
 
-
+alter table game_player
+add constraint game_player_fk
+foreign key (game_id) references game (game_id) on delete cascade;
 
 alter table round
 add constraint game_round_fk
