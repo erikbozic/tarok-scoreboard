@@ -92,17 +92,17 @@ namespace TarokScoreBoard.Api.Swagger
                },
              }
           };
-        case nameof(Game):
-          return new Game()
+        case nameof(GameDTO):
+          return new GameDTO()
           {
             Date = new DateTime(2018, 03, 10),
             GameId = gameId,
             Name = "Tarok escapade of 2018.03.10",
             TeamId = teamId,
-            Players = fourPlayers.Select(p => p.Value).ToList()         
+            Players = fourPlayers.Select(p => new GamePlayerDTO() { Name = p.Value.Name, PlayerId = p.Key }).ToList()
           };
-        case nameof(Round):
-          return new Round()
+        case nameof(RoundDTO):
+          return new RoundDTO()
           {
             ContraFactor = 1,
             GameId = gameId,
@@ -115,42 +115,34 @@ namespace TarokScoreBoard.Api.Swagger
             SupportingPlayerId = erik.PlayerId,
             PagatFangPlayerId = luka.PlayerId,
             Won = true,
-            RoundResults = new List<RoundResult>()
+            RoundResults = new List<RoundResultDTO>()
             {
-              new RoundResult()
+              new RoundResultDTO()
               {
-                GameId = gameId,
-                RoundId = roundId,
                 PlayerId = jan.PlayerId,
                 PlayerScore = 210,
                 PlayerRadelcCount = 1,
                 PlayerRadelcUsed = 1 ,
                 RoundScoreChange = 0
               },
-              new RoundResult()
+              new RoundResultDTO()
               {
-                GameId = gameId,
-                RoundId = roundId,
                 PlayerId = erik.PlayerId,
                 PlayerScore = 210,
                 PlayerRadelcCount = 1,
                 PlayerRadelcUsed = 0,
                 RoundScoreChange = 60
               },
-              new RoundResult()
+              new RoundResultDTO()
               {
-                GameId = gameId,
-                RoundId = roundId,
                 PlayerId = luka.PlayerId,
                 PlayerScore = 0,
                 PlayerRadelcCount = 1,
                 PlayerRadelcUsed = 0,
                 RoundScoreChange = 60
               },
-              new RoundResult()
+              new RoundResultDTO()
               {
-                GameId = gameId,
-                RoundId = roundId,
                 PlayerId = nejc.PlayerId,
                 PlayerScore = 0,
                 PlayerRadelcCount = 1,
@@ -158,23 +150,23 @@ namespace TarokScoreBoard.Api.Swagger
                 RoundScoreChange = 0
               }
             },
-            Modifiers = new List<RoundModifier>()
+            Modifiers = new List<RoundModifierDTO>()
             {
-              new RoundModifier()
+              new RoundModifierDTO()
                {
                  Announced = false,
                  Contra = 1,
                  ModifierType = ModifierTypeDbEnum.PAGAT_ULTIMO,
                  Team = 1
                },
-               new RoundModifier()
+               new RoundModifierDTO()
                {
                  Announced = true,
                  Contra = 2,
                  ModifierType = ModifierTypeDbEnum.TRULA,
                  Team = 1
                },
-               new RoundModifier()
+               new RoundModifierDTO()
                {
                  Announced = false,
                  Contra = 1,
@@ -187,15 +179,9 @@ namespace TarokScoreBoard.Api.Swagger
           return new CreateTeamDTO()
           {
             Passphrase = "Neko geslo ki ga poznajo vsi igralci",
-            TeamId = "Nek unique id, ki si ga je lahko zapomnit",
+            TeamId = "Nek unique id, ki si ga je lahko zapomnit", // TODO Change to TeamUsername
             Name = "Naša tarok skupina",
-            Members = new List<TeamPlayerDTO>()
-            {
-              new TeamPlayerDTO("Luka"),
-              new TeamPlayerDTO("Nejc"),
-              new TeamPlayerDTO("Erik"),
-              new TeamPlayerDTO("Jan")
-            }
+            Members = fourPlayers.Select(p => new TeamPlayerDTO(p.Value.Name) { PlayerId = null }).ToList()
           };
         case nameof(Team):
           return new Team()
@@ -241,7 +227,22 @@ namespace TarokScoreBoard.Api.Swagger
             TeamName = "Hribi team",
             TeamUserId = "hribovci",
             Members = fourPlayers.Select(p => new TeamPlayerDTO(p.Value.Name) { PlayerId = p.Value.PlayerId }).ToList()
-        });
+          });
+        case nameof(TeamDTO):
+          return new TeamDTO()
+          {
+            TeamUserId = "hribovci",
+            TeamId = teamId,
+            TeamName = "Hribi team",
+            Members = fourPlayers.Select(p => new TeamPlayerDTO(p.Value.Name) { PlayerId = p.Value.PlayerId }).ToList()
+          };
+        case nameof(TeamPlayer):
+          return new TeamPlayer()
+          {
+            Name = "Gregor",
+            PlayerId = Guid.NewGuid(),
+            TeamId = teamId
+          };
 
         default:
           return null;

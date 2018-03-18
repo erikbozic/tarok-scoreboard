@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TarokScoreBoard.Api.Filters;
 using TarokScoreBoard.Core;
-using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Infrastructure.Services;
 using TarokScoreBoard.Shared.DTO;
 
@@ -25,7 +24,7 @@ namespace TarokScoreBoard.Api.Controllers
     }
 
     [HttpGet("{gameId}")]
-    public async Task<ActionResult<ResponseDTO<IEnumerable<Round>>>> Get(Guid gameId)
+    public async Task<ActionResult<ResponseDTO<IEnumerable<RoundDTO>>>> Get(Guid gameId)
     {
       var rounds = await scoreboardService.GetGameRounds(gameId);
       return Ok(rounds);
@@ -34,7 +33,7 @@ namespace TarokScoreBoard.Api.Controllers
     [HttpPost]
     [Authorize]
     [TransactionFilter]
-    public async Task<ActionResult<ResponseDTO<Round>>> PostRound(CreateRoundDTO createRoundRequest)
+    public async Task<ActionResult<ResponseDTO<RoundDTO>>> PostRound(CreateRoundDTO createRoundRequest)
     {
       if (!await CheckTeamId(createRoundRequest.GameId))
         return StatusCode(403);
@@ -61,7 +60,7 @@ namespace TarokScoreBoard.Api.Controllers
     [HttpPost("end/{gameId}")]
     [Authorize]
     [TransactionFilter]
-    public async Task<ActionResult<ResponseDTO<Round>>> FinishGame(Guid gameId)
+    public async Task<ActionResult<ResponseDTO<RoundDTO>>> FinishGame(Guid gameId)
     {
       if (!await CheckTeamId(gameId))
         return Forbid();
@@ -69,7 +68,6 @@ namespace TarokScoreBoard.Api.Controllers
       var round = await scoreboardService.EndGame(gameId);
       return Ok(round);
     }
-
 
     [NonAction]
     private async Task<bool> CheckTeamId(Guid gameId)

@@ -24,7 +24,7 @@ namespace TarokScoreBoard.Api.Controllers
       this.context = context;
     }
     [HttpPost]
-    public async Task<ActionResult<Team>> CreateTeam(CreateTeamDTO createTeamDTO)
+    public async Task<ActionResult<TeamDTO>> CreateTeam(CreateTeamDTO createTeamDTO)
     {
       var team = await teamService.CreateTeamAsync(createTeamDTO);
       return Ok(team);
@@ -81,7 +81,7 @@ namespace TarokScoreBoard.Api.Controllers
 
     [HttpPost("{teamId}/player")]
     [Authorize]
-    public async Task<ActionResult> AddPlayerToTeam(Guid teamId, AddPlayerToTeamDTO addPlayerDTO)
+    public async Task<ActionResult<TeamPlayer>> AddPlayerToTeam(Guid teamId, AddPlayerToTeamDTO addPlayerDTO)
     {
       if (teamId != context.TeamId)
         return StatusCode(403);

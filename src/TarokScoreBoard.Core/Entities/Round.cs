@@ -38,5 +38,39 @@ namespace TarokScoreBoard.Core.Entities
           new RoundResult() {  GameId = round.GameId, PlayerId = r.PlayerId, PlayerScore = r.Score, RoundId = roundId }).ToList()
       };
     }
+
+    public RoundDTO ToDto()
+    {
+      return new RoundDTO()
+      {
+        GameId = GameId,
+        ContraFactor = ContraFactor,
+        Difference = Difference,
+        GameType = GameType,
+        IsKlop = IsKlop,
+        LeadPlayerId = LeadPlayerId,
+        MondFangPlayerId = MondFangPlayerId,
+        PagatFangPlayerId = PagatFangPlayerId,
+        RoundId = RoundId,
+        RoundNumber = RoundNumber,
+        Won = Won,
+        SupportingPlayerId = SupportingPlayerId,
+        RoundResults = RoundResults?.Select(r => new RoundResultDTO()
+        {
+          PlayerId = r.PlayerId,
+          PlayerScore = r.PlayerScore,
+          PlayerRadelcCount = r.PlayerRadelcCount,
+          PlayerRadelcUsed = r.PlayerRadelcUsed,
+          RoundScoreChange = r.RoundScoreChange
+        }).ToList(),
+        Modifiers = Modifiers?.Select(m => new RoundModifierDTO()
+        {
+          Team = m.Team,
+          Announced = m.Announced,
+          Contra = m.Contra,
+          ModifierType = m.ModifierType
+        }).ToList(),
+      };
+    }
   }
 }

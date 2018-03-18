@@ -30,14 +30,14 @@ namespace TarokScoreBoard.Infrastructure.Services
       this.modifierRepository = modifierRepo;
     }
 
-    public async Task<IEnumerable<Round>> GetGameRounds(Guid gameId)
+    public async Task<IEnumerable<RoundDTO>> GetGameRounds(Guid gameId)
     {
       var rounds = await roundRepository.GetScoreboard(gameId);
 
-      return rounds;
+      return rounds.Select(r => r.ToDto());
     }
 
-    public async Task<Round> AddRound(CreateRoundDTO createRoundRequest)
+    public async Task<RoundDTO> AddRound(CreateRoundDTO createRoundRequest)
     {
       var round = Round.FromCreateRoundRequest(createRoundRequest);
       var gameId = round.GameId;
@@ -90,10 +90,10 @@ namespace TarokScoreBoard.Infrastructure.Services
       foreach (var roundResult in round.RoundResults)
         await roundResultRepository.AddAsync(roundResult);
 
-      return round;
+      return round.ToDto();
     }
 
-    public async Task<Round> EndGame(Guid gameId)
+    public async Task<RoundDTO> EndGame(Guid gameId)
     {
       var gameRounds = await roundRepository.GetAllAsync(c => c.Where(r => r.GameId == gameId).OrderBy(r => r.RoundNumber));
 
@@ -128,7 +128,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       foreach (var roundResult in endRound.RoundResults)
         await roundResultRepository.AddAsync(roundResult);
 
-      return endRound;
+      return endRound.ToDto();
     }
 
     private async Task AddRoundResults(ScoreBoard scoreBoard, Guid roundId)

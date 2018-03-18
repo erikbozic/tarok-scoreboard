@@ -19,7 +19,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       this.playerRepository = playerRepository;
     }
 
-    public async Task<Game> StartGameAsync(CreateGameDTO gameRequest)
+    public async Task<GameDTO> StartGameAsync(CreateGameDTO gameRequest)
     {      
       var game = new Game()
       {
@@ -38,23 +38,23 @@ namespace TarokScoreBoard.Infrastructure.Services
         game.Players.Add(dbPlayer);
       }
 
-      return game;
+      return game.ToDto();
     }
 
-    public async Task<IEnumerable<Game>> GetAllAsync()
+    public async Task<IEnumerable<GameDTO>> GetAllAsync()
     {
       var result = await gameRepository.GetAllAsync();
-      return result;
+      return result.Select(g => g.ToDto());
     }
 
-    public async Task<Game> GetAsync(Guid guid)
+    public async Task<GameDTO> GetAsync(Guid guid)
     {
       var game = await gameRepository.GetAsync(guid);
       var id = game.GameId;
       var gamePlayers = await playerRepository.GetAllAsync(c => c.Where(p => p.GameId == id));
       game.Players = gamePlayers.ToList();
 
-      return game;
+      return game.ToDto();
     }
   }
 }

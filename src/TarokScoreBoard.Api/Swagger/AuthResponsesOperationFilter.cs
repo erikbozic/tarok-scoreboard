@@ -14,6 +14,9 @@ namespace TarokScoreBoard.Api.Swagger
      .ControllerAttributes()
      .Union(context.ApiDescription.ActionAttributes())
      .OfType<AuthorizeAttribute>();
+
+      //everything is json
+      operation.Produces = new[] { "application/json" };
       
       if (authAttributes.Any())
       {

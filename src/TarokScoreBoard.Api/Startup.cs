@@ -92,7 +92,11 @@ namespace TarokScoreBoard.Api
 
       app.UseSwaggerUI(c =>
       {
+        c.DocumentTitle = "Tarok Scoreboard API";
         c.SwaggerEndpoint("/api-docs/v1/scoreboard.json", "Tarok Scoreboard API");
+        c.DefaultModelsExpandDepth(0);
+        c.EnableFilter();
+        c.EnableDeepLinking();
         c.RoutePrefix = "";
       });
 

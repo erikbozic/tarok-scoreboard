@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Xunit;
 using Newtonsoft.Json;
 using TarokScoreBoard.Shared.DTO;
-using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Tests.IntegrationSetup;
 using System.Text;
+using Xunit.Abstractions;
 
 namespace TarokScoreBoard.Tests
 {
@@ -14,12 +14,14 @@ namespace TarokScoreBoard.Tests
   public class ControllerTests : IClassFixture<BackendTestFixture>
   {
     private readonly BackendTestFixture fixture;
+    private readonly ITestOutputHelper output;
     private Guid accessToken;
     private TeamDTO team;
 
-    public ControllerTests(BackendTestFixture fixture)
+    public ControllerTests(BackendTestFixture fixture, ITestOutputHelper output)
     {
       this.fixture = fixture;
+      this.output = output;
     }
 
     [Fact, TestPriority(-10)]
@@ -41,7 +43,8 @@ namespace TarokScoreBoard.Tests
       response.EnsureSuccessStatusCode();
 
       var responseString = await response.Content.ReadAsStringAsync();
-      var result = JsonConvert.DeserializeObject<ResponseDTO<Game[]>>(responseString);
+      output.WriteLine(responseString);
+      var result = JsonConvert.DeserializeObject<ResponseDTO<GameDTO[]>>(responseString);
 
       // Assert
       Assert.True(result.Data.Length == 1);
@@ -63,6 +66,7 @@ namespace TarokScoreBoard.Tests
       response.EnsureSuccessStatusCode();
 
       var responseString = await response.Content.ReadAsStringAsync();
+      output.WriteLine(responseString);
       var result = JsonConvert.DeserializeObject<ResponseDTO<LoginResponseDTO>>(responseString);
       this.accessToken = result.Data.AccessToken;
       this.team = result.Data.Team;

@@ -65,7 +65,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       return team.FirstOrDefault() != null;
     }
 
-    public async Task<Team> CreateTeamAsync(CreateTeamDTO createTeamDTO)
+    public async Task<TeamDTO> CreateTeamAsync(CreateTeamDTO createTeamDTO)
     {
       var teamId = Guid.NewGuid();
       var (key, salt) = CreateKeyAndSalt(createTeamDTO.Passphrase);
@@ -89,7 +89,7 @@ namespace TarokScoreBoard.Infrastructure.Services
         });
         team.Members.Add(dbMember);
       }
-      return team;
+      return team.ToDto();
     }
 
     public async Task<TeamPlayer> AddPlayerToTeamAsync(AddPlayerToTeamDTO addPlayerDTO, Guid teamId)

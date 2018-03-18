@@ -11,7 +11,10 @@ namespace TarokScoreBoard.Shared.DTO
 
     [Required]
     public List<PlayerDTO> Players { get; set; }
-
-    public Guid TeamId { get; set; }
+    
+    /// <summary>
+    /// Only used internally
+    /// </summary>
+    public Guid? TeamId { get; set; }
   }
 }
