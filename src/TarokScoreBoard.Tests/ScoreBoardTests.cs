@@ -43,7 +43,7 @@ namespace TarokScoreBoard.Tests
       var round = new TarokRound
       {
         LeadPlayer = jan.PlayerId,
-        SupportingPLayer = erik.PlayerId,
+        SupportingPlayer = erik.PlayerId,
         Game = GameType.Ena,
         Won  = true,
         ScoreDifference = 15
@@ -117,7 +117,7 @@ namespace TarokScoreBoard.Tests
       var round = new TarokRound
       {
         LeadPlayer = jan.PlayerId,
-        SupportingPLayer = luka.PlayerId,
+        SupportingPlayer = luka.PlayerId,
         Game = GameType.Ena,
         Won = false,
         ScoreDifference = 0
@@ -148,7 +148,7 @@ namespace TarokScoreBoard.Tests
       var round = new TarokRound
       {
         LeadPlayer = jan.PlayerId,
-        SupportingPLayer = luka.PlayerId,
+        SupportingPlayer = luka.PlayerId,
         Game = GameType.Ena,
         Won = true,
         ScoreDifference = 20
@@ -180,7 +180,7 @@ namespace TarokScoreBoard.Tests
       var round = new TarokRound
       {
         LeadPlayer = jan.PlayerId,
-        SupportingPLayer = luka.PlayerId,
+        SupportingPlayer = luka.PlayerId,
         Game = GameType.Ena,
         Won = true,
         ScoreDifference = 20
@@ -340,7 +340,7 @@ namespace TarokScoreBoard.Tests
       {
         Game = GameType.Ena,
         LeadPlayer = jan.PlayerId,
-        SupportingPLayer = luka.PlayerId,
+        SupportingPlayer = luka.PlayerId,
         Won = true,
         ScoreDifference = 10,
         MondFangPlayer = luka.PlayerId
@@ -398,7 +398,7 @@ namespace TarokScoreBoard.Tests
       {
         Game = GameType.Ena,
         LeadPlayer = jan.PlayerId,
-        SupportingPLayer = luka.PlayerId,
+        SupportingPlayer = luka.PlayerId,
         Won = true,
         ScoreDifference = 10,
         MondFangPlayer = luka.PlayerId,
@@ -425,7 +425,7 @@ namespace TarokScoreBoard.Tests
       {
         Game = GameType.Ena,
         LeadPlayer = jan.PlayerId,
-        SupportingPLayer = luka.PlayerId,
+        SupportingPlayer = luka.PlayerId,
         Won = true,
         ScoreDifference = 30,
       };

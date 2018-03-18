@@ -16,7 +16,7 @@ namespace TarokScoreBoard.Core
 
     public Guid? LeadPlayer { get; set; }
 
-    public Guid? SupportingPLayer { get; set; }
+    public Guid? SupportingPlayer { get; set; }
 
     public bool Won { get; set; }
 
@@ -73,7 +73,7 @@ namespace TarokScoreBoard.Core
         ScoreDifference = round.Difference,
         ContraFactor = (Contra)round.ContraFactor,
         LeadPlayer = round.LeadPlayerId,
-        SupportingPLayer = round.SupportingPlayerId,
+        SupportingPlayer = round.SupportingPlayerId,
         MondFangPlayer = round.MondFangPlayerId,
         PagatFangPlayer = round.PagatFangPlayerId,
         Game = (GameType)round.GameType,

@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using TarokScoreBoard.Api;
+using TarokScoreBoard.Shared.DTO;
 
 namespace TarokScoreBoard.Tests.IntegrationSetup
 {
@@ -12,6 +13,10 @@ namespace TarokScoreBoard.Tests.IntegrationSetup
   {
     public TestServer Server { get; }
     public HttpClient Client { get; }
+
+    public Guid accessToken;
+    public TeamDTO team;
+    internal Guid gameId;
 
     public BackendTestFixture()
     {

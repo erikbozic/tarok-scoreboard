@@ -85,8 +85,8 @@ namespace TarokScoreBoard.Core
           Scores[round.LeadPlayer.Value].RemoveRadelc();
 
         Scores[round.LeadPlayer.Value].ChangeScore(roundScore);
-        if (round.SupportingPLayer != null)
-          Scores[round.SupportingPLayer.Value].ChangeScore(roundScore);
+        if (round.SupportingPlayer != null)
+          Scores[round.SupportingPlayer.Value].ChangeScore(roundScore);
       }
 
       if((int)round.Game >= 70)
