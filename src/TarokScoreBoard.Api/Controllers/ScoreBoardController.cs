@@ -42,7 +42,7 @@ namespace TarokScoreBoard.Api.Controllers
         return StatusCode(403);
 
       var score = await scoreboardService.AddRound(createRoundRequest);
-      await hub.Clients.All.SendAsync("updateScoreBoard", score);
+      await hub.Clients.Group(score.GameId.ToString()).SendAsync("updateScoreBoard", score);
       return Ok(score);
     }
 
