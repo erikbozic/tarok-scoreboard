@@ -43,16 +43,16 @@ namespace TarokScoreBoard.Api.Middleware
       var code = HttpStatusCode.InternalServerError; // 500 if unexpected
       ResponseDTO<object> error;
 
+
+      error = new ResponseDTO<object>()
+      {
+        Data = null,
+        Errors = exception,
+        Message = exception.Message
+      };
+
       if (exception is TarokBaseException tbe)
-      {
-        error = ResponseDTO.Create<object>(null, tbe.UserFriendyMessage, tbe);
-        code = tbe.StatusCode;
-      }
-      else
-      {
-        error = ResponseDTO.Create<object>(null, exception.Message, exception);
-      }
-      // TODO In production, backend shouldn't return an error message with  internal implementation details.
+          code = tbe.StatusCode;
 
 
       logger.LogError(exception, exception.Message, code);

@@ -2,14 +2,18 @@
 {
   public class ResponseDTO
   {
-    public static ResponseDTO<T> Create<T>(T data, string message = "", object errors = null)
+    public static ResponseDTO<T> Create<T>(T data, string message = "", object errors = null) where T : class
     {
       return new ResponseDTO<T>(data, message, errors);
     }
   }
 
-  public class ResponseDTO<T>
+  public class ResponseDTO<T> where T : class
   {
+    public ResponseDTO()
+    {
+
+    }
     public ResponseDTO(T data, string message = "", object errors = null)
     {
       Data = data;
@@ -17,10 +21,10 @@
       Errors = errors;
     }
 
-    public T Data { get; private set; }
+    public T Data { get;  set; }
 
-    public string Message { get; private set; }
+    public string Message { get;  set; }
 
-    public object Errors { get; private set; }
+    public object Errors { get;  set; }
   }
 }
