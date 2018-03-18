@@ -25,6 +25,7 @@ namespace TarokScoreBoard.Core.Entities
         IsKlop = round.IsKlop,
         LeadPlayerId = round.LeadPlayerId,
         SupportingPlayerId = round.SupportingPlayerId,
+        PagatFangPlayerId = round.PagatFangPlayerId,
         MondFangPlayerId = round.MondFangPlayerId,
         Won = round.Won,
         Modifiers = round.Modifiers?.Select(m => 
