@@ -82,8 +82,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       {
         var dbMember = await teamPlayerRepository.AddAsync(new TeamPlayer()
         {
-          PlayerId = Guid.NewGuid(),
-          
+          PlayerId = Guid.NewGuid(),          
           TeamId = teamId,
           Name = member.Name
         });

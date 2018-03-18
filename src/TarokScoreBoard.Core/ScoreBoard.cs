@@ -20,15 +20,12 @@ namespace TarokScoreBoard.Core
 
     private ScoreBoard()
     {
-
     }
 
     public void AddRadelc()
     {
       foreach (var score in Scores)
-      {
         score.Value.AddRadelc();
-      }
     }
 
     public void ResetScores()
@@ -36,12 +33,11 @@ namespace TarokScoreBoard.Core
       Scores = new Dictionary<Guid, PlayerScore>();
 
       foreach (var player in players)
-      {
-        Scores.Add(player, new PlayerScore());
-      }
+        Scores.Add(player, new PlayerScore());      
     }
 
-    private void ChangeScore(Guid playerId, int baseScore) => Scores[playerId].ChangeScore(baseScore * (Scores[playerId].HasRadelc() ? 2 : 1));
+    private void ChangeScore(Guid playerId, int baseScore) => 
+      Scores[playerId].ChangeScore(baseScore * (Scores[playerId].HasRadelc() ? 2 : 1));
 
     public void ApplyTarokRound(TarokRound round)
     {
@@ -125,10 +121,9 @@ namespace TarokScoreBoard.Core
         GameId = roundResults.First().GameId,
         Scores = new Dictionary<Guid, PlayerScore>()
       };
+
       foreach (var result in roundResults)
-      {
-        sb.Scores.Add(result.PlayerId, PlayerScore.FromRoundResult(result));
-      }
+        sb.Scores.Add(result.PlayerId, PlayerScore.FromRoundResult(result));      
       
       return sb;
     }

@@ -31,14 +31,12 @@ namespace TarokScoreBoard.Tests
 
       var unauthorized = response.StatusCode == System.Net.HttpStatusCode.Unauthorized;
 
-      // Assert
       Assert.True(unauthorized);
     }
 
     [Fact, TestPriority(0)]
     public async Task GetGamesTest()
     {
-      // Act
       var response = await fixture.Client.GetAsync("/api/game");
       response.EnsureSuccessStatusCode();
 
@@ -46,7 +44,6 @@ namespace TarokScoreBoard.Tests
       output.WriteLine(responseString);
       var result = JsonConvert.DeserializeObject<ResponseDTO<GameDTO[]>>(responseString);
 
-      // Assert
       Assert.True(result.Data.Length == 1);
       Assert.True(!String.IsNullOrEmpty(responseString));
     }
@@ -71,7 +68,7 @@ namespace TarokScoreBoard.Tests
       this.accessToken = result.Data.AccessToken;
       this.team = result.Data.Team;
       fixture.Client.DefaultRequestHeaders.Add("access-token", accessToken.ToString());
-      // Assert
+
       Assert.True(!String.IsNullOrEmpty(responseString));
     }
 
@@ -82,7 +79,6 @@ namespace TarokScoreBoard.Tests
 
       var deleted = response.StatusCode == System.Net.HttpStatusCode.NoContent;
 
-      // Assert
       Assert.True(deleted);
     }
   }

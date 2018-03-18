@@ -15,8 +15,6 @@ namespace TarokScoreBoard.Infrastructure
     private string orderBy = string.Empty;
     private string whereClause = string.Empty;
 
-
-
     private readonly IDictionary<int, object> queryParameters = new Dictionary<int, object>();
     private int paramCount = 0;
 

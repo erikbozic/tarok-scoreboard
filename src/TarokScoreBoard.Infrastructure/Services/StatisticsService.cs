@@ -20,12 +20,11 @@ namespace TarokScoreBoard.Infrastructure.Services
       this.teamPlayerRepository = teamPlayerRepository;
     }
 
-    public async Task<object> GetTeamPlayersStatistics(Guid? teamId =null, Guid? gameId = null, Guid? playerId = null)
+    public async Task<object> GetTeamPlayersStatistics(Guid? teamId = null, Guid? gameId = null, Guid? playerId = null)
     {
       // this gets averages, round played, round lost etc....
       var results = await teamRepository.GetTeamPlayersStatisticsAsync(teamId, gameId, playerId);
-      return results ;
-
+      return results;
     }
   }
 }

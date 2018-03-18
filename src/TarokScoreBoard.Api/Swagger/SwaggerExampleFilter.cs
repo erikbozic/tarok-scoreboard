@@ -41,7 +41,6 @@ namespace TarokScoreBoard.Api.Swagger
     public void Apply(Schema model, SchemaFilterContext context)
     {
       var type = context.SystemType;
-
       model.Example = GetExampleForType(type);
     }
 

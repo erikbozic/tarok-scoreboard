@@ -38,9 +38,7 @@ namespace TarokScoreBoard.Api.Filters
           return;
         }
         if(!await this.authorizationService.CheckAuthenticated(accessToken))
-        {
           context.Result = new StatusCodeResult(403);
-        }
       }
     }
   }

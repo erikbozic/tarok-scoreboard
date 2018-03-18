@@ -45,9 +45,7 @@ namespace TarokScoreBoard.Api.Controllers
       await hub.Clients.Group(score.GameId.ToString()).SendAsync("updateScoreBoard", score);
       return Ok(score);
     }
-
-
-
+    
     [HttpDelete("{gameId}")]
     [Authorize]
     [TransactionFilter]
@@ -59,8 +57,7 @@ namespace TarokScoreBoard.Api.Controllers
       var result = await scoreboardService.DeleteLastRound(gameId);
       return NoContent();
     }
-
-
+    
     [HttpPost("end/{gameId}")]
     [Authorize]
     [TransactionFilter]

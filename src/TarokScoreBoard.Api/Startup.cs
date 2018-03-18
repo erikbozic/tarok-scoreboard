@@ -71,18 +71,14 @@ namespace TarokScoreBoard.Api
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-      }
-
-      var allowedOrigins = Configuration.GetSection("CORS:AllowedOrigins").GetChildren().Select(c => c.Value).ToArray();
+      var allowedOrigins = Configuration.GetSection("CORS:AllowedOrigins")
+        .GetChildren().Select(c => c.Value).ToArray();
 
       app.UseCors(a =>
-      a.WithOrigins(allowedOrigins)
-      .SetPreflightMaxAge(TimeSpan.FromSeconds(3600))
-      .AllowAnyHeader()
-      .AllowAnyMethod());
+        a.WithOrigins(allowedOrigins)
+        .SetPreflightMaxAge(TimeSpan.FromSeconds(3600))
+        .AllowAnyHeader()
+        .AllowAnyMethod());
 
       app.UseErrorHandling();
 

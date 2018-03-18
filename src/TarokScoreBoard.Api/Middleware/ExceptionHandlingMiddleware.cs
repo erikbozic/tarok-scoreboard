@@ -40,9 +40,8 @@ namespace TarokScoreBoard.Api.Middleware
     private async Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger<ErrorHandlingMiddleware> logger)
     {
       logger.LogError(exception.HResult, exception, "Error returned to the client.");
-      var code = HttpStatusCode.InternalServerError; // 500 if unexpected
+      var code = HttpStatusCode.InternalServerError;
       ResponseDTO<object> error;
-
 
       error = new ResponseDTO<object>()
       {
@@ -53,7 +52,6 @@ namespace TarokScoreBoard.Api.Middleware
 
       if (exception is TarokBaseException tbe)
           code = tbe.StatusCode;
-
 
       logger.LogError(exception, exception.Message, code);
       context.Response.ContentType = "application/json";

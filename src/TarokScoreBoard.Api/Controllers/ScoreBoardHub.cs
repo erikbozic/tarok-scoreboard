@@ -8,14 +8,14 @@ namespace TarokScoreBoard.Api.Controllers
 {
   public class ScoreBoardHub : Hub
   {
-    public override Task OnConnectedAsync()
+    public async override Task OnConnectedAsync()
     {
       var ctx = this.Context.Connection.Features.Get<IHttpContextFeature>();
       var gameId =ctx.HttpContext.Request.Query["gameId"];
 
-      Groups.AddAsync(this.Context.ConnectionId, gameId);
+      await Groups.AddAsync(this.Context.ConnectionId, gameId);
 
-      return base.OnConnectedAsync();
+      await base.OnConnectedAsync();
     }
   }
 }

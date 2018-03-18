@@ -26,17 +26,13 @@ namespace TarokScoreBoard.Api.Filters
       public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
       {
         if (!context.HttpContext.Request.Headers.TryGetValue("access-token", out var token))
-        {
           return;
-        }
+        
         if (!Guid.TryParse(token, out var accessToken))
-        {
           return;
-        }
+        
         await this.authorizationService.CheckAuthenticated(accessToken);
       }
     }
   }
-
-
 }
