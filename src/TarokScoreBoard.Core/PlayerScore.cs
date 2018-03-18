@@ -9,6 +9,8 @@ namespace TarokScoreBoard.Core
       _score = score;
     }
 
+    public int RoundScoreChange  { get; private set; }
+
     private int _score;
 
     public int Score { get => _score;}
@@ -34,7 +36,7 @@ namespace TarokScoreBoard.Core
 
     public int ChangeScore(int change)
     {
-      // TODO log change 
+      this.RoundScoreChange += change;
       _score += change;
       return Score;
     }

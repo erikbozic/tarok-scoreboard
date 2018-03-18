@@ -78,6 +78,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       {
         return new RoundResult()
         {
+          RoundScoreChange = s.Value.RoundScoreChange,
           GameId = gameId,
           RoundId = round.RoundId,
           PlayerId = s.Key,
