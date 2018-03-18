@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,12 +16,14 @@ namespace TarokScoreBoard.Api.Controllers
     private readonly ScoreBoardService scoreboardService;
     private readonly GameService gameService;
     private readonly RequestContext context;
+    private readonly IHubContext<ScoreBoardHub> hub;
 
-    public ScoreBoardController(ScoreBoardService scoreboardService, GameService gameService, RequestContext context)
+    public ScoreBoardController(ScoreBoardService scoreboardService, GameService gameService, RequestContext context, IHubContext<ScoreBoardHub> hub)
     {
       this.scoreboardService = scoreboardService;
       this.gameService = gameService;
       this.context = context;
+      this.hub = hub;
     }
 
     [HttpGet("{gameId}")]
@@ -39,6 +42,7 @@ namespace TarokScoreBoard.Api.Controllers
         return StatusCode(403);
 
       var score = await scoreboardService.AddRound(createRoundRequest);
+      await hub.Clients.All.SendAsync("updateScoreBoard", score);
       return Ok(score);
     }
 

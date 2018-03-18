@@ -7,6 +7,7 @@ using Npgsql;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Linq;
+using TarokScoreBoard.Api.Controllers;
 using TarokScoreBoard.Api.Middleware;
 using TarokScoreBoard.Api.Swagger;
 using TarokScoreBoard.Core;
@@ -29,6 +30,7 @@ namespace TarokScoreBoard.Api
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+      services.AddSignalR();
       services.AddCors();
 
       // my dependencies
@@ -85,6 +87,11 @@ namespace TarokScoreBoard.Api
       app.UseErrorHandling();
 
       app.UseMvc();
+      app.UseSignalR(routes =>
+      {
+        routes.MapHub<ScoreBoardHub>("/api/hub/scoreboard");
+      });
+
       app.UseSwagger(c =>
       {
         c.RouteTemplate = "api-docs/{documentName}/scoreboard.json";
