@@ -75,6 +75,7 @@ namespace TarokScoreBoard.Core
         LeadPlayer = round.LeadPlayerId,
         SupportingPLayer = round.SupportingPlayerId,
         MondFangPlayer = round.MondFangPlayerId,
+        PagatFangPlayer = round.PagatFangPlayerId,
         Game = (GameType)round.GameType,
         Modifiers = round.Modifiers.Select(m =>
         {
