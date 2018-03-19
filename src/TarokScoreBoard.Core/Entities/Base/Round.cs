@@ -44,5 +44,7 @@ namespace TarokScoreBoard.Core.Entities
 
     [Column("won")]
     public bool Won { get; set; }
+
+    // TODO add IsEndRound
   }
 }

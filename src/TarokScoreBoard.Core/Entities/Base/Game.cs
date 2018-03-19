@@ -20,5 +20,7 @@ namespace TarokScoreBoard.Core.Entities
 
     [Column("team_id")]
     public Guid? TeamId { get; set; }
+
+    // TODO Add IsFinished
   }
 }

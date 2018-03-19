@@ -210,11 +210,9 @@ namespace TarokScoreBoard.Tests
 
       Assert.True(result.Data.RoundNumber == 1);
     }
-
-
+    
     private async Task<ResponseDTO<T>> DeserializeResponse<T>(HttpResponseMessage response) where T : class
     {
-
       var responseString = await response.Content.ReadAsStringAsync();
       output.WriteLine(responseString);
       var result = JsonConvert.DeserializeObject<ResponseDTO<T>>(responseString);

@@ -100,7 +100,7 @@ namespace TarokScoreBoard.Api
         c.DefaultModelsExpandDepth(0);
         c.EnableFilter();
         c.EnableDeepLinking();
-        c.RoutePrefix = "";
+        c.RoutePrefix = "api-docs";
       });
 
       DapperMapping.ConfigureColumnMapping();

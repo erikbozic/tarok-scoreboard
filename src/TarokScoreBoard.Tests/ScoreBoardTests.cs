@@ -462,5 +462,37 @@ namespace TarokScoreBoard.Tests
       Assert.True(scoreBoard.Scores[erik.PlayerId].Score == 125);
     }
 
+    [Fact(DisplayName = "Klop, Erik 10, Jan 36, Luka 0, Nejc, 24")]
+    public void Test17()
+    {
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
+
+      scoreBoard.ResetScores();
+
+      var round = new KlopRound
+      {
+        Game = GameType.Klop,
+        Won = false
+      };
+
+      round.KlopScores.Add(jan.PlayerId, new PlayerScore(-36));
+      round.KlopScores.Add(erik.PlayerId, new PlayerScore(-10));
+      round.KlopScores.Add(nejc.PlayerId, new PlayerScore(-24));
+      round.KlopScores.Add(luka.PlayerId, new PlayerScore(-0));
+
+      scoreBoard.ApplyTarokRound(round);
+
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == -35);
+      Assert.True(scoreBoard.Scores[erik.PlayerId].Score == 0);
+      Assert.True(scoreBoard.Scores[nejc.PlayerId].Score == 0);
+      Assert.True(scoreBoard.Scores[luka.PlayerId].Score == 35);
+
+      Assert.True(scoreBoard.Scores[jan.PlayerId].RadelcCount - scoreBoard.Scores[jan.PlayerId].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[erik.PlayerId].RadelcCount - scoreBoard.Scores[erik.PlayerId].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[nejc.PlayerId].RadelcCount - scoreBoard.Scores[nejc.PlayerId].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[luka.PlayerId].RadelcCount - scoreBoard.Scores[luka.PlayerId].UsedRadelcCount == 1);
+    }
   }
 }

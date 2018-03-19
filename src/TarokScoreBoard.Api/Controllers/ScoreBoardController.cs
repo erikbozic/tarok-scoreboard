@@ -64,7 +64,7 @@ namespace TarokScoreBoard.Api.Controllers
     public async Task<ActionResult<ResponseDTO<RoundDTO>>> FinishGame(Guid gameId)
     {
       if (!await CheckTeamId(gameId))
-        return Forbid();
+        return StatusCode(403);
 
       var round = await scoreboardService.EndGame(gameId);
       return Ok(round);
