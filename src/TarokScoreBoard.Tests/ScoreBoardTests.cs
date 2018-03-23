@@ -45,7 +45,7 @@ namespace TarokScoreBoard.Tests
         LeadPlayer = jan.PlayerId,
         SupportingPlayer = erik.PlayerId,
         Game = GameType.Ena,
-        Won  = true,
+        Won = true,
         ScoreDifference = 15
       };
 
@@ -493,6 +493,40 @@ namespace TarokScoreBoard.Tests
       Assert.True(scoreBoard.Scores[erik.PlayerId].RadelcCount - scoreBoard.Scores[erik.PlayerId].UsedRadelcCount == 1);
       Assert.True(scoreBoard.Scores[nejc.PlayerId].RadelcCount - scoreBoard.Scores[nejc.PlayerId].UsedRadelcCount == 1);
       Assert.True(scoreBoard.Scores[luka.PlayerId].RadelcCount - scoreBoard.Scores[luka.PlayerId].UsedRadelcCount == 1);
+    }
+
+    [Fact(DisplayName = "Klop, Erik 10, Jan 1, Luka 30, Nejc, 30")]
+    public void Test18()
+    {
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
+
+      scoreBoard.ResetScores();
+
+      var round = new KlopRound
+      {
+        Game = GameType.Klop,
+        Won = false
+      };
+
+      round.KlopScores.Add(jan.PlayerId, new PlayerScore(-1));
+      round.KlopScores.Add(erik.PlayerId, new PlayerScore(-10));
+      round.KlopScores.Add(nejc.PlayerId, new PlayerScore(-30));
+      round.KlopScores.Add(luka.PlayerId, new PlayerScore(-30));
+
+      scoreBoard.ApplyTarokRound(round);
+
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == 0);
+      Assert.True(scoreBoard.Scores[erik.PlayerId].Score == -10);
+      Assert.True(scoreBoard.Scores[nejc.PlayerId].Score == -30);
+      Assert.True(scoreBoard.Scores[luka.PlayerId].Score == -30);
+
+      Assert.True(scoreBoard.Scores[jan.PlayerId].RadelcCount - scoreBoard.Scores[jan.PlayerId].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[erik.PlayerId].RadelcCount - scoreBoard.Scores[erik.PlayerId].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[nejc.PlayerId].RadelcCount - scoreBoard.Scores[nejc.PlayerId].UsedRadelcCount == 1);
+      Assert.True(scoreBoard.Scores[luka.PlayerId].RadelcCount - scoreBoard.Scores[luka.PlayerId].UsedRadelcCount == 1);
+
     }
   }
 }

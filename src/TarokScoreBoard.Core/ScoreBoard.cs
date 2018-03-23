@@ -65,14 +65,15 @@ namespace TarokScoreBoard.Core
             ChangeScore(emptyPlayer.Key, (70/emptyPlayers.Count()));
 
             if (Scores[emptyPlayer.Key].HasRadelc())
-              Scores[emptyPlayer.Key].RemoveRadelc();
+              Scores[emptyPlayer.Key].RemoveRadelc(); 
           }
         }
         else
         {
           foreach (var klopScore in klop.KlopScores)
           {
-            Scores[klopScore.Key].ChangeScore(klopScore.Value.Score * (Scores[klopScore.Key].HasRadelc() ? 2 : 1));
+            var score = klopScore.Value.Score == -1 ? 0 : klopScore.Value.Score; // TODO ugly workaround. Solve this better.
+            Scores[klopScore.Key].ChangeScore(score * (Scores[klopScore.Key].HasRadelc() ? 2 : 1));
           }
         }    
       }
