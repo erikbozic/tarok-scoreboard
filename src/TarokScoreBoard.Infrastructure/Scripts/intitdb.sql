@@ -80,3 +80,23 @@ foreign key (round_id) references round (round_id) on delete cascade;
 alter table round_modifier
 add constraint game_round_modifier_fk
 foreign key (round_id) references round (round_id) on delete cascade;
+
+alter table game_player
+add constraint game_player_pk
+  primary key (game_id, player_id);
+
+alter table round_modifier
+add constraint round_modifier_pk
+  primary key (round_id, modifier_type);
+  
+alter table round_result
+add constraint round_result_pk
+  primary key (game_id, round_id, player_id);
+
+alter table team_player
+add constraint team_player_pk
+  primary key (team_id, player_id);
+
+alter table team_access_token
+add constraint team_access_token_pk
+  primary key (team_id, access_token);
