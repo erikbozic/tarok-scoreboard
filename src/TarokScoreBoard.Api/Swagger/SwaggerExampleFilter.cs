@@ -98,7 +98,7 @@ namespace TarokScoreBoard.Api.Swagger
             GameId = gameId,
             Name = "Tarok escapade of 2018.03.10",
             TeamId = teamId,
-            Players = fourPlayers.Select(p => new GamePlayerDTO() { Name = p.Value.Name, PlayerId = p.Key }).ToList()
+            Players = fourPlayers.Select(p => new GamePlayerDTO() { Name = p.Value.Name, PlayerId = p.Key, Position = p.Value.Position }).ToList()
           };
         case nameof(RoundDTO):
           return new RoundDTO()

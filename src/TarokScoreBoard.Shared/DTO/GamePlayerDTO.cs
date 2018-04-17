@@ -7,5 +7,6 @@ namespace TarokScoreBoard.Shared.DTO
     public string Name { get; set; }
 
     public Guid PlayerId { get; set; }
+    public int? Position { get; set; }
   }
 }

@@ -23,6 +23,7 @@ create table round(
 create table game_player(
   player_id uuid not null,
   game_id uuid not null,
+  position int,
   name varchar(100) not null
 );
 

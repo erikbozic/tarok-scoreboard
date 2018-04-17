@@ -19,7 +19,8 @@ namespace TarokScoreBoard.Core.Entities
         Players = Players?.Select(p => new GamePlayerDTO()
         {
           Name = p.Name,
-          PlayerId = p.PlayerId
+          PlayerId = p.PlayerId,
+          Position = p.Position
         }).ToList()
       };
     }

@@ -31,14 +31,27 @@ namespace TarokScoreBoard.Infrastructure.Services
 
       game = await gameRepository.AddAsync(game);
       game.Players = new List<GamePlayer>();
+
+
+      var gamePlayers = gameRequest.Players.Select(p => new GamePlayer(p.Name) { GameId = game.GameId, PlayerId = p.PlayerId ?? Guid.NewGuid() }).ToList();
+      RandomizePlayerPosition(gamePlayers);
       // TODO Check the players actually belong the the specified team
-      foreach (var player in gameRequest.Players.Select(p => new GamePlayer(p.Name) { GameId = game.GameId, PlayerId =  p.PlayerId ?? Guid.NewGuid() }))
+      foreach (var player in gamePlayers)
       {
         var dbPlayer =  await playerRepository.AddAsync(player);
         game.Players.Add(dbPlayer);
       }
 
       return game.ToDto();
+    }
+
+    private void RandomizePlayerPosition(IList<GamePlayer> players)
+    {
+      var rand = new Random();
+      var randomPositions = Enumerable.Range(1, players.Count).OrderBy(p => rand.Next()).ToArray();
+
+      for (var i = 0; i < players.Count; i++)
+        players[i].Position = randomPositions[i];      
     }
 
     public async Task<IEnumerable<GameDTO>> GetAllAsync()
