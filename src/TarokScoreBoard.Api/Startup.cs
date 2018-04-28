@@ -77,6 +77,7 @@ namespace TarokScoreBoard.Api
       app.UseCors(a =>
         a.WithOrigins(allowedOrigins)
         .SetPreflightMaxAge(TimeSpan.FromSeconds(3600))
+        .AllowCredentials()
         .AllowAnyHeader()
         .AllowAnyMethod());
 
