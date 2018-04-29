@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TarokScoreBoard.Api.Filters;
 using TarokScoreBoard.Core;
+using TarokScoreBoard.Core.Exceptions;
 using TarokScoreBoard.Infrastructure.Services;
 using TarokScoreBoard.Shared.DTO;
 
@@ -41,9 +42,9 @@ namespace TarokScoreBoard.Api.Controllers
       if (!await CheckTeamId(createRoundRequest.GameId))
         return StatusCode(403);
 
-      var score = await scoreboardService.AddRound(createRoundRequest);
-      await hub.Clients.Group(score.GameId.ToString()).SendAsync("updateScoreBoard", score);
-      return Ok(score);
+      var round = await scoreboardService.AddRound(createRoundRequest);
+      await hub.Clients.Group(round.GameId.ToString()).SendAsync("updateScoreBoard", round);
+      return Ok(round);
     }
     
     [HttpDelete("{gameId}")]
@@ -54,8 +55,17 @@ namespace TarokScoreBoard.Api.Controllers
       if (!await CheckTeamId(gameId))
         return StatusCode(403);
 
-      var result = await scoreboardService.DeleteLastRound(gameId);
-      return NoContent();
+      var deletedRound = await scoreboardService.DeleteLastRound(gameId);
+
+      if (deletedRound != null)
+      {
+        await hub.Clients.Group(gameId.ToString()).SendAsync("deleteLastRound", deletedRound);
+        return NoContent();
+      }
+      else
+      {
+        throw new RoundNotExistsException("No round to delete!");
+      }        
     }
     
     [HttpPost("end/{gameId}")]
@@ -67,6 +77,7 @@ namespace TarokScoreBoard.Api.Controllers
         return StatusCode(403);
 
       var round = await scoreboardService.EndGame(gameId);
+      await hub.Clients.Group(round.GameId.ToString()).SendAsync("updateScoreBoard", round);
       return Ok(round);
     }
 

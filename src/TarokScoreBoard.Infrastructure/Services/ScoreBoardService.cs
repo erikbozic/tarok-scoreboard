@@ -148,15 +148,15 @@ namespace TarokScoreBoard.Infrastructure.Services
       }
     }
 
-    public async Task<bool> DeleteLastRound(Guid gameId)
+    public async Task<RoundDTO> DeleteLastRound(Guid gameId)
     {
-      var lastRound =(await roundRepository.GetAllAsync(c => c.Where(r => r.GameId == gameId)
+      var lastRound = (await roundRepository.GetAllAsync(c => c.Where(r => r.GameId == gameId)
       .OrderByDescending(r => r.RoundNumber)))
       .FirstOrDefault();
 
-      var result = await roundRepository.DeleteAsync(lastRound.RoundId);
-
-      return result;
+      var success = await roundRepository.DeleteAsync(lastRound.RoundId);
+      
+      return lastRound.ToDto();
     }
   }
 }
