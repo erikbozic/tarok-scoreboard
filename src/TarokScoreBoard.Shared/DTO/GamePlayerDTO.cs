@@ -8,5 +8,7 @@ namespace TarokScoreBoard.Shared.DTO
 
     public Guid PlayerId { get; set; }
     public int? Position { get; set; }
+
+    public bool IsMaestro { get; set; }
   }
 }

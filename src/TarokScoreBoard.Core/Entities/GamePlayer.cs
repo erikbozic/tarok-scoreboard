@@ -1,4 +1,6 @@
-﻿namespace TarokScoreBoard.Core.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace TarokScoreBoard.Core.Entities
 {
   public partial class GamePlayer
   {
@@ -11,5 +13,8 @@
     {
       Name = name;
     }
+
+    [NotMapped] // TODO does dapper honor this?
+    public bool IsMaestro { get; set; }
   }
 }

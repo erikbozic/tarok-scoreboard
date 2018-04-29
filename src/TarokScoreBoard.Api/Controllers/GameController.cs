@@ -23,14 +23,14 @@ namespace TarokScoreBoard.Api.Controllers
     }
 
     [HttpGet]
-    public async Task<ActionResult<ResponseDTO<IEnumerable<GameDTO>>>> Get()
+    public async Task<ActionResult<ResponseDTO<IEnumerable<GameDTO>>>> Get(int? limit = 5, int? offset = 0)
     {
-      var games = await gameService.GetAllAsync();
+      var games = await gameService.GetAllAsync(limit.Value, offset.Value);
       return Ok(games);
     }
     
     [HttpGet("{gameId}")]
-    [ResponseCache(Duration = 72000, Location = ResponseCacheLocation.Any, VaryByHeader = "Origin")]
+    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, VaryByHeader = "Origin")]
     public async Task<ActionResult<ResponseDTO<GameDTO>>> Get(Guid gameId)
     {
       var game = await gameService.GetAsync(gameId);

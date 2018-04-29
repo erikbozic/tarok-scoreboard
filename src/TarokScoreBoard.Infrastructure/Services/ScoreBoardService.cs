@@ -94,7 +94,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       return round.ToDto();
     }
 
-    public async Task<RoundDTO> EndGame(Guid gameId)
+    public async Task<Round> GetLastRound(Guid gameId)
     {
       var gameRounds = await roundRepository.GetAllAsync(c => c.Where(r => r.GameId == gameId).OrderBy(r => r.RoundNumber));
 
@@ -102,8 +102,15 @@ namespace TarokScoreBoard.Infrastructure.Services
 
       var lastRoundId = lastRound.RoundId;
       var lastRoundResults = await roundResultRepository.GetAllAsync(c => c.Where(r => r.RoundId == lastRoundId));
+      lastRound.RoundResults = lastRoundResults.ToList();
 
-      var scoreBoard = ScoreBoard.FromRound(lastRoundResults);
+      return lastRound;
+    }
+
+    public async Task<RoundDTO> EndGame(Guid gameId)
+    {
+      var lastRound = await this.GetLastRound(gameId);
+      var scoreBoard = ScoreBoard.FromRound(lastRound.RoundResults);
       scoreBoard.EndGame();
       var roundId = Guid.NewGuid();
       var endRound = new Round()

@@ -20,7 +20,8 @@ namespace TarokScoreBoard.Core.Entities
         {
           Name = p.Name,
           PlayerId = p.PlayerId,
-          Position = p.Position
+          Position = p.Position,
+          IsMaestro = p.IsMaestro
         }).ToList()
       };
     }
