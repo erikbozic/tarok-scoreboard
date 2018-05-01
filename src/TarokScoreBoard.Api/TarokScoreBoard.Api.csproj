@@ -15,10 +15,13 @@
   
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.4" />
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.0-preview1-final" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.0-preview2-final" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Connections" Version="1.0.0-preview2-final" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.0.0-preview2-final" />
+    <PackageReference Include="Microsoft.AspNetCore.Sockets.Http" Version="1.0.0-preview1-final" />
     <PackageReference Include="Npgsql" Version="4.0.0-preview1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="2.2.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="2.2.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="2.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>
