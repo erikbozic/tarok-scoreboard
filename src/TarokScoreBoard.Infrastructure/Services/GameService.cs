@@ -92,7 +92,7 @@ namespace TarokScoreBoard.Infrastructure.Services
         if(lastRound != null)
         {
           var highestScore = lastRound.RoundResults.OrderByDescending(r => r.PlayerScore).FirstOrDefault();
-          var bestPlayerPreviousGame = game.Players.FirstOrDefault(g => g.PlayerId == highestScore.PlayerId);
+          var bestPlayerPreviousGame = game.Players.FirstOrDefault(g => g.PlayerId == highestScore?.PlayerId);
           bestPlayerPreviousGame.IsMaestro = true;
         }
       }
