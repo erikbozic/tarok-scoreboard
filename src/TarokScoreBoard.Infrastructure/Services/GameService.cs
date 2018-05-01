@@ -89,10 +89,12 @@ namespace TarokScoreBoard.Infrastructure.Services
       if(previousGame != null)
       {
         var lastRound = await this.scoreBoardService.GetLastRound(previousGame.GameId);
-
-        var highestScore = lastRound.RoundResults.OrderByDescending(r => r.PlayerScore).FirstOrDefault();
-        var bestPlayerPreviousGame = game.Players.FirstOrDefault(g => g.PlayerId == highestScore.PlayerId);
-        bestPlayerPreviousGame.IsMaestro = true;
+        if(lastRound != null)
+        {
+          var highestScore = lastRound.RoundResults.OrderByDescending(r => r.PlayerScore).FirstOrDefault();
+          var bestPlayerPreviousGame = game.Players.FirstOrDefault(g => g.PlayerId == highestScore.PlayerId);
+          bestPlayerPreviousGame.IsMaestro = true;
+        }
       }
 
       return game.ToDto();

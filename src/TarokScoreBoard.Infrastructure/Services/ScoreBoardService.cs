@@ -100,10 +100,12 @@ namespace TarokScoreBoard.Infrastructure.Services
 
       var lastRound = gameRounds.LastOrDefault();
 
-      var lastRoundId = lastRound.RoundId;
-      var lastRoundResults = await roundResultRepository.GetAllAsync(c => c.Where(r => r.RoundId == lastRoundId));
-      lastRound.RoundResults = lastRoundResults.ToList();
-
+      var lastRoundId = lastRound?.RoundId;
+      if(lastRoundId != null)
+      {
+        var lastRoundResults = await roundResultRepository.GetAllAsync(c => c.Where(r => r.RoundId == lastRoundId));
+        lastRound.RoundResults = lastRoundResults.ToList();
+      }
       return lastRound;
     }
 
