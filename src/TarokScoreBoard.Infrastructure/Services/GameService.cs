@@ -60,7 +60,7 @@ namespace TarokScoreBoard.Infrastructure.Services
 
     public async Task<IEnumerable<GameDTO>> GetAllAsync(int limit = 5, int offset = 0)
     {
-      var result = await gameRepository.GetAllAsync(limit, offset);
+      var result = await gameRepository.GetAllAsync(c => c.OrderByDescending(g => g.Date), limit, offset);
       return result.Select(g => g.ToDto());
     }
 

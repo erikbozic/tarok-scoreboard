@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -21,10 +21,10 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.4" />
-    <PackageReference Include="Npgsql" Version="3.2.7" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.1.0-preview2-final"/>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.0-preview2-final"/>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0-preview2-26406-04"/>
+    <PackageReference Include="Npgsql" Version="4.0.0-preview1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.1.0-preview1-final" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.0-preview1-final" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
     
   </ItemGroup>
 
