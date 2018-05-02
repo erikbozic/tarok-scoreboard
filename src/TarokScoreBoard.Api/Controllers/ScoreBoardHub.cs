@@ -10,7 +10,7 @@ namespace TarokScoreBoard.Api.Controllers
   {
     public async override Task OnConnectedAsync()
     {
-      var ctx = this.Context.Connection.Features.Get<IHttpContextFeature>();
+      var ctx = this.Context.Features.Get<IHttpContextFeature>();
       var gameId =ctx.HttpContext.Request.Query["gameId"];
 
       await Groups.AddAsync(this.Context.ConnectionId, gameId);
