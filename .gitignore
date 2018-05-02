@@ -259,5 +259,7 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+# config files
 /src/TarokScoreBoard.Api/appsettings.Production.json
 /src/TarokScoreBoard.Api/appsettings.Development.json
+src/TarokScoreBoard.Tests/appsettings.Testing.json
