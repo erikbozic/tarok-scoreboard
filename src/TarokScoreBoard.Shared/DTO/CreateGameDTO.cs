@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TarokScoreBoard.Shared.DTO
 {
-  public class CreateGameDTO
+  public class CreateGameDTO : IValidatableObject
   {
     [Required]
     public string Name { get; set; } = string.Empty;
@@ -16,5 +16,11 @@ namespace TarokScoreBoard.Shared.DTO
     /// Only used internally
     /// </summary>
     public Guid? TeamId { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+       if (this.Players == null || this.Players.Count < 3 )
+        yield return new ValidationResult("There must be at least three players!");
+    }
   }
 }
