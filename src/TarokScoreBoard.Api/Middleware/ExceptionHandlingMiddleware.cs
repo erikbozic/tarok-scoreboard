@@ -38,14 +38,12 @@ namespace TarokScoreBoard.Api.Middleware
     }
 
     private async Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger<ErrorHandlingMiddleware> logger)
-    {
-      logger.LogError(exception.HResult, exception, "Error returned to the client.");
+    { 
       var code = HttpStatusCode.InternalServerError;
-      ResponseDTO<object> error;
-
+      ResponseDTO<object> responseObj;
 
       // TODO figure out a way to propery solve exception handling and reporting for the 99% case...
-      error = new ResponseDTO<object>()
+      responseObj = new ResponseDTO<object>()
       {
         Data = null,
         Errors = Array.Empty<string>(),
@@ -55,7 +53,7 @@ namespace TarokScoreBoard.Api.Middleware
       if (exception is TarokBaseException tbe)
       {
         code = tbe.StatusCode;
-        error.Errors = tbe.AdditionalData;
+        responseObj.Errors = tbe.AdditionalData;
       }
         
       logger.LogError(exception, exception.Message, code);
@@ -64,7 +62,7 @@ namespace TarokScoreBoard.Api.Middleware
 
       using (var writer = new StreamWriter(context.Response.Body))
       {
-        _serializer.Serialize(writer, error);
+        _serializer.Serialize(writer, responseObj);
         await writer.FlushAsync();
       }
     }
