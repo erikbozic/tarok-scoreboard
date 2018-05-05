@@ -74,7 +74,7 @@ namespace TarokScoreBoard.Infrastructure.Services
         .OrderByDescending(g => g.Date), 1, 1))
         .FirstOrDefault();
 
-      return lastGame.ToDto();
+      return lastGame?.ToDto();
     }
 
     public async Task<GameDTO> GetAsync(Guid guid)

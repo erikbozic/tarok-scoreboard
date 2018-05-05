@@ -43,16 +43,21 @@ namespace TarokScoreBoard.Api.Middleware
       var code = HttpStatusCode.InternalServerError;
       ResponseDTO<object> error;
 
+
+      // TODO figure out a way to propery solve exception handling and reporting for the 99% case...
       error = new ResponseDTO<object>()
       {
         Data = null,
-        Errors = exception,
+        Errors = Array.Empty<string>(),
         Message = exception.Message
       };
 
       if (exception is TarokBaseException tbe)
-          code = tbe.StatusCode;
-
+      {
+        code = tbe.StatusCode;
+        error.Errors = tbe.AdditionalData;
+      }
+        
       logger.LogError(exception, exception.Message, code);
       context.Response.ContentType = "application/json";
       context.Response.StatusCode = (int)code;
