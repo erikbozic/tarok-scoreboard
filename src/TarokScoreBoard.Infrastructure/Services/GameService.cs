@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using TarokScoreBoard.Core;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Infrastructure.Repositories;
@@ -15,13 +16,15 @@ namespace TarokScoreBoard.Infrastructure.Services
     private readonly GamePlayerRepository playerRepository;
     private readonly RequestContext context;
     private readonly ScoreBoardService scoreBoardService;
+    private readonly ILogger<GameService> logger;
 
-    public GameService(GameRepository gameRepository, GamePlayerRepository playerRepository, RequestContext context, ScoreBoardService scoreBoardService)
+    public GameService(GameRepository gameRepository, GamePlayerRepository playerRepository, RequestContext context, ScoreBoardService scoreBoardService, ILogger<GameService> logger)
     {
       this.gameRepository = gameRepository;
       this.playerRepository = playerRepository;
       this.context = context;
       this.scoreBoardService = scoreBoardService;
+      this.logger = logger;
     }
 
     public async Task<GameDTO> StartGameAsync(CreateGameDTO gameRequest)
@@ -93,7 +96,9 @@ namespace TarokScoreBoard.Infrastructure.Services
         {
           var highestScore = lastRound.RoundResults.OrderByDescending(r => r.PlayerScore).FirstOrDefault();
           var bestPlayerPreviousGame = game.Players.FirstOrDefault(g => g.PlayerId == highestScore?.PlayerId);
-          bestPlayerPreviousGame.IsMaestro = true;
+          
+          if (bestPlayerPreviousGame != null)
+            bestPlayerPreviousGame.IsMaestro = true;
         }
       }
 
