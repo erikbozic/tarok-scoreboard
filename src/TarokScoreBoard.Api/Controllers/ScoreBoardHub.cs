@@ -13,7 +13,7 @@ namespace TarokScoreBoard.Api.Controllers
       var ctx = this.Context.GetHttpContext();
       var gameId =ctx.Request.Query["gameId"];
 
-      await Groups.AddAsync(this.Context.ConnectionId, gameId);
+      await Groups.AddToGroupAsync(this.Context.ConnectionId, gameId);
 
       await base.OnConnectedAsync();
     }
