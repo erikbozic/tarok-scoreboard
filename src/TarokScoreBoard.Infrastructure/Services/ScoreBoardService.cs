@@ -25,6 +25,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       .Include(r => r.RoundResult)
       .Include(r => r.RoundModifier)
       .Where(r => r.GameId == gameId)
+      .OrderBy(r => r.RoundNumber)
       .ToListAsync();
 
       return rounds.Select(r => r.ToDto());
