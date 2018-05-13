@@ -36,17 +36,21 @@ namespace TarokScoreBoard.Infrastructure.Services
       var round = Round.FromCreateRoundRequest(createRoundRequest);
       var gameId = round.GameId;
 
-      var gameRounds = dbContext.Round.Where(r => r.GameId == gameId).OrderBy(r => r.RoundNumber);
+      var gameRounds = dbContext.Round
+      .AsNoTracking()  
+      .Where(r => r.GameId == gameId)
+      .OrderBy(r => r.RoundNumber);
 
       var lastRound = await gameRounds.LastOrDefaultAsync();
       round.RoundNumber = (lastRound?.RoundNumber ?? 0) + 1;
 
-      await dbContext.Round.AddAsync(round);
+      dbContext.Round.Add(round);
 
       foreach (var mod in round.RoundModifier)
-        await dbContext.RoundModifier.AddAsync(mod);
+        dbContext.RoundModifier.Add(mod);
 
       var game = await dbContext.Game
+          .AsNoTracking()
           .Include(g => g.GamePlayer)
           .FirstOrDefaultAsync(g => g.GameId == gameId);
           
@@ -87,8 +91,7 @@ namespace TarokScoreBoard.Infrastructure.Services
         round.RoundResult.Add(score);
 
       foreach (var roundResult in round.RoundResult)
-        await dbContext.RoundResult.AddAsync(roundResult);
-
+        dbContext.RoundResult.Add(roundResult);
 
       await dbContext.SaveChangesAsync();
 

@@ -36,7 +36,8 @@ namespace TarokScoreBoard.Infrastructure.Services
       
       var members = await dbContext.TeamPlayer
       .AsNoTracking()
-      .Where(t => t.TeamId == teamId).ToListAsync();
+      .Where(t => t.TeamId == teamId)
+      .ToListAsync();
       
       team.Members.AddRange(members);
       return team;
@@ -50,6 +51,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       var team = await dbContext.Team
       .AsNoTracking()
       .FirstOrDefaultAsync(t => t.TeamUserId == teamId);
+      
       if (team == null)
         throw new LoginFailedException("Credentials invalid!");
 
@@ -63,7 +65,10 @@ namespace TarokScoreBoard.Infrastructure.Services
 
       var token = await this.dbContext.GetAccessToken(team.TeamId);
 
-      team.Members = await dbContext.TeamPlayer.AsNoTracking().Where(tp => tp.TeamId == team.TeamId).ToListAsync();
+      team.Members = await dbContext.TeamPlayer
+      .AsNoTracking()
+      .Where(tp => tp.TeamId == team.TeamId)
+      .ToListAsync();
 
       return (token, team);
     }
@@ -72,9 +77,9 @@ namespace TarokScoreBoard.Infrastructure.Services
     {
       var team = await dbContext.Team
       .AsNoTracking()
-      .Where(t => t.TeamUserId == username).ToListAsync();
+      .FirstOrDefaultAsync(t => t.TeamUserId == username);
 
-      return team.FirstOrDefault() != null;
+      return team != null;
     }
 
     public async Task<TeamDTO> CreateTeamAsync(CreateTeamDTO createTeamDTO)
