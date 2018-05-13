@@ -37,7 +37,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 
     public async Task<Team> GetAsync(Guid teamid)
     {
-      return await conn.QueryFirstAsync<Team>($@"
+      return await conn.QueryFirstOrDefaultAsync<Team>($@"
       {BaseSelect}
       WHERE team_id = :teamid",
       new { teamid });

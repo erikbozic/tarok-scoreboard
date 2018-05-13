@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TarokScoreBoard.Core;
 using TarokScoreBoard.Core.Entities;
+using TarokScoreBoard.Core.Exceptions;
 using TarokScoreBoard.Infrastructure.Repositories;
 using TarokScoreBoard.Shared.DTO;
 
@@ -12,16 +14,14 @@ namespace TarokScoreBoard.Infrastructure.Services
 {
   public class GameService
   {
-    private readonly GameRepository gameRepository;
-    private readonly GamePlayerRepository playerRepository;
+    private readonly TarokDbContext dbContext;
     private readonly RequestContext context;
     private readonly ScoreBoardService scoreBoardService;
     private readonly ILogger<GameService> logger;
 
-    public GameService(GameRepository gameRepository, GamePlayerRepository playerRepository, RequestContext context, ScoreBoardService scoreBoardService, ILogger<GameService> logger)
+    public GameService(TarokDbContext dbContext, RequestContext context, ScoreBoardService scoreBoardService, ILogger<GameService> logger)
     {
-      this.gameRepository = gameRepository;
-      this.playerRepository = playerRepository;
+      this.dbContext = dbContext;
       this.context = context;
       this.scoreBoardService = scoreBoardService;
       this.logger = logger;
@@ -37,17 +37,31 @@ namespace TarokScoreBoard.Infrastructure.Services
         Date = DateTime.Now
       };
 
-      game = await gameRepository.AddAsync(game);
+      dbContext.Game.Add(game);
+
+      if(game.TeamId != null)
+      {
+        var teamPlayers = await dbContext.TeamPlayer
+        .AsNoTracking()
+        .Where(tp => tp.TeamId == game.TeamId)
+        .ToListAsync();;
+      
+       foreach(var player in gameRequest.Players)
+       {
+         if(player.PlayerId.HasValue && !teamPlayers.Select(tp => tp.PlayerId).Contains(player.PlayerId.Value))
+          throw new OperationUnauthorizedException("Specified player not in team!");
+       }
+      }
+      
       game.GamePlayer = new List<GamePlayer>();
       
       var gamePlayers = gameRequest.Players.Select(p => new GamePlayer(p.Name) { GameId = game.GameId, PlayerId = p.PlayerId ?? Guid.NewGuid() }).ToList();
       RandomizePlayerPosition(gamePlayers);
-      // TODO Check the players actually belong the the specified team
+
       foreach (var player in gamePlayers)
-      {
-        var dbPlayer =  await playerRepository.AddAsync(player);
-        game.GamePlayer.Add(dbPlayer);
-      }
+        game.GamePlayer.Add(player);
+
+      await dbContext.SaveChangesAsync();
 
       return game.ToDto();
     }
@@ -63,7 +77,11 @@ namespace TarokScoreBoard.Infrastructure.Services
 
     public async Task<IEnumerable<GameDTO>> GetAllAsync(int limit = 5, int offset = 0)
     {
-      var result = await gameRepository.GetAllAsync(c => c.OrderByDescending(g => g.Date), limit, offset);
+      var result = await dbContext.Game
+      .OrderByDescending(g => g.Date)
+      .Skip(offset)
+      .Take(limit)
+      .ToListAsync();
       return result.Select(g => g.ToDto());
     }
 
@@ -72,20 +90,21 @@ namespace TarokScoreBoard.Infrastructure.Services
       if (teamId == null)
         return null;
 
-      var lastGame = (await gameRepository
-        .GetAllAsync(c => c.Where(g => g.TeamId == teamId)
-        .OrderByDescending(g => g.Date), 1, 1))
-        .FirstOrDefault();
+      var lastGame = await dbContext.Game
+      .AsNoTracking()
+      .Where(g => g.TeamId == teamId)
+      .OrderByDescending(g => g.Date)
+      .FirstOrDefaultAsync();
 
       return lastGame?.ToDto();
     }
 
     public async Task<GameDTO> GetAsync(Guid guid)
     {
-      var game = await gameRepository.GetAsync(guid);
-      var id = game.GameId;
-      var gamePlayers = await playerRepository.GetAllAsync(c => c.Where(p => p.GameId == id));
-      game.GamePlayer = gamePlayers.ToList();
+      var game = await dbContext.Game
+      .AsNoTracking()
+      .Include(g => g.GamePlayer)      
+      .FirstOrDefaultAsync(g => g.GameId == guid);
 
       var previousGame = await GetPreviousGame(game.TeamId);
 

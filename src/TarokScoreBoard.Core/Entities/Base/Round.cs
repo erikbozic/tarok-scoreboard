@@ -11,7 +11,7 @@ namespace TarokScoreBoard.Core.Entities
         public Round()
         {
             RoundModifier = new HashSet<RoundModifier>();
-            // RoundResult = new HashSet<RoundResult>();
+            RoundResult = new HashSet<RoundResult>();
         }
 
         [Column("round_id")]

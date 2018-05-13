@@ -36,7 +36,6 @@ namespace TarokScoreBoard.Api.Controllers
 
     [HttpPost]
     [Authorize]
-    [TransactionFilter]
     public async Task<ActionResult<ResponseDTO<RoundDTO>>> PostRound(CreateRoundDTO createRoundRequest)
     {
       if (!await CheckTeamId(createRoundRequest.GameId))
@@ -49,7 +48,6 @@ namespace TarokScoreBoard.Api.Controllers
     
     [HttpDelete("{gameId}")]
     [Authorize]
-    [TransactionFilter]
     public async Task<IActionResult> Delete(Guid gameId)
     {
       if (!await CheckTeamId(gameId))
@@ -70,7 +68,6 @@ namespace TarokScoreBoard.Api.Controllers
     
     [HttpPost("end/{gameId}")]
     [Authorize]
-    [TransactionFilter]
     public async Task<ActionResult<ResponseDTO<RoundDTO>>> FinishGame(Guid gameId)
     {
       if (!await CheckTeamId(gameId))
@@ -85,7 +82,7 @@ namespace TarokScoreBoard.Api.Controllers
     private async Task<bool> CheckTeamId(Guid gameId)
     {
       var game = await gameService.GetAsync(gameId);
-
+      
       if (game.TeamId != this.context.TeamId)
         return false;
 

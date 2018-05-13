@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Core.Exceptions;
 using TarokScoreBoard.Infrastructure.Repositories;
@@ -14,11 +15,13 @@ namespace TarokScoreBoard.Infrastructure.Services
   {
     private readonly TeamRepository teamRepository;
     private readonly TeamPlayerRepository teamPlayerRepository;
+    private readonly TarokDbContext dbContext;
 
-    public TeamService(TeamRepository teamRepository, TeamPlayerRepository teamPlayerRepository)
+    public TeamService(TeamRepository teamRepository, TeamPlayerRepository teamPlayerRepository, TarokDbContext dbContext)
     {
       this.teamRepository = teamRepository;
       this.teamPlayerRepository = teamPlayerRepository;
+      this.dbContext = dbContext;
     }
 
     public async Task<IEnumerable<Team>> GetTeamsAsync()
@@ -40,7 +43,9 @@ namespace TarokScoreBoard.Infrastructure.Services
       var teamId = loginDto.TeamId;
       var passphrase = loginDto.Passphrase;
 
-      var team = (await teamRepository.GetAllAsync(c => c.Where(t => t.TeamUserId == teamId))).FirstOrDefault();
+      var team = await dbContext.Team
+      .AsNoTracking()
+      .FirstOrDefaultAsync(t => t.TeamUserId == teamId);
       if (team == null)
         throw new LoginFailedException("Credentials invalid!");
 
@@ -53,7 +58,8 @@ namespace TarokScoreBoard.Infrastructure.Services
       }
 
       var token = await this.teamRepository.GetAccessToken(team.TeamId);
-      team = await this.GetTeamAsync(team.TeamId);
+
+      team.Members = await dbContext.TeamPlayer.AsNoTracking().Where(tp => tp.TeamId == team.TeamId).ToListAsync();
              
       return (token,team);
     }

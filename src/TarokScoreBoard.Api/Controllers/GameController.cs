@@ -40,7 +40,6 @@ namespace TarokScoreBoard.Api.Controllers
     }
     
     [HttpPost]
-    [TransactionFilter]
     public async Task<ActionResult<ResponseDTO<GameDTO>>> AddGame(CreateGameDTO gameRequest)
     {
       if (context.TeamId != null)

@@ -53,6 +53,7 @@ namespace TarokScoreBoard.Api
       services.AddDbContextPool<TarokDbContext>(opt => {
           opt.UseNpgsql(Configuration.GetConnectionString("tarok"));
       });
+
       services.ConfigureValidationModel();
 
       services.AddSingleton(Configuration);      
@@ -108,7 +109,7 @@ namespace TarokScoreBoard.Api
         c.RoutePrefix = "api-docs";
       });
 
-      // DapperMapping.ConfigureColumnMapping();
+      DapperMapping.ConfigureColumnMapping();
     }
   }
 }

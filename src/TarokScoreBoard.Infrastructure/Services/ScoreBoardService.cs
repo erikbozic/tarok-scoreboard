@@ -12,30 +12,17 @@ namespace TarokScoreBoard.Infrastructure.Services
 {
   public class ScoreBoardService
   {
-    private readonly GameRepository gameRepository;
-    private readonly GamePlayerRepository playerRepository;
-    private readonly RoundRepository roundRepository;
-    private readonly RoundResultRepository roundResultRepository;
-    private readonly RoundModifierRepository modifierRepository;
     private readonly TarokDbContext dbContext;
 
-    public ScoreBoardService(GameRepository gameRepo,
-      GamePlayerRepository playerRepo,
-      RoundRepository roundRepo,
-      RoundResultRepository roundResultRepo,
-      RoundModifierRepository modifierRepo, TarokDbContext dbContext)
-    {
-      this.gameRepository = gameRepo;
-      this.playerRepository = playerRepo;
-      this.roundRepository = roundRepo;
-      this.roundResultRepository = roundResultRepo;
-      this.modifierRepository = modifierRepo;
+    public ScoreBoardService(TarokDbContext dbContext)
+    {;
       this.dbContext = dbContext;
     }
 
     public async Task<IEnumerable<RoundDTO>> GetGameRounds(Guid gameId)
     {
       var rounds = await this.dbContext.Round
+      .AsNoTracking()
       .Include(r => r.RoundResult)
       .Include(r => r.RoundModifier)
       .Where(r => r.GameId == gameId)
@@ -49,18 +36,21 @@ namespace TarokScoreBoard.Infrastructure.Services
       var round = Round.FromCreateRoundRequest(createRoundRequest);
       var gameId = round.GameId;
 
-      var gameRounds = await roundRepository.GetAllAsync(c => c.Where(r => r.GameId == gameId).OrderBy(r => r.RoundNumber));
+      var gameRounds = dbContext.Round.Where(r => r.GameId == gameId).OrderBy(r => r.RoundNumber);
 
-      var lastRound = gameRounds.LastOrDefault();
+      var lastRound = await gameRounds.LastOrDefaultAsync();
       round.RoundNumber = (lastRound?.RoundNumber ?? 0) + 1;
 
-      await roundRepository.AddAsync(round);
-      // TODO move to repo, bulk insert
-      foreach (var mod in round.RoundModifier)
-        await modifierRepository.AddAsync(mod);
+      await dbContext.Round.AddAsync(round);
 
-      var game = await gameRepository.GetAsync(gameId);
-      var players = (await playerRepository.GetAllAsync(c => c.Where(p => p.GameId == gameId))).ToDictionary(item => item.PlayerId, item => item);
+      foreach (var mod in round.RoundModifier)
+        await dbContext.RoundModifier.AddAsync(mod);
+
+      var game = await dbContext.Game
+          .Include(g => g.GamePlayer)
+          .FirstOrDefaultAsync(g => g.GameId == gameId);
+          
+      var players = game.GamePlayer.ToDictionary(item => item.PlayerId, item => item);
       ScoreBoard scoreBoard = null;
 
       if(lastRound == null)
@@ -71,7 +61,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       else
       {
         var lastRoundId = lastRound.RoundId;
-        var lastRoundResults = await roundResultRepository.GetAllAsync(c => c.Where(r => r.RoundId == lastRoundId));
+        var lastRoundResults = await dbContext.RoundResult.Where(r => r.RoundId == lastRoundId).ToListAsync();
   
         scoreBoard = ScoreBoard.FromRound(lastRoundResults);
       }
@@ -97,23 +87,23 @@ namespace TarokScoreBoard.Infrastructure.Services
         round.RoundResult.Add(score);
 
       foreach (var roundResult in round.RoundResult)
-        await roundResultRepository.AddAsync(roundResult);
+        await dbContext.RoundResult.AddAsync(roundResult);
+
+
+      await dbContext.SaveChangesAsync();
 
       return round.ToDto();
     }
 
     public async Task<Round> GetLastRound(Guid gameId)
     {
-      var gameRounds = await roundRepository.GetAllAsync(c => c.Where(r => r.GameId == gameId).OrderBy(r => r.RoundNumber));
+      var gameRounds = dbContext.Round
+      .AsNoTracking()
+      .Include(r => r.RoundResult)
+      .Where(r => r.GameId == gameId).OrderBy(r => r.RoundNumber);
 
-      var lastRound = gameRounds.LastOrDefault();
-
-      var lastRoundId = lastRound?.RoundId;
-      if(lastRoundId != null)
-      {
-        var lastRoundResults = await roundResultRepository.GetAllAsync(c => c.Where(r => r.RoundId == lastRoundId));
-        lastRound.RoundResult = lastRoundResults.ToList();
-      }
+      var lastRound = await gameRounds.LastOrDefaultAsync();
+      
       return lastRound;
     }
 
@@ -147,9 +137,9 @@ namespace TarokScoreBoard.Infrastructure.Services
       foreach(var score in scores)
         endRound.RoundResult.Add(score);
 
-      await roundRepository.AddAsync(endRound);
-      foreach (var roundResult in endRound.RoundResult)
-        await roundResultRepository.AddAsync(roundResult);
+      dbContext.Round.Add(endRound);
+      
+      await dbContext.SaveChangesAsync();
 
       return endRound.ToDto();
     }
@@ -158,7 +148,7 @@ namespace TarokScoreBoard.Infrastructure.Services
     {
       foreach (var score in scoreBoard.Scores)
       {
-        await roundResultRepository.AddAsync(new RoundResult()
+         dbContext.RoundResult.Add(new RoundResult()
         {
            RoundId = roundId,
            GameId = scoreBoard.GameId,
@@ -168,16 +158,20 @@ namespace TarokScoreBoard.Infrastructure.Services
            PlayerRadelcUsed = score.Value.UsedRadelcCount
         });
       }
+
+      await dbContext.SaveChangesAsync();
     }
 
     public async Task<RoundDTO> DeleteLastRound(Guid gameId)
     {
-      var lastRound = (await roundRepository.GetAllAsync(c => c.Where(r => r.GameId == gameId)
-      .OrderByDescending(r => r.RoundNumber)))
-      .FirstOrDefault();
+      var lastRound = await dbContext.Round.Where(r => r.GameId == gameId)
+      .OrderByDescending(r => r.RoundNumber)
+      .FirstOrDefaultAsync();
 
-      var success = await roundRepository.DeleteAsync(lastRound.RoundId);
-      
+      dbContext.Round.Remove(lastRound);
+
+      await dbContext.SaveChangesAsync();
+
       return lastRound.ToDto();
     }
   }
