@@ -122,7 +122,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       };
       
 
-      var scores =scoreBoard.Scores.OrderBy(s => s.Key).Select(s =>
+      var scores = scoreBoard.Scores.OrderBy(s => s.Key).Select(s =>
       {
         return new RoundResult()
         {
@@ -164,7 +164,8 @@ namespace TarokScoreBoard.Infrastructure.Services
 
     public async Task<RoundDTO> DeleteLastRound(Guid gameId)
     {
-      var lastRound = await dbContext.Round.Where(r => r.GameId == gameId)
+      var lastRound = await dbContext.Round
+      .Where(r => r.GameId == gameId)
       .OrderByDescending(r => r.RoundNumber)
       .FirstOrDefaultAsync();
 

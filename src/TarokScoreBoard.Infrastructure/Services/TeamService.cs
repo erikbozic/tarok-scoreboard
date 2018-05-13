@@ -13,27 +13,31 @@ namespace TarokScoreBoard.Infrastructure.Services
 {
   public class TeamService
   {
-    private readonly TeamRepository teamRepository;
-    private readonly TeamPlayerRepository teamPlayerRepository;
     private readonly TarokDbContext dbContext;
 
-    public TeamService(TeamRepository teamRepository, TeamPlayerRepository teamPlayerRepository, TarokDbContext dbContext)
+    public TeamService(TarokDbContext dbContext)
     {
-      this.teamRepository = teamRepository;
-      this.teamPlayerRepository = teamPlayerRepository;
       this.dbContext = dbContext;
     }
 
     public async Task<IEnumerable<Team>> GetTeamsAsync()
     {
-      var teams = await teamRepository.GetAllAsync();
+      var teams = await dbContext.Team
+      .AsNoTracking()
+      .ToListAsync();
       return teams;
     }
 
     public async Task<Team> GetTeamAsync(Guid teamId)
     {
-      var team = await teamRepository.GetAsync(teamId);
-      var members = await teamPlayerRepository.GetAllAsync(c => c.Where(t => t.TeamId == teamId));
+      var team = await dbContext.Team
+      .AsNoTracking()
+      .FirstOrDefaultAsync(t => t.TeamId == teamId);
+      
+      var members = await dbContext.TeamPlayer
+      .AsNoTracking()
+      .Where(t => t.TeamId == teamId).ToListAsync();
+      
       team.Members.AddRange(members);
       return team;
     }
@@ -57,16 +61,18 @@ namespace TarokScoreBoard.Infrastructure.Services
           throw new LoginFailedException("Credentials invalid!");
       }
 
-      var token = await this.teamRepository.GetAccessToken(team.TeamId);
+      var token = await this.dbContext.GetAccessToken(team.TeamId);
 
       team.Members = await dbContext.TeamPlayer.AsNoTracking().Where(tp => tp.TeamId == team.TeamId).ToListAsync();
-             
-      return (token,team);
+
+      return (token, team);
     }
 
     public async Task<bool> CheckNameAsync(string username)
     {
-      var team = await teamRepository.GetAllAsync(c => c.Where(t => t.TeamUserId == username));
+      var team = await dbContext.Team
+      .AsNoTracking()
+      .Where(t => t.TeamUserId == username).ToListAsync();
 
       return team.FirstOrDefault() != null;
     }
@@ -75,37 +81,45 @@ namespace TarokScoreBoard.Infrastructure.Services
     {
       var teamId = Guid.NewGuid();
       var (key, salt) = CreateKeyAndSalt(createTeamDTO.Passphrase);
-      var team = await teamRepository.AddAsync(new Team()
+      var team = new Team()
       {
         TeamUserId = createTeamDTO.TeamId,
         TeamName = createTeamDTO.Name,
         TeamId = teamId,
         Passphrase = key,
         Salt = salt
-      });
+      };
+      dbContext.Team.Add(team);
 
       foreach (var member in createTeamDTO.Members)
       {
-        var dbMember = await teamPlayerRepository.AddAsync(new TeamPlayer()
+        var teamPlayer = new TeamPlayer()
         {
-          PlayerId = Guid.NewGuid(),          
+          PlayerId = Guid.NewGuid(),
           TeamId = teamId,
           Name = member.Name
-        });
-        team.Members.Add(dbMember);
+        };
+        dbContext.TeamPlayer.Add(teamPlayer);
+
+        team.Members.Add(teamPlayer);
       }
+
+      await dbContext.SaveChangesAsync();
+
       return team.ToDto();
     }
 
     public async Task<TeamPlayer> AddPlayerToTeamAsync(AddPlayerToTeamDTO addPlayerDTO, Guid teamId)
     {
-      var newPlayer = await teamPlayerRepository.AddAsync(new TeamPlayer()
+
+      var newPlayer =new TeamPlayer()
       {
         Name = addPlayerDTO.Name,
         TeamId = teamId,
         PlayerId = Guid.NewGuid()
-      });
-
+      };
+      dbContext.TeamPlayer.Add(newPlayer);
+      await dbContext.SaveChangesAsync();
       return newPlayer;
     }
 

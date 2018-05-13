@@ -36,13 +36,6 @@ namespace TarokScoreBoard.Api
       services.AddCors();
 
       // my dependencies
-      services.AddScoped<GameRepository>();
-      services.AddScoped<GamePlayerRepository>();
-      services.AddScoped<RoundRepository>();
-      services.AddScoped<RoundResultRepository>();
-      services.AddScoped<RoundModifierRepository>();
-      services.AddScoped<TeamRepository>();
-      services.AddScoped<TeamPlayerRepository>();
       services.AddScoped<GameService>();
       services.AddScoped<ScoreBoardService>();
       services.AddScoped<TeamService>();
@@ -58,7 +51,7 @@ namespace TarokScoreBoard.Api
 
       services.AddSingleton(Configuration);      
 
-       services.AddSwaggerGen(c =>
+      services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new Info { Title = "Tarok Scoreboard", Version = "v1"});
         c.SchemaFilter<SwaggerExampleFilter>();

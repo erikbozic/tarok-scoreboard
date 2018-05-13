@@ -7,18 +7,18 @@ namespace TarokScoreBoard.Infrastructure.Services
 {
   public class AuthorizationService
   {
-    private readonly TeamRepository teamRepository;
+    private readonly TarokDbContext dbContext;
     private readonly RequestContext context;
 
-    public AuthorizationService(TeamRepository teamRepository, RequestContext context)
+    public AuthorizationService(TarokDbContext dbContext, RequestContext context)
     {
-      this.teamRepository = teamRepository;
+      this.dbContext = dbContext;
       this.context = context;
     }
 
     public async Task<bool> CheckAuthenticated(Guid accessToken)
     {
-      var teamId = await this.teamRepository.GetTeamId(accessToken);
+      var teamId = await this.dbContext.GetTeamId(accessToken);
 
       if (teamId == null)
         return false;

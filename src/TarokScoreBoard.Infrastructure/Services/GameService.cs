@@ -78,6 +78,7 @@ namespace TarokScoreBoard.Infrastructure.Services
     public async Task<IEnumerable<GameDTO>> GetAllAsync(int limit = 5, int offset = 0)
     {
       var result = await dbContext.Game
+      .AsNoTracking()
       .OrderByDescending(g => g.Date)
       .Skip(offset)
       .Take(limit)

@@ -3,19 +3,13 @@ using Microsoft.Extensions.Logging;
 using Npgsql;
 using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace TarokScoreBoard.Infrastructure.Repositories
 {
-  public class TeamRepository : TeamBaseRepository
+  public static class TeamRepository
   {
-    private readonly ILogger<TeamRepository> logger;
-
-    public TeamRepository(TarokDbContext dbContext, ILogger<TeamRepository> logger) : base(dbContext)
-    {
-      this.logger = logger;
-    }
-
-    public async Task<object> GetTeamPlayersStatisticsAsync(Guid? teamId = null, Guid? gameId = null, Guid? playerId = null)
+    public static async Task<object> GetTeamPlayersStatisticsAsync(this TarokDbContext dbContext, Guid? teamId = null, Guid? gameId = null, Guid? playerId = null)
     {
       var innerJoin = gameId == null ? "INNER JOIN team_player tp ON tp.player_id = rr.player_id AND team_id = :teamId" :
                                        "INNER JOIN game_player gp ON gp.player_id = rr.player_id AND gp.game_id = :gameId";
@@ -70,13 +64,14 @@ namespace TarokScoreBoard.Infrastructure.Repositories
                  GROUP BY rr.player_id
                ) stat
               {leftJoin}";
-      logger.LogDebug(sql);
-      return await this.conn.QueryAsync(sql, new { teamId, gameId, playerId });
+
+      return await dbContext.Database.GetDbConnection().QueryAsync(sql, new { teamId, gameId, playerId });
     }
 
-    public async Task<Guid> GetAccessToken(Guid teamId)
+    public static async Task<Guid> GetAccessToken(this TarokDbContext dbContext, Guid teamId)
     {
-      var accessToken = await this.conn.QueryFirstOrDefaultAsync<Guid>(@"
+      var conn = dbContext.Database.GetDbConnection();
+      var accessToken = await conn.QueryFirstOrDefaultAsync<Guid>(@"
         SELECT access_token FROM team_access_token
         WHERE team_id = :teamId", new { teamId });
 
@@ -91,14 +86,13 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 
       return accessToken;
     }
-
-    public async Task<Guid?> GetTeamId(Guid accessToken)
+    
+    public static async Task<Guid?> GetTeamId(this TarokDbContext dbContext, Guid accessToken)
     {
-      var teamId = await this.conn.QueryFirstOrDefaultAsync<Guid?>(@"
+      var conn = dbContext.Database.GetDbConnection();
+      var teamId = await conn.QueryFirstOrDefaultAsync<Guid?>(@"
         SELECT team_id FROM team_access_token
         WHERE access_token = :accessToken", new { accessToken });
-      
-      
 
       return teamId;
     }
