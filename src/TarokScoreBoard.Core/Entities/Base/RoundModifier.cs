@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TarokScoreBoard.Core.Entities
 {
-    [Table("round_modifier")]
+  [Table("round_modifier")]
     public partial class RoundModifier
     {
         [Column("round_id")]

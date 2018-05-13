@@ -1,11 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 using TarokScoreBoard.Core.Entities;
 
 namespace TarokScoreBoard.Infrastructure
 {
-    public partial class TarokDbContext : DbContext
+  public partial class TarokDbContext : DbContext
     {
         public TarokDbContext(DbContextOptions<TarokDbContext> options)
             : base(options)

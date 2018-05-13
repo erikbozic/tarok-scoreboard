@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using TarokScoreBoard.Core;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Core.Exceptions;
-using TarokScoreBoard.Infrastructure.Repositories;
 using TarokScoreBoard.Shared.DTO;
 
 namespace TarokScoreBoard.Infrastructure.Services

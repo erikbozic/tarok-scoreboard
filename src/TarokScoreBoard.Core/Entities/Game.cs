@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using TarokScoreBoard.Shared.DTO;
 
 namespace TarokScoreBoard.Core.Entities

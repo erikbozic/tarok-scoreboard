@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TarokScoreBoard.Core.Entities
 {
-    [Table("team_access_token")]
+  [Table("team_access_token")]
     public partial class TeamAccessToken
     {
         [Column("team_id")]

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TarokScoreBoard.Api.Filters;
 using TarokScoreBoard.Core;
-using TarokScoreBoard.Core.Exceptions;
 using TarokScoreBoard.Infrastructure.Services;
 using TarokScoreBoard.Shared.DTO;
 

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TarokScoreBoard.Core.Entities
 {
-    [Table("round_result")]
+  [Table("round_result")]
     public partial class RoundResult
     {
         [Column("game_id")]

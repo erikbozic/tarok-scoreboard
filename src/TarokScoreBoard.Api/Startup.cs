@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Npgsql;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Linq;
@@ -14,7 +12,6 @@ using TarokScoreBoard.Api.Swagger;
 using TarokScoreBoard.Core;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Infrastructure;
-using TarokScoreBoard.Infrastructure.Repositories;
 using TarokScoreBoard.Infrastructure.Services;
 
 namespace TarokScoreBoard.Api
@@ -31,7 +28,12 @@ namespace TarokScoreBoard.Api
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddMvc();
+      services.AddMvc()
+      .AddJsonOptions(
+            options =>{
+               options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
+
       services.AddSignalR();
       services.AddCors();
 

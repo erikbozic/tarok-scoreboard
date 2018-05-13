@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using TarokScoreBoard.Core;
 using TarokScoreBoard.Core.Entities;
-using TarokScoreBoard.Infrastructure.Repositories;
 using TarokScoreBoard.Shared.DTO;
 using Microsoft.EntityFrameworkCore;
 

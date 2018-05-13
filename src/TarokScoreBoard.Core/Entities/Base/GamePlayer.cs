@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TarokScoreBoard.Core.Entities
 {
-    [Table("game_player")]
+  [Table("game_player")]
     public partial class GamePlayer
     {
         [Column("player_id")]
