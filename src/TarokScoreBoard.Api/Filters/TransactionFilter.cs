@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using TarokScoreBoard.Infrastructure;
 
 namespace TarokScoreBoard.Api.Filters
 {
@@ -15,9 +17,9 @@ namespace TarokScoreBoard.Api.Filters
       private readonly NpgsqlConnection connection;
       private NpgsqlTransaction transaction;
 
-      public TransactionFilter(NpgsqlConnection connection)
+      public TransactionFilter(TarokDbContext dbContext)
       {
-        this.connection = connection;
+        this.connection = (NpgsqlConnection)dbContext.Database.GetDbConnection();
       }
 
       public void OnActionExecuting(ActionExecutingContext context)

@@ -15,7 +15,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 
     protected override string BaseSelect { get; set; }
 
-    public TeamPlayerBaseRepository(NpgsqlConnection conn) : base(conn)
+    public TeamPlayerBaseRepository(TarokDbContext dbContext) : base(dbContext)
     {    
       BaseSelect = $@"
         SELECT

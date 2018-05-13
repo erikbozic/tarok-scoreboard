@@ -1,31 +1,27 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
-    <None Remove="Scripts\intitdb.sql" />
-    <None Remove="Scripts\seed.sql" />
+    <None Remove="Scripts\intitdb.sql"/>
+    <None Remove="Scripts\seed.sql"/>
   </ItemGroup>
-
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\seed.sql" />
-    <EmbeddedResource Include="Scripts\intitdb.sql" />
+    <EmbeddedResource Include="Scripts\seed.sql"/>
+    <EmbeddedResource Include="Scripts\intitdb.sql"/>
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\TarokScoreBoard.Core\TarokScoreBoard.Core.csproj" />
-    <ProjectReference Include="..\TarokScoreBoard.Shared\TarokScoreBoard.Shared.csproj" />
+    <ProjectReference Include="..\TarokScoreBoard.Core\TarokScoreBoard.Core.csproj"/>
+    <ProjectReference Include="..\TarokScoreBoard.Shared\TarokScoreBoard.Shared.csproj"/>
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="1.50.4" />
-    <PackageReference Include="Npgsql" Version="4.0.0-rc1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.1.0-rc1-final" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.0-rc1-final" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
-    
+    <PackageReference Include="Dapper" Version="1.50.4"/>
+    <PackageReference Include="Npgsql" Version="4.0.0-rc1"/>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.1.0-rc1-final"/>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.0-rc1-final"/>
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0-rc1"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore"  Version="2.1.0-rc1-final"/>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.1.0-rc1*"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.0-rc1-final"/>
   </ItemGroup>
-
 </Project>

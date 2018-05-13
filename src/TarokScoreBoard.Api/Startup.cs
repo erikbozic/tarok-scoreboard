@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -12,6 +13,7 @@ using TarokScoreBoard.Api.Middleware;
 using TarokScoreBoard.Api.Swagger;
 using TarokScoreBoard.Core;
 using TarokScoreBoard.Core.Entities;
+using TarokScoreBoard.Infrastructure;
 using TarokScoreBoard.Infrastructure.Repositories;
 using TarokScoreBoard.Infrastructure.Services;
 
@@ -47,8 +49,10 @@ namespace TarokScoreBoard.Api
       services.AddScoped<StatisticsService>();
       services.AddScoped<AuthorizationService>();
       services.AddScoped<RequestContext>();
-      services.AddScoped((ser) =>  new NpgsqlConnection(ser.GetService<IConfiguration>().GetConnectionString("tarok")));
-
+      
+      services.AddDbContextPool<TarokDbContext>(opt => {
+          opt.UseNpgsql(Configuration.GetConnectionString("tarok"));
+      });
       services.ConfigureValidationModel();
 
       services.AddSingleton(Configuration);      
@@ -80,7 +84,7 @@ namespace TarokScoreBoard.Api
         .AllowCredentials()
         .AllowAnyHeader()
         .AllowAnyMethod());
-
+        
       app.UseErrorHandling();
 
       app.UseMvc();
@@ -104,7 +108,7 @@ namespace TarokScoreBoard.Api
         c.RoutePrefix = "api-docs";
       });
 
-      DapperMapping.ConfigureColumnMapping();
+      // DapperMapping.ConfigureColumnMapping();
     }
   }
 }

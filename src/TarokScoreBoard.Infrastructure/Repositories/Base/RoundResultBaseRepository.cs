@@ -19,7 +19,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 
     protected override string BaseSelect { get; set; }
 
-    public RoundResultBaseRepository(NpgsqlConnection conn) : base(conn)
+    public RoundResultBaseRepository(TarokDbContext dbContext) : base(dbContext)
     {    
       BaseSelect = $@"
         SELECT

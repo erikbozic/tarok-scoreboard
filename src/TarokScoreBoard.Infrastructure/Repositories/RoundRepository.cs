@@ -9,7 +9,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 {
   public class RoundRepository : RoundBaseRepository
   {
-    public RoundRepository(NpgsqlConnection conn) : base(conn)
+    public RoundRepository(TarokDbContext dbContext) : base(dbContext)
     {
     }
 
@@ -34,9 +34,9 @@ namespace TarokScoreBoard.Infrastructure.Repositories
       var lookup = new Dictionary<Guid, Round>();
       var resultLookup = new Dictionary<GuidGuidComposite, bool>();
       var modlookup = new Dictionary<GuidStringComposite, bool>();
-      await this.conn.QueryAsync<Round, RoundResult, RoundModifier, Round>(
+      await this.conn.QueryAsync(
         sql, 
-        (r,rr, rm) => {
+(Func<Round, RoundResult, RoundModifier, Round>)((r,rr, rm) => {
           if (!lookup.TryGetValue(r.RoundId, out Round round))
             lookup.Add(r.RoundId, round = r);
 
@@ -45,19 +45,19 @@ namespace TarokScoreBoard.Infrastructure.Repositories
           if (!resultLookup.TryGetValue(ggc, out bool value))
           {
             resultLookup.Add(ggc, value);
-            round.RoundResults.Add(rr);
+            round.RoundResult.Add(rr);
           }
 
           // if a round already has this modifier, dont add
           var gsc = new GuidStringComposite(r.RoundId, rm.ModifierType);
-          if (!String.IsNullOrEmpty(rm.ModifierType) && !modlookup.TryGetValue(gsc, out bool modValue))
+          if (!string.IsNullOrEmpty(rm.ModifierType) && !modlookup.TryGetValue(gsc, out bool modValue))
           {
             modlookup.Add(gsc, modValue);
-            round.Modifiers.Add(rm);
+            round.RoundModifier.Add(rm);
           }
 
           return round;
-        }, new { gameId }, splitOn: "rr_id,rm_id");
+        }), new { gameId }, splitOn: "rr_id,rm_id");
 
       return lookup.Values;
     }

@@ -10,7 +10,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
   {
     private readonly ILogger<TeamRepository> logger;
 
-    public TeamRepository(NpgsqlConnection conn, ILogger<TeamRepository> logger) : base(conn)
+    public TeamRepository(TarokDbContext dbContext, ILogger<TeamRepository> logger) : base(dbContext)
     {
       this.logger = logger;
     }

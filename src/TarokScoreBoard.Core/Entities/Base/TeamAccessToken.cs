@@ -5,15 +5,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TarokScoreBoard.Core.Entities
 {
-    [Table("team_player")]
-    public partial class TeamPlayer
+    [Table("team_access_token")]
+    public partial class TeamAccessToken
     {
         [Column("team_id")]
         public Guid TeamId { get; set; }
-        [Column("player_id")]
-        public Guid PlayerId { get; set; }
-        [Required]
-        [Column("name", TypeName = "character varying(100)")]
-        public string Name { get; set; }
+        [Column("access_token")]
+        public Guid AccessToken { get; set; }
+        [Column("date_issued", TypeName = "date")]
+        public DateTime DateIssued { get; set; }
     }
 }

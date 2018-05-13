@@ -6,8 +6,6 @@ namespace TarokScoreBoard.Core.Entities
 {
   partial class Game
   {
-    public List<GamePlayer> Players { get; set; }
-
     public GameDTO ToDto()
     {
       return new GameDTO()
@@ -16,7 +14,7 @@ namespace TarokScoreBoard.Core.Entities
         Date = Date,
         Name = Name,
         TeamId = TeamId,
-        Players = Players?.Select(p => new GamePlayerDTO()
+        Players = GamePlayer?.Select(p => new GamePlayerDTO()
         {
           Name = p.Name,
           PlayerId = p.PlayerId,

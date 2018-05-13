@@ -4,7 +4,7 @@ namespace TarokScoreBoard.Infrastructure.Repositories
 {
   public class GameRepository : GameBaseRepository
   {
-    public GameRepository(NpgsqlConnection conn) : base(conn)
+    public GameRepository(TarokDbContext dbContext) : base(dbContext)
     {
 
     }

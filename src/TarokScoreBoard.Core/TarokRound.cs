@@ -62,7 +62,7 @@ namespace TarokScoreBoard.Core
         return new KlopRound
         {
           Game = GameType.Klop,
-          KlopScores = round.RoundResults.ToDictionary(r => r.PlayerId,
+          KlopScores = round.RoundResult.ToDictionary(r => r.PlayerId,
             p => new PlayerScore(-p.PlayerScore))            
         };
       }
@@ -77,7 +77,7 @@ namespace TarokScoreBoard.Core
         MondFangPlayer = round.MondFangPlayerId,
         PagatFangPlayer = round.PagatFangPlayerId,
         Game = (GameType)round.GameType,
-        Modifiers = round.Modifiers.Select(m =>
+        Modifiers = round.RoundModifier.Select(m =>
         {
           ModifierType modType;
 

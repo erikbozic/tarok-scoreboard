@@ -6,6 +6,7 @@ using TarokScoreBoard.Core;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Infrastructure.Repositories;
 using TarokScoreBoard.Shared.DTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace TarokScoreBoard.Infrastructure.Services
 {
@@ -16,23 +17,29 @@ namespace TarokScoreBoard.Infrastructure.Services
     private readonly RoundRepository roundRepository;
     private readonly RoundResultRepository roundResultRepository;
     private readonly RoundModifierRepository modifierRepository;
+    private readonly TarokDbContext dbContext;
 
     public ScoreBoardService(GameRepository gameRepo,
       GamePlayerRepository playerRepo,
       RoundRepository roundRepo,
       RoundResultRepository roundResultRepo,
-      RoundModifierRepository modifierRepo)
+      RoundModifierRepository modifierRepo, TarokDbContext dbContext)
     {
       this.gameRepository = gameRepo;
       this.playerRepository = playerRepo;
       this.roundRepository = roundRepo;
       this.roundResultRepository = roundResultRepo;
       this.modifierRepository = modifierRepo;
+      this.dbContext = dbContext;
     }
 
     public async Task<IEnumerable<RoundDTO>> GetGameRounds(Guid gameId)
     {
-      var rounds = await roundRepository.GetScoreboard(gameId);
+      var rounds = await this.dbContext.Round
+      .Include(r => r.RoundResult)
+      .Include(r => r.RoundModifier)
+      .Where(r => r.GameId == gameId)
+      .ToListAsync();
 
       return rounds.Select(r => r.ToDto());
     }
@@ -49,7 +56,7 @@ namespace TarokScoreBoard.Infrastructure.Services
 
       await roundRepository.AddAsync(round);
       // TODO move to repo, bulk insert
-      foreach (var mod in round.Modifiers)
+      foreach (var mod in round.RoundModifier)
         await modifierRepository.AddAsync(mod);
 
       var game = await gameRepository.GetAsync(gameId);
@@ -73,22 +80,23 @@ namespace TarokScoreBoard.Infrastructure.Services
 
       scoreBoard.ApplyTarokRound(tarokRound);
 
-      round.RoundResults = new List<RoundResult>();
-      round.RoundResults.AddRange(scoreBoard.Scores.OrderBy(s => s.Key).Select(s =>
+      round.RoundResult = new List<RoundResult>();
+      var scores =scoreBoard.Scores.OrderBy(s => s.Key).Select(s =>
       {
         return new RoundResult()
         {
-          RoundScoreChange = s.Value.RoundScoreChange,
-          GameId = gameId,
           RoundId = round.RoundId,
+          GameId = gameId,
           PlayerId = s.Key,
           PlayerScore = s.Value.Score,
           PlayerRadelcCount = s.Value.RadelcCount,
-          PlayerRadelcUsed = s.Value.UsedRadelcCount
+          PlayerRadelcUsed = s.Value.RadelcCount // should we leave as is?
         };
-      }));
+      });
+      foreach(var score in scores)
+        round.RoundResult.Add(score);
 
-      foreach (var roundResult in round.RoundResults)
+      foreach (var roundResult in round.RoundResult)
         await roundResultRepository.AddAsync(roundResult);
 
       return round.ToDto();
@@ -104,7 +112,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       if(lastRoundId != null)
       {
         var lastRoundResults = await roundResultRepository.GetAllAsync(c => c.Where(r => r.RoundId == lastRoundId));
-        lastRound.RoundResults = lastRoundResults.ToList();
+        lastRound.RoundResult = lastRoundResults.ToList();
       }
       return lastRound;
     }
@@ -112,7 +120,7 @@ namespace TarokScoreBoard.Infrastructure.Services
     public async Task<RoundDTO> EndGame(Guid gameId)
     {
       var lastRound = await this.GetLastRound(gameId);
-      var scoreBoard = ScoreBoard.FromRound(lastRound.RoundResults);
+      var scoreBoard = ScoreBoard.FromRound(lastRound.RoundResult);
       scoreBoard.EndGame();
       var roundId = Guid.NewGuid();
       var endRound = new Round()
@@ -122,7 +130,9 @@ namespace TarokScoreBoard.Infrastructure.Services
         GameType = 0,
         RoundNumber = lastRound.RoundNumber + 1,
       };
-      endRound.RoundResults.AddRange(scoreBoard.Scores.OrderBy(s => s.Key).Select(s =>
+      
+
+      var scores =scoreBoard.Scores.OrderBy(s => s.Key).Select(s =>
       {
         return new RoundResult()
         {
@@ -133,9 +143,12 @@ namespace TarokScoreBoard.Infrastructure.Services
           PlayerRadelcCount = s.Value.RadelcCount,
           PlayerRadelcUsed = s.Value.RadelcCount // should we leave as is?
         };
-      }));
+      });
+      foreach(var score in scores)
+        endRound.RoundResult.Add(score);
+
       await roundRepository.AddAsync(endRound);
-      foreach (var roundResult in endRound.RoundResults)
+      foreach (var roundResult in endRound.RoundResult)
         await roundResultRepository.AddAsync(roundResult);
 
       return endRound.ToDto();

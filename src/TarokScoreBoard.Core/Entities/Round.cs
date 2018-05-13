@@ -7,10 +7,6 @@ namespace TarokScoreBoard.Core.Entities
 {
   public partial class Round
   {
-    public List<RoundResult> RoundResults { get; set; } = new List<RoundResult>();
-
-    public List<RoundModifier> Modifiers { get; set; } = new List<RoundModifier>();
-
     public static Round FromCreateRoundRequest(CreateRoundDTO round)
     {
       var roundId = Guid.NewGuid();
@@ -28,14 +24,14 @@ namespace TarokScoreBoard.Core.Entities
         PagatFangPlayerId = round.PagatFangPlayerId,
         MondFangPlayerId = round.MondFangPlayerId,
         Won = round.Won,
-        Modifiers = round.Modifiers?.Select(m => 
+        RoundModifier = round.Modifiers?.Select(m => 
           new RoundModifier(
             m.ModifierType,
             m.Team,
             roundId, 
             m.Announced,
             m.ContraFactor)).ToList(),
-        RoundResults = round.KlopResults.Select(r =>
+        RoundResult = round.KlopResults.Select(r =>
           new RoundResult() {  GameId = round.GameId, PlayerId = r.PlayerId, PlayerScore = r.Score, RoundId = roundId }).ToList()
       };
     }
@@ -56,7 +52,7 @@ namespace TarokScoreBoard.Core.Entities
         RoundNumber = RoundNumber,
         Won = Won,
         SupportingPlayerId = SupportingPlayerId,
-        RoundResults = RoundResults?.Select(r => new RoundResultDTO()
+        RoundResults = RoundResult?.Select(r => new RoundResultDTO()
         {
           PlayerId = r.PlayerId,
           PlayerScore = r.PlayerScore,
@@ -64,7 +60,7 @@ namespace TarokScoreBoard.Core.Entities
           PlayerRadelcUsed = r.PlayerRadelcUsed,
           RoundScoreChange = r.RoundScoreChange
         }).ToList(),
-        Modifiers = Modifiers?.Select(m => new RoundModifierDTO()
+        Modifiers = RoundModifier?.Select(m => new RoundModifierDTO()
         {
           Team = m.Team,
           Announced = m.Announced,

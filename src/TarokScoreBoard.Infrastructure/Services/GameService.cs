@@ -38,7 +38,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       };
 
       game = await gameRepository.AddAsync(game);
-      game.Players = new List<GamePlayer>();
+      game.GamePlayer = new List<GamePlayer>();
       
       var gamePlayers = gameRequest.Players.Select(p => new GamePlayer(p.Name) { GameId = game.GameId, PlayerId = p.PlayerId ?? Guid.NewGuid() }).ToList();
       RandomizePlayerPosition(gamePlayers);
@@ -46,7 +46,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       foreach (var player in gamePlayers)
       {
         var dbPlayer =  await playerRepository.AddAsync(player);
-        game.Players.Add(dbPlayer);
+        game.GamePlayer.Add(dbPlayer);
       }
 
       return game.ToDto();
@@ -85,7 +85,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       var game = await gameRepository.GetAsync(guid);
       var id = game.GameId;
       var gamePlayers = await playerRepository.GetAllAsync(c => c.Where(p => p.GameId == id));
-      game.Players = gamePlayers.ToList();
+      game.GamePlayer = gamePlayers.ToList();
 
       var previousGame = await GetPreviousGame(game.TeamId);
 
@@ -94,8 +94,8 @@ namespace TarokScoreBoard.Infrastructure.Services
         var lastRound = await this.scoreBoardService.GetLastRound(previousGame.GameId);
         if(lastRound != null)
         {
-          var highestScore = lastRound.RoundResults.OrderByDescending(r => r.PlayerScore).FirstOrDefault();
-          var bestPlayerPreviousGame = game.Players.FirstOrDefault(g => g.PlayerId == highestScore?.PlayerId);
+          var highestScore = lastRound.RoundResult.OrderByDescending(r => r.PlayerScore).FirstOrDefault();
+          var bestPlayerPreviousGame = game.GamePlayer.FirstOrDefault(g => g.PlayerId == highestScore?.PlayerId);
           
           if (bestPlayerPreviousGame != null)
             bestPlayerPreviousGame.IsMaestro = true;

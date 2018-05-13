@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace TarokScoreBoard.Infrastructure
 {
@@ -14,9 +15,9 @@ namespace TarokScoreBoard.Infrastructure
 
     protected readonly NpgsqlConnection conn;
 
-    public BaseRepository(NpgsqlConnection conn)
+    public BaseRepository(TarokDbContext dbContext)
     {
-      this.conn = conn;
+      this.conn = (NpgsqlConnection)dbContext.Database.GetDbConnection();
     }
 
     public IEnumerable<T> GetAll(Expression<Func<IQueryable<T>, IQueryable<T>>> expression, int limit = 0, int offset = 0, bool buffered = true)
