@@ -36,12 +36,11 @@ namespace TarokScoreBoard.Infrastructure.Services
       var round = Round.FromCreateRoundRequest(createRoundRequest);
       var gameId = round.GameId;
 
-      var gameRounds = dbContext.Round
-      .AsNoTracking()  
-      .Where(r => r.GameId == gameId)
-      .OrderBy(r => r.RoundNumber);
+      var lastRound = await dbContext.Round
+      .AsNoTracking()
+      .OrderBy(r => r.RoundNumber)      
+      .LastOrDefaultAsync(r => r.GameId == gameId);
 
-      var lastRound = await gameRounds.LastOrDefaultAsync();
       round.RoundNumber = (lastRound?.RoundNumber ?? 0) + 1;
 
       dbContext.Round.Add(round);
@@ -55,7 +54,7 @@ namespace TarokScoreBoard.Infrastructure.Services
           .FirstOrDefaultAsync(g => g.GameId == gameId);
           
       var players = game.GamePlayer.ToDictionary(item => item.PlayerId, item => item);
-      ScoreBoard scoreBoard = null;
+      ScoreBoard scoreBoard;
 
       if(lastRound == null)
       {
@@ -64,8 +63,9 @@ namespace TarokScoreBoard.Infrastructure.Services
       }
       else
       {
-        var lastRoundId = lastRound.RoundId;
-        var lastRoundResults = await dbContext.RoundResult.Where(r => r.RoundId == lastRoundId).ToListAsync();
+        var lastRoundResults = await dbContext.RoundResult
+        .Where(r => r.RoundId == lastRound.RoundId)
+        .ToListAsync();
   
         scoreBoard = ScoreBoard.FromRound(lastRoundResults);
       }
@@ -100,12 +100,11 @@ namespace TarokScoreBoard.Infrastructure.Services
 
     public async Task<Round> GetLastRound(Guid gameId)
     {
-      var gameRounds = dbContext.Round
+      var lastRound= await dbContext.Round
       .AsNoTracking()
       .Include(r => r.RoundResult)
-      .Where(r => r.GameId == gameId).OrderBy(r => r.RoundNumber);
-
-      var lastRound = await gameRounds.LastOrDefaultAsync();
+      .OrderBy(r => r.RoundNumber)      
+      .LastOrDefaultAsync(r => r.GameId == gameId);
       
       return lastRound;
     }
@@ -137,6 +136,7 @@ namespace TarokScoreBoard.Infrastructure.Services
           PlayerRadelcUsed = s.Value.RadelcCount // should we leave as is?
         };
       });
+      
       foreach(var score in scores)
         endRound.RoundResult.Add(score);
 

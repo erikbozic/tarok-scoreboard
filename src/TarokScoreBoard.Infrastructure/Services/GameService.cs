@@ -113,8 +113,12 @@ namespace TarokScoreBoard.Infrastructure.Services
         var lastRound = await this.scoreBoardService.GetLastRound(previousGame.GameId);
         if(lastRound != null)
         {
-          var highestScore = lastRound.RoundResult.OrderByDescending(r => r.PlayerScore).FirstOrDefault();
-          var bestPlayerPreviousGame = game.GamePlayer.FirstOrDefault(g => g.PlayerId == highestScore?.PlayerId);
+          var highestScore = lastRound.RoundResult
+          .OrderByDescending(r => r.PlayerScore)
+          .FirstOrDefault();
+          
+          var bestPlayerPreviousGame = game.GamePlayer
+          .FirstOrDefault(g => g.PlayerId == highestScore?.PlayerId);
           
           if (bestPlayerPreviousGame != null)
             bestPlayerPreviousGame.IsMaestro = true;
