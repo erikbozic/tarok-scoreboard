@@ -33,10 +33,9 @@ namespace TarokScoreBoard.Infrastructure.Services
         TeamId = gameRequest.TeamId,
         Name = gameRequest.Name,
         GameId = Guid.NewGuid(),
-        Date = DateTime.Now
+        Date = DateTime.Now,
+        GamePlayer = new List<GamePlayer>()
       };
-
-      dbContext.Game.Add(game);
 
       if(game.TeamId != null)
       {
@@ -52,17 +51,19 @@ namespace TarokScoreBoard.Infrastructure.Services
        }
       }
       
-      game.GamePlayer = new List<GamePlayer>();
-      
-      var gamePlayers = gameRequest.Players.Select(p => new GamePlayer(p.Name) { GameId = game.GameId, PlayerId = p.PlayerId ?? Guid.NewGuid() }).ToList();
+      var gamePlayers = gameRequest.Players
+      .Select(p => new GamePlayer(p.Name) { GameId = game.GameId, PlayerId = p.PlayerId ?? Guid.NewGuid() })
+      .ToList();
+
       RandomizePlayerPosition(gamePlayers);
 
       foreach (var player in gamePlayers)
         game.GamePlayer.Add(player);
 
+      dbContext.Game.Add(game);
       await dbContext.SaveChangesAsync();
 
-      return game.ToDto();
+      return await this.GetAsync(game.GameId);;
     }
 
     private void RandomizePlayerPosition(IList<GamePlayer> players)
@@ -82,6 +83,7 @@ namespace TarokScoreBoard.Infrastructure.Services
       .Skip(offset)
       .Take(limit)
       .ToListAsync();
+
       return result.Select(g => g.ToDto());
     }
 
@@ -102,10 +104,14 @@ namespace TarokScoreBoard.Infrastructure.Services
     public async Task<GameDTO> GetAsync(Guid guid)
     {
       var game = await dbContext.Game
-      .AsNoTracking()
-      .Include(g => g.GamePlayer)      
+      .AsNoTracking()    
       .FirstOrDefaultAsync(g => g.GameId == guid);
 
+      game.GamePlayer = await dbContext.GamePlayer
+      .Where(p => p.GameId == game.GameId)
+      .OrderBy(p => p.Position)
+      .ToListAsync();
+      
       var previousGame = await GetPreviousGame(game.TeamId);
 
       if(previousGame != null)
@@ -116,7 +122,6 @@ namespace TarokScoreBoard.Infrastructure.Services
           var highestScore = lastRound.RoundResult
           .OrderByDescending(r => r.PlayerScore)
           .FirstOrDefault();
-          
           var bestPlayerPreviousGame = game.GamePlayer
           .FirstOrDefault(g => g.PlayerId == highestScore?.PlayerId);
           

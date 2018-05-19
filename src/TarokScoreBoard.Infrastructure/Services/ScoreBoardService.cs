@@ -38,27 +38,22 @@ namespace TarokScoreBoard.Infrastructure.Services
 
       var lastRound = await dbContext.Round
       .AsNoTracking()
-      .OrderBy(r => r.RoundNumber)      
+      .OrderBy(r => r.RoundNumber)
       .LastOrDefaultAsync(r => r.GameId == gameId);
 
       round.RoundNumber = (lastRound?.RoundNumber ?? 0) + 1;
 
-      dbContext.Round.Add(round);
-
-      foreach (var mod in round.RoundModifier)
-        dbContext.RoundModifier.Add(mod);
-
-      var game = await dbContext.Game
+      var gamePlayers = await dbContext.GamePlayer
           .AsNoTracking()
-          .Include(g => g.GamePlayer)
-          .FirstOrDefaultAsync(g => g.GameId == gameId);
+          .Where(g => g.GameId == gameId)
+          .OrderBy(p => p.Position)
+          .ToListAsync();
           
-      var players = game.GamePlayer.ToDictionary(item => item.PlayerId, item => item);
       ScoreBoard scoreBoard;
 
       if(lastRound == null)
       {
-        var gameinit = new GameInitializer(players.Select(p => p.Key));
+        var gameinit = new GameInitializer(gamePlayers.Select(p => p.PlayerId));
         scoreBoard = gameinit.StartGame(gameId);
       }
       else
@@ -72,27 +67,23 @@ namespace TarokScoreBoard.Infrastructure.Services
 
       var tarokRound = TarokRound.FromRound(round);
 
-      scoreBoard.ApplyTarokRound(tarokRound);
+      var scores = scoreBoard.ApplyTarokRound(tarokRound);
 
-      round.RoundResult = new List<RoundResult>();
-      var scores =scoreBoard.Scores.OrderBy(s => s.Key).Select(s =>
+      foreach (var player in gamePlayers)
       {
-        return new RoundResult()
-        {
+        var playerScore = scores[player.PlayerId];
+        
+        round.RoundResult.Add(new RoundResult(){
           RoundId = round.RoundId,
           GameId = gameId,
-          PlayerId = s.Key,
-          PlayerScore = s.Value.Score,
-          PlayerRadelcCount = s.Value.RadelcCount,
-          PlayerRadelcUsed = s.Value.RadelcCount // should we leave as is?
-        };
-      });
-      foreach(var score in scores)
-        round.RoundResult.Add(score);
+          PlayerId = player.PlayerId,
+          PlayerScore = playerScore.Score,
+          PlayerRadelcCount = playerScore.RadelcCount,
+          PlayerRadelcUsed = playerScore.RadelcCount
+        });
+      }
 
-      foreach (var roundResult in round.RoundResult)
-        dbContext.RoundResult.Add(roundResult);
-
+      dbContext.Round.Add(round);
       await dbContext.SaveChangesAsync();
 
       return round.ToDto();
@@ -113,7 +104,7 @@ namespace TarokScoreBoard.Infrastructure.Services
     {
       var lastRound = await this.GetLastRound(gameId);
       var scoreBoard = ScoreBoard.FromRound(lastRound.RoundResult);
-      scoreBoard.EndGame();
+      var scores = scoreBoard.EndGame();
       var roundId = Guid.NewGuid();
       var endRound = new Round()
       {
@@ -122,47 +113,32 @@ namespace TarokScoreBoard.Infrastructure.Services
         GameType = 0,
         RoundNumber = lastRound.RoundNumber + 1,
       };
-      
 
-      var scores = scoreBoard.Scores.OrderBy(s => s.Key).Select(s =>
+      var gamePlayers = await dbContext.GamePlayer
+        .AsNoTracking()
+        .Where(g => g.GameId == gameId)
+        .OrderBy(p => p.Position)
+        .ToListAsync();
+
+      foreach (var player in gamePlayers)
       {
-        return new RoundResult()
-        {
-          RoundId = roundId,
+        var playerScore = scores[player.PlayerId];
+        
+        endRound.RoundResult.Add(new RoundResult(){
+          RoundId = endRound.RoundId,
           GameId = gameId,
-          PlayerId = s.Key,
-          PlayerScore = s.Value.Score,
-          PlayerRadelcCount = s.Value.RadelcCount,
-          PlayerRadelcUsed = s.Value.RadelcCount // should we leave as is?
-        };
-      });
+          PlayerId = player.PlayerId,
+          PlayerScore = playerScore.Score,
+          PlayerRadelcCount = playerScore.RadelcCount,
+          PlayerRadelcUsed = playerScore.RadelcCount
+        });
+      }
       
-      foreach(var score in scores)
-        endRound.RoundResult.Add(score);
-
       dbContext.Round.Add(endRound);
       
       await dbContext.SaveChangesAsync();
 
       return endRound.ToDto();
-    }
-
-    private async Task AddRoundResults(ScoreBoard scoreBoard, Guid roundId)
-    {
-      foreach (var score in scoreBoard.Scores)
-      {
-         dbContext.RoundResult.Add(new RoundResult()
-        {
-           RoundId = roundId,
-           GameId = scoreBoard.GameId,
-           PlayerId = score.Key,
-           PlayerScore = score.Value.Score,
-           PlayerRadelcCount = score.Value.RadelcCount,
-           PlayerRadelcUsed = score.Value.UsedRadelcCount
-        });
-      }
-
-      await dbContext.SaveChangesAsync();
     }
 
     public async Task<RoundDTO> DeleteLastRound(Guid gameId)

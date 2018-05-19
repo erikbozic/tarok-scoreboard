@@ -39,7 +39,7 @@ namespace TarokScoreBoard.Core
     private void ChangeScore(Guid playerId, int baseScore) => 
       Scores[playerId].ChangeScore(baseScore * (Scores[playerId].HasRadelc() ? 2 : 1));
 
-    public void ApplyTarokRound(TarokRound round)
+    public IDictionary<Guid, PlayerScore> ApplyTarokRound(TarokRound round)
     {
       if (round is KlopRound klop)
       { 
@@ -91,21 +91,19 @@ namespace TarokScoreBoard.Core
       }
 
       if((int)round.Game >= 70)
-      {
-        foreach (var score in Scores)
-        {
-          score.Value.AddRadelc();
-        }
-      }
+        this.AddRadelc();
+      
 
       if (round.MondFangPlayer != null)
         Scores[round.MondFangPlayer.Value].ChangeScore(-20);
 
       if (round.PagatFangPlayer != null)
         Scores[round.PagatFangPlayer.Value].ChangeScore(-25);
+
+      return Scores;
     }
 
-    public void EndGame()
+    public IDictionary<Guid, PlayerScore>  EndGame()
     {
       foreach (var score in Scores)
       {
@@ -113,6 +111,8 @@ namespace TarokScoreBoard.Core
         
         score.Value.ChangeScore(leftRadelc * -100);
       }
+
+      return this.Scores;
     }
 
     public static ScoreBoard FromRound(IEnumerable<RoundResult> roundResults)

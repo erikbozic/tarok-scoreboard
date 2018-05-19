@@ -10,6 +10,8 @@ using Xunit.Abstractions;
 using System.Collections.Generic;
 using System.Linq;
 using TarokScoreBoard.Shared;
+using FluentAssertions;
+using FluentAssertions.Collections;
 
 namespace TarokScoreBoard.Tests
 {
@@ -47,6 +49,19 @@ namespace TarokScoreBoard.Tests
 
       Assert.True(result.Data.Length == 1);
       Assert.True(!String.IsNullOrEmpty(responseString));
+    }
+
+    [Fact(DisplayName = "get scoreboard anonymous"), TestPriority(-90)]
+    public async Task GetScoreboardTest()
+    {
+      var response = await fixture.Client.GetAsync("/api/scoreboard/4ac472ed-5e78-4573-b24e-6506198f1f13");
+      response.EnsureSuccessStatusCode();
+
+      var responseString = await response.Content.ReadAsStringAsync();
+      output.WriteLine(responseString);
+      var result = JsonConvert.DeserializeObject<ResponseDTO<RoundDTO[]>>(responseString);
+
+      Assert.True(result.Data.Length == 62);
     }
 
     [Fact(DisplayName = "get teams anonymous"), TestPriority(-80)]
@@ -154,7 +169,16 @@ namespace TarokScoreBoard.Tests
 
       var result = await DeserializeResponse<GameDTO>(response);
       this.fixture.gameId = result.Data.GameId;
-      Assert.True(result.Data.Name == "new game");
+
+      result.Data.Name.Should().Be("new game");
+      result.Data.Players.Should().HaveCount(4, "the created game has 4 players");
+      
+      result.Data.Players.Should().
+      Contain(p => this.fixture.team.Members.Select(m => m.PlayerId).Contains(p.PlayerId),
+       "All the players should have ids that belong to the team members");
+
+      result.Data.Players.Where(p => p.IsMaestro == true).Should().HaveCount(0, "no player should be maestro because this is this tema's first game");
+      result.Data.TeamId.Should().Be(fixture.team.TeamId);         
     }
 
     [Fact(DisplayName = "Post round"), TestPriority(103)]
@@ -208,7 +232,13 @@ namespace TarokScoreBoard.Tests
 
       var result = await DeserializeResponse<RoundDTO>(response);
 
-      Assert.True(result.Data.RoundNumber == 1);
+      result.Data.Modifiers.Should().HaveCount(3, "we posted a round with three modifiers");
+      result.Data.RoundResults.Should().HaveCount(4," there's three four players in the game.");
+      result.Data.RoundNumber.Should().Be(1, "it's the first round");
+      result.Data.LeadPlayerId.Should().Be(p1.PlayerId, " player one was the leading player");
+      result.Data.SupportingPlayerId.Should().Be(p2.PlayerId, "player two was the supporintg player");
+      result.Data.PagatFangPlayerId.Should().Be(p3.PlayerId, "player three had his pagat stolen as the last card");
+      result.Data.RoundResults.First(p => p.PlayerId == p1.PlayerId).PlayerScore.Should().Be(105, " i say so");
     }
     
     private async Task<ResponseDTO<T>> DeserializeResponse<T>(HttpResponseMessage response) where T : class
