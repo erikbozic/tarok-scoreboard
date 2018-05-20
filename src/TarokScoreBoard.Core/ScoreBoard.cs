@@ -2,7 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using TarokScoreBoard.Core.Entities;
+/*
+KLOP v 4:
+ŠT. POBRANIH KART (da P1 ostane ena karta pri štetju - posledično P2 ostaneta 2)
+P1: 4  10 13  16  19  22  25  28  31  34  37  40  46 49
+P2: 50 44 41  38  35  32  29  26  23  20  17  14  8  5   
 
+Če ima P1 35 in mu ostane karta, ali ima lahko P2 36 (35 + 2 karte) ?? Če je to res sta lahko dva polna.
+
+ŠT. POBRANIH KART (da p1 ne ostane nobena pri štetju)
+P1: 9  12  15  18  21  24  27  30  33  36  39  42  45
+P2: 45 42  39  36  33  30  27  24  21  18  15  12  9  
+
+Imata lahko oba točno 35 brez dodatne karte kar pomeni da sta oba prazna - makes sense
+
+Možno št. pobranih kart:
+0, 4,5  8,9,10  12,13,14,15  16,17,18,19,20  21,22,23,24,25  26,27,28,29  30,31,32,33,34,  35,36,37,38,  39,40,41,42,  43,44,45,46  47,48,49,50, 54
+
+torej ne moreš pobrat manj kot 4 in pa tudi ne 6, 7 ali 11 kart.
+
+ */
 namespace TarokScoreBoard.Core
 {
   public class ScoreBoard
@@ -47,14 +66,18 @@ namespace TarokScoreBoard.Core
 
         var fullPlayer = klop.KlopScores.FirstOrDefault(s => s.Value.Score < -35);
         var emptyPlayers = klop.KlopScores.Where(s => s.Value.Score == 0);
-
+        
         if (emptyPlayers.Any() && fullPlayer.Value != null)
         {
           ChangeScore(fullPlayer.Key, -35);
-          ChangeScore(emptyPlayers.First().Key, 35);
+          
+          foreach(var empty in emptyPlayers)
+          {
+            ChangeScore(empty.Key, 35);
 
-          if (Scores[emptyPlayers.First().Key].HasRadelc())
-            Scores[emptyPlayers.First().Key].RemoveRadelc();
+            if (Scores[empty.Key].HasRadelc())
+              Scores[empty.Key].RemoveRadelc();
+          }
         }
         else if (!emptyPlayers.Any() && fullPlayer.Value != null)
           ChangeScore(fullPlayer.Key, -70);
@@ -75,7 +98,7 @@ namespace TarokScoreBoard.Core
             var score = klopScore.Value.Score == -1 ? 0 : klopScore.Value.Score; // TODO ugly workaround. Solve this better.
             Scores[klopScore.Key].ChangeScore(score * (Scores[klopScore.Key].HasRadelc() ? 2 : 1));
           }
-        }    
+        }
       }
       else
       {
