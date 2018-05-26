@@ -14,7 +14,7 @@ namespace TarokScoreBoard.Infrastructure.Services
     private readonly TarokDbContext dbContext;
 
     public ScoreBoardService(TarokDbContext dbContext)
-    {;
+    {
       this.dbContext = dbContext;
     }
 
@@ -79,7 +79,8 @@ namespace TarokScoreBoard.Infrastructure.Services
           PlayerId = player.PlayerId,
           PlayerScore = playerScore.Score,
           PlayerRadelcCount = playerScore.RadelcCount,
-          PlayerRadelcUsed = playerScore.RadelcCount
+          PlayerRadelcUsed = playerScore.UsedRadelcCount,
+          RoundScoreChange = playerScore.RoundScoreChange          
         });
       }
 
