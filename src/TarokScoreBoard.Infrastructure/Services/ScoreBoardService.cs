@@ -68,7 +68,8 @@ namespace TarokScoreBoard.Infrastructure.Services
       var tarokRound = TarokRound.FromRound(round);
 
       var scores = scoreBoard.ApplyTarokRound(tarokRound);
-
+      // TODO in case of Klop the client sent results are already here. No like.
+      round.RoundResult.Clear();
       foreach (var player in gamePlayers)
       {
         var playerScore = scores[player.PlayerId];
