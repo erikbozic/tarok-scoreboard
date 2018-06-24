@@ -10,10 +10,10 @@ namespace TarokScoreBoard.Api.Swagger
   {
     public void Apply(Operation operation, OperationFilterContext context)
     {
-      var authAttributes = context.ApiDescription
-       .ControllerAttributes()
-       .Union(context.ApiDescription.ActionAttributes())
-       .OfType<AuthorizeAttribute>();
+      var authAttributes = context
+      .ControllerActionDescriptor
+      .GetControllerAndActionAttributes(false)
+      .OfType<AuthorizeAttribute>();
 
       //everything is json
       operation.Produces = new[] { "application/json" };
