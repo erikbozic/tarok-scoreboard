@@ -42,7 +42,7 @@ namespace TarokScoreBoard.Infrastructure.Services
         var teamPlayers = await dbContext.TeamPlayer
         .AsNoTracking()
         .Where(tp => tp.TeamId == game.TeamId)
-        .ToListAsync();;
+        .ToListAsync();
       
        foreach(var player in gameRequest.Players)
        {
@@ -104,8 +104,11 @@ namespace TarokScoreBoard.Infrastructure.Services
     public async Task<GameDTO> GetAsync(Guid guid)
     {
       var game = await dbContext.Game
-      .AsNoTracking()    
+      .AsNoTracking()
       .FirstOrDefaultAsync(g => g.GameId == guid);
+
+      if (game == null)
+        throw new GameNotExistsException("Game with this id doesn't exist!");
 
       game.GamePlayer = await dbContext.GamePlayer
       .Where(p => p.GameId == game.GameId)
@@ -122,6 +125,7 @@ namespace TarokScoreBoard.Infrastructure.Services
           var highestScore = lastRound.RoundResult
           .OrderByDescending(r => r.PlayerScore)
           .FirstOrDefault();
+
           var bestPlayerPreviousGame = game.GamePlayer
           .FirstOrDefault(g => g.PlayerId == highestScore?.PlayerId);
           
@@ -129,7 +133,6 @@ namespace TarokScoreBoard.Infrastructure.Services
             bestPlayerPreviousGame.IsMaestro = true;
         }
       }
-
       return game.ToDto();
     }
   }
