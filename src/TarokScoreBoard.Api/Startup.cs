@@ -13,6 +13,7 @@ using TarokScoreBoard.Core;
 using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Infrastructure;
 using TarokScoreBoard.Infrastructure.Services;
+using Bugsnag.AspNet.Core;
 
 namespace TarokScoreBoard.Api
 {
@@ -28,10 +29,15 @@ namespace TarokScoreBoard.Api
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+      services.AddBugsnag(configuration => {
+        configuration.ApiKey = Configuration.GetValue<string>("Bugsnag:ApiKey");
+      });
+
       services.AddMvc()
       .AddJsonOptions(
-            options =>{
-               options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            options =>
+            {
+              options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
 
       services.AddSignalR();
@@ -44,18 +50,19 @@ namespace TarokScoreBoard.Api
       services.AddScoped<StatisticsService>();
       services.AddScoped<AuthorizationService>();
       services.AddScoped<RequestContext>();
-      
-      services.AddDbContextPool<TarokDbContext>(opt => {
-          opt.UseNpgsql(Configuration.GetConnectionString("tarok"));
+
+      services.AddDbContextPool<TarokDbContext>(opt =>
+      {
+        opt.UseNpgsql(Configuration.GetConnectionString("tarok"));
       });
 
       services.ConfigureValidationModel();
 
-      services.AddSingleton(Configuration);      
+      services.AddSingleton(Configuration);
 
       services.AddSwaggerGen(c =>
       {
-        c.SwaggerDoc("v1", new Info { Title = "Tarok Scoreboard", Version = "v1"});
+        c.SwaggerDoc("v1", new Info { Title = "Tarok Scoreboard", Version = "v1" });
         c.SchemaFilter<SwaggerExampleFilter>();
         c.AddSecurityDefinition("access-token", new ApiKeyScheme()
         {
@@ -80,7 +87,7 @@ namespace TarokScoreBoard.Api
         .AllowCredentials()
         .AllowAnyHeader()
         .AllowAnyMethod());
-        
+
       app.UseErrorHandling();
 
       app.UseMvc();

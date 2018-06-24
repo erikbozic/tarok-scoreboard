@@ -25,7 +25,7 @@ namespace TarokScoreBoard.Api.Middleware
       };
     }
 
-    public async Task Invoke(HttpContext context, ILogger<ErrorHandlingMiddleware> logger)
+    public async Task Invoke(HttpContext context, ILogger<ErrorHandlingMiddleware> logger, Bugsnag.IClient bugSnagClient)
     {
       try
       {
@@ -33,11 +33,11 @@ namespace TarokScoreBoard.Api.Middleware
       }
       catch (Exception ex)
       {
-        await HandleExceptionAsync(context, ex, logger);
+        await HandleExceptionAsync(context, ex, logger, bugSnagClient);
       }
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger<ErrorHandlingMiddleware> logger)
+    private async Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger<ErrorHandlingMiddleware> logger, Bugsnag.IClient bugSnagClient)
     { 
       var code = HttpStatusCode.InternalServerError;
       ResponseDTO<object> responseObj;
@@ -57,6 +57,9 @@ namespace TarokScoreBoard.Api.Middleware
       }
         
       logger.LogError(exception, exception.Message, code);
+
+      bugSnagClient.Notify(exception);
+
       context.Response.ContentType = "application/json";
       context.Response.StatusCode = (int)code;
 
