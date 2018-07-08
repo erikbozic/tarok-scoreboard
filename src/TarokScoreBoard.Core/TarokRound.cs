@@ -41,7 +41,7 @@ namespace TarokScoreBoard.Core
       if (Game == GameType.Berac || Game == GameType.OdprtiBerac || modifierIsGame)
         ScoreDifference = 0;
 
-      if (modifierIsGame)      
+      if (modifierIsGame)
         Game = 0;
 
       var result = wonModifier * (int)(ScoreDifference + Game) * (int)ContraFactor;
@@ -50,7 +50,10 @@ namespace TarokScoreBoard.Core
         result += (int)mod.Team *
           (mod.Announced && mod.ModifierType != ModifierType.BarvniValat? 2 : 1) *
           (int)mod.ModifierType *
-          (int)mod.ContraFactor;   
+          (int)mod.ContraFactor;
+
+      if(modifierIsGame)
+        result = result * (int)ContraFactor;
 
       return result;
     }

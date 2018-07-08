@@ -528,5 +528,45 @@ namespace TarokScoreBoard.Tests
       Assert.True(scoreBoard.Scores[luka.PlayerId].RadelcCount - scoreBoard.Scores[luka.PlayerId].UsedRadelcCount == 1);
 
     }
+
+    [Fact(DisplayName = "Valat nasprotna ekipa, kontra")]
+    public void Test19()
+    {
+      var game = new GameInitializer(fourPlayers.Keys);
+      var gameId = Guid.NewGuid();
+      var scoreBoard = game.StartGame(gameId);
+
+      scoreBoard.ResetScores();
+
+      var round = new TarokRound
+      {
+        Game = GameType.Ena,
+        Won = false,
+        Modifiers = new List<Modifier>()
+        {
+          new Modifier(ModifierType.Valat, TeamModifier.NonPlaying, false)
+        },
+        ContraFactor = Contra.Contra,
+        ScoreDifference = 35,
+        LeadPlayer = fourPlayers[nejc.PlayerId].PlayerId,
+        SupportingPlayer = fourPlayers[luka.PlayerId].PlayerId,
+      };
+
+      scoreBoard.ApplyTarokRound(round);
+
+      Console.WriteLine(scoreBoard.Scores[nejc.PlayerId].Score);
+
+      Assert.True(scoreBoard.Scores[jan.PlayerId].Score == 0);
+      Assert.True(scoreBoard.Scores[erik.PlayerId].Score == 0);
+      Assert.True(scoreBoard.Scores[nejc.PlayerId].Score == -500, "Nejc ima -500");
+      Assert.True(scoreBoard.Scores[luka.PlayerId].Score == -500, "Luka ima -500");
+
+      Assert.True(scoreBoard.Scores[jan.PlayerId].RadelcCount - scoreBoard.Scores[jan.PlayerId].UsedRadelcCount == 0);
+      Assert.True(scoreBoard.Scores[erik.PlayerId].RadelcCount - scoreBoard.Scores[erik.PlayerId].UsedRadelcCount == 0);
+      Assert.True(scoreBoard.Scores[nejc.PlayerId].RadelcCount - scoreBoard.Scores[nejc.PlayerId].UsedRadelcCount == 0);
+      Assert.True(scoreBoard.Scores[luka.PlayerId].RadelcCount - scoreBoard.Scores[luka.PlayerId].UsedRadelcCount == 0);
+
+    }
+
   }
 }
