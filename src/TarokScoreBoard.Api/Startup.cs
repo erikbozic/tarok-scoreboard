@@ -14,6 +14,7 @@ using TarokScoreBoard.Core.Entities;
 using TarokScoreBoard.Infrastructure;
 using TarokScoreBoard.Infrastructure.Services;
 using Bugsnag.AspNet.Core;
+using Microsoft.AspNetCore.Http.Connections;
 
 namespace TarokScoreBoard.Api
 {
@@ -29,7 +30,8 @@ namespace TarokScoreBoard.Api
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddBugsnag(configuration => {
+      services.AddBugsnag(configuration =>
+      {
         configuration.ApiKey = Configuration.GetValue<string>("Bugsnag:ApiKey");
       });
 
@@ -40,7 +42,10 @@ namespace TarokScoreBoard.Api
               options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
 
-      services.AddSignalR();
+      services.AddSignalR(c =>
+      {
+        c.KeepAliveInterval = TimeSpan.FromSeconds(5);
+      });
       services.AddCors();
 
       // my dependencies
@@ -93,7 +98,7 @@ namespace TarokScoreBoard.Api
       app.UseMvc();
       app.UseSignalR(routes =>
       {
-        routes.MapHub<ScoreBoardHub>("/api/hub/scoreboard");
+        routes.MapHub<ScoreBoardHub>("/api/hub/scoreboard"); //  c => c.Transports = HttpTransportType.ServerSentEvents could just do SSE since we only need one way communication
       });
 
       app.UseSwagger(c =>
