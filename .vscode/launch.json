@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/TarokScoreBoard.Api/bin/Debug/netcoreapp2.1/TarokScoreBoard.Api.dll",
+            "program": "${workspaceFolder}/src/TarokScoreBoard.Api/bin/Debug/netcoreapp2.2/TarokScoreBoard.Api.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/TarokScoreBoard.Api",
             "stopAtEntry": false,

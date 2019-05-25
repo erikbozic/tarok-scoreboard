@@ -1,5 +1,6 @@
 ﻿using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TarokScoreBoard.Api.Filters;
@@ -10,10 +11,12 @@ namespace TarokScoreBoard.Api.Swagger
   {
     public void Apply(Operation operation, OperationFilterContext context)
     {
-      var authAttributes = context
-      .ControllerActionDescriptor
-      .GetControllerAndActionAttributes(false)
+
+
+      var authAttributes = context.MethodInfo.DeclaringType.GetCustomAttributes(true)
+      .Union(context.MethodInfo.GetCustomAttributes(true))
       .OfType<AuthorizeAttribute>();
+
 
       //everything is json
       operation.Produces = new[] { "application/json" };

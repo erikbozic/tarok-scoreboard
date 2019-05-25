@@ -554,8 +554,6 @@ namespace TarokScoreBoard.Tests
 
       scoreBoard.ApplyTarokRound(round);
 
-      Console.WriteLine(scoreBoard.Scores[nejc.PlayerId].Score);
-
       Assert.True(scoreBoard.Scores[jan.PlayerId].Score == 0);
       Assert.True(scoreBoard.Scores[erik.PlayerId].Score == 0);
       Assert.True(scoreBoard.Scores[nejc.PlayerId].Score == -500, "Nejc ima -500");
